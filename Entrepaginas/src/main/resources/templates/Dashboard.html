@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Entre Páginas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        nav, main, footer {
+            z-index: 1;
+        }
+
+        .contenedor-dashboard {
+            background: linear-gradient(135deg, #fffef0, #f5f5f5);
+            border: 3px solid #d4af37;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            color: #1E3A8A;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .boton-whatsapp {
+            background: #25D366;
+            color: white;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .boton-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #1E3A8A, #1E40AF);
+        }
+
+        .navbar .logo-container {
+            display: flex;
+            align-items: center;
+            /* El logo no necesita el font-bold de la clase anterior */
+        }
+
+        .navbar .logo {
+            height: 40px; /* Ajusta la altura del logo (cambia este valor si lo ves muy grande o pequeño) */
+            width: auto;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Pequeña sombra para resaltar */
+        }
+
+        footer {
+            background: linear-gradient(90deg, #1E3A8A, #1E40AF);
+        }
+
+        footer a, .navbar a {
+            color: #93c5fd;
+            transition: color 0.3s;
+        }
+
+        footer a:hover, .navbar a:hover {
+            color: #eff6ff;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        @media (max-width: 600px) {
+            .contenedor-dashboard {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .boton-whatsapp {
+                font-size: 0.9rem;
+            }
+
+            .navbar .logo {
+                height: 35px; /* Ajuste para pantallas pequeñas */
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+
+        <a href="/templates/login.html" class="logo-container">
+            <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="Entre Páginas Logo" class="logo">
+        </a>
+
+        <div class="flex items-center space-x-4">
+            <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+            <a th:href="@{/entrepaginas/dashboard}" class="hover:underline">Dashboard</a>
+            <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+            <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+            <a th:href="@{/libros}" class="hover:underline">Libros</a>
+            <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+            <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+            <a th:href="@{/perfiles}"  class="hover:underline">Perfiles</a>
+            <a th:href="@{/catalogo}" class="hover:underline">Catálogo</a>
+            <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+<main class="flex-1 p-6">
+    <div class="contenedor-dashboard p-6 mx-auto max-w-7xl">
+        <h1 class="text-3xl font-bold text-center mb-6"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card Libros -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-blue-900">Total Libros</h3>
+                    <i class="fas fa-book text-3xl text-blue-500"></i>
+                </div>
+                <p class="text-4xl font-bold text-blue-600 mb-4" th:text="${totalLibros}">0</p>
+                <a th:href="@{/entrepaginas/libros}" class="text-blue-500 hover:text-blue-700">
+                    Ver Libros <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+
+            <!-- Card Clientes -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-blue-900">Total Clientes</h3>
+                    <i class="fas fa-users text-3xl text-blue-500"></i>
+                </div>
+                <p class="text-4xl font-bold text-blue-600 mb-4" th:text="${totalClientes}">0</p>
+                <a th:href="@{/entrepaginas/clientes}" class="text-blue-500 hover:text-blue-700">
+                    Ver Clientes <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+
+            <!-- Card Préstamos -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-blue-900">Total Préstamos</h3>
+                    <i class="fas fa-handshake text-3xl text-blue-500"></i>
+                </div>
+                <p class="text-4xl font-bold text-blue-600 mb-4" th:text="${totalPrestamos}">0</p>
+                <a th:href="@{/entrepaginas/prestamos}" class="text-blue-500 hover:text-blue-700">
+                    Ver Préstamos <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+        <p class="text-center text-gray-600">Gestiona tu biblioteca desde aquí. Usa los enlaces de navegación para administrar usuarios, clientes, libros, categorías, perfiles, catálogo y préstamos.</p>
+    </div>
+</main>
+<footer class="text-white py-4 text-center">
+    <p>© 2025 Entre Páginas | Contacto:
+        <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+        | <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚" class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+</footer>
+</body>
+</html>

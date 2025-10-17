@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Catálogo - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover; background-position: center; background-attachment: fixed;
+      min-height:100vh; position:relative; color:#222;
+      display:flex; flex-direction:column;
+    }
+    body::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:0; }
+    nav, main, footer { position:relative; z-index:1; }
+
+    .navbar { background: linear-gradient(90deg, #1E3A8A, #1E40AF); }
+    .navbar a { color: #93c5fd; transition: color 0.3s; }
+    .navbar a:hover { color: #eff6ff; }
+
+    .contenedor-catalogo{
+      background: linear-gradient(135deg,#fffef0,#f5f5f5);
+      border:3px solid #d4af37; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px); padding:2rem; max-width:1200px; margin:2rem auto; animation:aparecer .8s ease-in-out;
+      flex-grow: 1;
+    }
+    @keyframes aparecer { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
+    h1 { font-family:'Merriweather', serif; color:#1E3A8A; }
+    .categoria-btn { background:#d4af37; color:white; border-radius:10px; padding:.45rem .9rem; margin:.25rem; transition:all .18s; cursor:pointer; border:none; }
+    .categoria-btn:hover{ background:#b38600; transform:scale(1.03); }
+    .categoria-btn.activa{ box-shadow:0 6px 18px rgba(0,0,0,0.2); transform:translateY(-2px); }
+    .seccion-titulo{ font-family:'Merriweather', serif; color:#1E40AF; margin:1.2rem 0; display:flex; align-items:center; gap:.6rem; }
+    .tarjeta-libro{ background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 6px 14px rgba(0,0,0,0.12); transition:transform .25s, box-shadow .25s; display:flex; flex-direction:column; height:100%; }
+    .tarjeta-libro:hover{ transform:translateY(-6px); box-shadow:0 12px 26px rgba(0,0,0,0.18); }
+    .tarjeta-libro img{ height:220px; object-fit:cover; width:100%; }
+    .card-body{ padding:.9rem; display:flex; flex-direction:column; gap:.35rem; flex:1; }
+    .estado{ font-weight:700; }
+    footer{ background:linear-gradient(90deg,#1E3A8A,#1E40AF); color:#fff; padding:1rem; text-align:center; }
+    footer a{ color:#cfe9ff; }
+    .search-bar { border: 2px solid #d4af37; border-radius: 8px; padding: 0.5rem; width: 100%; max-width: 500px; }
+    @media (max-width:640px){ .contenedor-catalogo{ padding:1rem; margin:1rem;} .tarjeta-libro img{ height:180px; } }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<nav class="navbar text-white py-4 px-6">
+  <div class="container mx-auto flex justify-between items-center">
+    <a href="/biblioteca/Dashboard" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+    <div class="flex items-center space-x-4">
+      <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+      <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+            <a th:href="@{/usuarios}"  class="hover:underline">Usuarios</a>
+            <a th:href="@{/clientes}"  class="hover:underline">Clientes</a>
+            <a th:href="@{/libros}" class="hover:underline">Libros</a>
+            <a th:href="@{/categorias}"  class="hover:underline">Categorías</a>
+            <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+            <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+            <a th:href="@{/catalogo}" class="hover:underline">Catálogo</a>
+            <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+    </div>
+  </div>
+</nav>
+<main class="flex-1">
+  <div class="contenedor-catalogo">
+    <h1 class="text-3xl font-bold text-center mb-2"><i class="fas fa-book-open text-yellow-500 mr-2"></i>Catálogo de Libros</h1>
+    <p class="text-center text-sm text-gray-700 mb-6">Explora el universo de historias que te esperan en cada página...</p>
+
+    <!-- Formulario para subir imágenes -->
+    <div class="mb-6 text-center" th:if="${userRole == 'ADMIN'}">
+      <form id="uploadForm" th:action="@{/entrepaginas/uploadImage}" method="post" enctype="multipart/form-data">
+        <label for="bookId" class="mr-2">ID del Libro:</label>
+        <input type="number" id="bookId" name="bookId" class="border rounded px-2 py-1" required />
+        <label for="imageFile" class="ml-4 mr-2">Subir Imagen:</label>
+        <input type="file" id="imageFile" name="imageFile" accept="image/*" class="border rounded px-2 py-1" required />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition ml-4">
+          <i class="fas fa-upload mr-1"></i> Subir Imagen
+        </button>
+      </form>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="mb-6 text-center">
+      <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por ID, título, autor o género..." />
+    </div>
+
+    <div id="barraCategorias" class="flex flex-wrap justify-center mb-6"></div>
+    <div id="secciones"></div>
+
+    <div class="text-center mt-6">
+      <a th:href="@{/entrepaginas/libros}"
+         class="inline-block bg-yellow-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-yellow-600 transition">
+        <i class="fas fa-cogs mr-1"></i> Gestionar Libros
+      </a>
+      <a th:href="@{/entrepaginas/libros}"
+         class="inline-block bg-gray-400 text-white px-5 py-2 rounded-lg font-semibold cursor-not-allowed">
+        <i class="fas fa-cogs mr-1"></i> Gestionar Libros (Acceso Restringido)
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2025 Entre Páginas | <a href="mailto:info@entrepaginas.org">info@entrepaginas.org</a> |
+  <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // Lista completa de libros
+  let libros = [
+    { id: 1, titulo: "Cien años de soledad", autor: "Gabriel García Márquez", genero: "Drama", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.wSKlwjdlc--DoQA-LjxcrgHaLa&pid=Api&P=0&h=180", descripcion: "Una saga épica que narra la historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo." },
+    { id: 2, titulo: "El amor en los tiempos del cólera", autor: "Gabriel García Márquez", genero: "Drama", disponible: true, imagen: "https://pictures.abebooks.com/inventory/22536841297.jpg", descripcion: "Una historia de amor apasionado que explora la espera y la constancia a través de los años." },
+    { id: 3, titulo: "Crónica de una muerte anunciada", autor: "Gabriel García Márquez", genero: "Drama", disponible: true, imagen: "https://www.polifemo.com/static/img/portadas/_visd_0000JPG00RIP.jpg", descripcion: "Un relato sobre un asesinato anunciado en un pequeño pueblo, explorando el destino y la moralidad." },
+    { id: 4, titulo: "La casa de los espíritus", autor: "Isabel Allende", genero: "Drama", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.UOKYemEWwQcg8gRC9dcd-gHaLQ&pid=Api&P=0&h=180", descripcion: "Una novela que mezcla realismo mágico con la historia de una familia chilena a lo largo de generaciones." },
+    { id: 5, titulo: "Eva Luna", autor: "Isabel Allende", genero: "Drama", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.tsHOWsK-3EKWGDGw1wtZnwHaHa&pid=Api&P=0&h=180", descripcion: "La vida de Eva Luna, una mujer que narra su historia llena de aventuras y amores en un mundo vibrante." },
+    { id: 6, titulo: "La ciudad y los perros", autor: "Mario Vargas Llosa", genero: "Novela", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.VHwGGYxjoXwZ_gQ_DRAYQQAAAA&pid=Api&P=0&h=180", descripcion: "Una novela que explora la vida en un colegio militar en Perú, abordando temas de poder y violencia." },
+    { id: 7, titulo: "Conversación en La Catedral", autor: "Mario Vargas Llosa", genero: "Novela", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.hLS0rOjx4xYql4exR1H-lAHaMD&pid=Api&P=0&h=180", descripcion: "Un retrato de la corrupción y el desencanto en el Perú de los años 50." },
+    { id: 8, titulo: "La tía Julia y el escribidor", autor: "Mario Vargas Llosa", genero: "Novela", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.eeHE2_xEQrvRzaFhuDNDowAAAA&pid=Api&P=0&h=180", descripcion: "Una historia que mezcla autobiografía y ficción sobre un joven escritor y su romance con una mujer mayor." },
+    { id: 9, titulo: "El otoño del patriarca", autor: "Gabriel García Márquez", genero: "Novela", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.yYkPD4DsU4dxTOU-bupViAHaLQ&pid=Api&P=0&h=180", descripcion: "Una exploración del poder y la soledad a través de la vida de un dictador." },
+    { id: 10, titulo: "El túnel", autor: "Ernesto Sabato", genero: "Novela", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.wbkS1t_O701zo8yA52cgDQAAAA&pid=Api&P=0&h=180", descripcion: "Un relato psicológico sobre la obsesión y los celos de un pintor enamorado." },
+    { id: 11, titulo: "Veinte poemas de amor", autor: "Pablo Neruda", genero: "Poesía", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.dXICGhIDVDHUcu7AECu_IgHaMv&pid=Api&P=0&h=180", descripcion: "Una colección de poemas apasionados que celebran el amor y la sensualidad." },
+    { id: 12, titulo: "Canto general", autor: "Pablo Neruda", genero: "Poesía", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.P1DDQ5wtKTZfWLMNHPtiiAHaMO&pid=Api&P=0&h=180", descripcion: "Un poema épico que abarca la historia y la naturaleza de América Latina." },
+    { id: 13, titulo: "Cien sonetos de amor", autor: "Pablo Neruda", genero: "Poesía", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.yySxBqkeqNMefg2jQUC1IQHaLQ&pid=Api&P=0&h=180", descripcion: "Una serie de sonetos dedicados al amor y la pasión." },
+    { id: 14, titulo: "Residencia en la tierra", autor: "Pablo Neruda", genero: "Poesía", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.va7LBnrK82Mtd99ZSrjEfQHaKR&pid=Api&P=0&h=180", descripcion: "Poemas que exploran la existencia, el tiempo y la naturaleza." },
+    { id: 15, titulo: "España en el corazón", autor: "Pablo Neruda", genero: "Poesía", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.me0nIIE_01Hbs3mgXRreVQHaKa&pid=Api&P=0&h=180", descripcion: "Un canto apasionado sobre la Guerra Civil Española." },
+    { id: 16, titulo: "Harry Potter y la piedra filosofal", autor: "J.K. Rowling", genero: "Fantasía", disponible: true, imagen: "https://imagessl2.casadellibro.com/a/l/t0/52/9788478884452.jpg", descripcion: "El inicio de las aventuras de Harry Potter en un mundo mágico." },
+    { id: 17, titulo: "El hobbit", autor: "J.R.R. Tolkien", genero: "Fantasía", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.-JUm3l7g-nTTLylkI0vR-gHaLQ&pid=Api&P=0&h=180", descripcion: "La aventura de Bilbo Bolsón en un mundo lleno de dragones y tesoros." },
+    { id: 18, titulo: "El señor de los anillos", autor: "J.R.R. Tolkien", genero: "Fantasía", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.zUZKbZFm22m7E3KWkj8YkQHaLF&pid=Api&P=0&h=180", descripcion: "Una épica batalla por el destino de la Tierra Media." },
+    { id: 19, titulo: "El reino del dragón de oro", autor: "Isabel Allende", genero: "Fantasía", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.4myX1Ql9d6QrlnPPwfMdqgHaKt&pid=Api&P=0&h=180", descripcion: "Una aventura mística en los Himalayas." },
+    { id: 20, titulo: "Crónicas de Narnia", autor: "C.S. Lewis", genero: "Fantasía", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.g7dJqgc_lM5-sF2yhBglDAHaLx&pid=Api&P=0&h=180", descripcion: "Un mundo mágico donde los niños descubren aventuras extraordinarias." },
+    { id: 21, titulo: "Don Quijote de la Mancha", autor: "Miguel de Cervantes", genero: "Clásico", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.p2Qht0iMCaSgQb3wbzHukAHaKN&pid=Api&P=0&h=180", descripcion: "Las aventuras de un caballero y su fiel escudero en la España del siglo XVII." },
+    { id: 22, titulo: "Historia de dos ciudades", autor: "Charles Dickens", genero: "Clásico", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.NOqARYM8WCfpj2RX8UWlVwHaLD&pid=Api&P=0&h=180", descripcion: "Una novela sobre la Revolución Francesa y el amor." },
+    { id: 23, titulo: "El gran Gatsby", autor: "F. Scott Fitzgerald", genero: "Clásico", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.Ko0u4TrFgCcUcAjIKPJhiwHaLy&pid=Api&P=0&h=180", descripcion: "Un retrato de la opulencia y el amor no correspondido en los años 20." },
+    { id: 24, titulo: "Moby Dick", autor: "Herman Melville", genero: "Clásico", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.rAHI8P9xXNtCss6jkTKdcgHaKp&pid=Api&P=0&h=180", descripcion: "La obsesión de un capitán por cazar una ballena blanca." },
+    { id: 25, titulo: "Orgullo y prejuicio", autor: "Jane Austen", genero: "Clásico", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.jWGnnNreh9BPP1ACbwhi0AHaK-&pid=Api&P=0&h=180", descripcion: "Una historia de amor y clases sociales en la Inglaterra del siglo XIX." },
+    { id: 26, titulo: "Diario de Na Hee-do", autor: "Inspirado en 2521", genero: "Romántica", disponible: true, imagen: "https://fr.web.img5.acsta.net/pictures/22/01/13/20/07/0102169.jpg", descripcion: "Un diario que captura el amor juvenil y los sueños." },
+    { id: 27, titulo: "Cumbres borrascosas", autor: "Emily Brontë", genero: "Romántica", disponible: true, imagen: "https://mestasediciones.com/wp-content/uploads/2020/06/C61-Cumbres-borrascosas.jpg", descripcion: "Un amor tormentoso en los páramos ingleses." },
+    { id: 28, titulo: "Sentido y sensibilidad", autor: "Jane Austen", genero: "Romántica", disponible: true, imagen: "https://pictures.abebooks.com/inventory/22571482395.jpg", descripcion: "Dos hermanas enfrentan amor y desafíos sociales." },
+    { id: 29, titulo: "Emma", autor: "Jane Austen", genero: "Romántica", disponible: true, imagen: "https://www.canton4.com/wp-content/uploads/2022/10/portada_emma_jane-austen_202206131223-scaled.jpg", descripcion: "Una joven adinerada juega a ser casamentera." },
+    { id: 30, titulo: "Persuasión", autor: "Jane Austen", genero: "Romántica", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.TOUQbAu30R5cvJVL5dHEngHaLZ&pid=Api&P=0&h=180", descripcion: "Una historia de segundas oportunidades en el amor." },
+    { id: 31, titulo: "1984", autor: "George Orwell", genero: "Distopía", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.5fghEVBNKHeSYr8tyg-tVgHaLW&pid=Api&P=0&h=180", descripcion: "Una distopía sobre un régimen totalitario que controla la verdad." },
+    { id: 32, titulo: "Rebelión en la granja", autor: "George Orwell", genero: "Distopía", disponible: true, imagen: "https://mlstaticquic-a.akamaihd.net/george-orwell-rebelion-en-la-granja--D_NQ_NP_1644-MLU2922581417_072012-F.jpg", descripcion: "Una alegoría sobre la corrupción del poder." },
+    { id: 33, titulo: "Fahrenheit 451", autor: "Ray Bradbury", genero: "Distopía", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.PnbC_Fo_nqWvvdNLoewukAHaLH&pid=Api&P=0&h=180", descripcion: "Un futuro donde los libros están prohibidos." },
+    { id: 34, titulo: "Un mundo feliz", autor: "Aldous Huxley", genero: "Distopía", disponible: true, imagen: "https://losresumenes.com/wp-content/uploads/2023/11/Aldous-Huxley-Un-mundo-feliz.jpg", descripcion: "Una sociedad controlada por el placer y la tecnología." },
+    { id: 35, titulo: "El cuento de la criada", autor: "Margaret Atwood", genero: "Distopía", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.ZqEwg6ACprkxZm57u4H47AAAAA&pid=Api&P=0&h=180", descripcion: "Una distopía sobre la opresión de las mujeres." },
+    { id: 36, titulo: "El principito", autor: "Antoine de Saint-Exupéry", genero: "Infantil", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.l_srAYwg9jJPJbO4AHpFpQHaJs&pid=Api&P=0&h=180", descripcion: "Un cuento sobre la amistad y la simplicidad." },
+    { id: 37, titulo: "Charlie y la fábrica de chocolate", autor: "Roald Dahl", genero: "Infantil", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.GtK-QbxRm7nNwLYuvxQdcQHaK-&pid=Api&P=0&h=180", descripcion: "Un niño descubre un mundo mágico en una fábrica." },
+    { id: 38, titulo: "Matilda", autor: "Roald Dahl", genero: "Infantil", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.bP84LJtdPgUZ9C8MMZBr0wHaLp&pid=Api&P=0&h=180", descripcion: "Una niña con poderes especiales enfrenta adversidades." },
+    { id: 39, titulo: "El león, la bruja y el armario", autor: "C.S. Lewis", genero: "Infantil", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.iRWlIiMoNNZooAJZAcfNlAHaKW&pid=Api&P=0&h=180", descripcion: "Cuatro hermanos descubren un mundo mágico." },
+    { id: 40, titulo: "Alicia en el país de las maravillas", autor: "Lewis Carroll", genero: "Infantil", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.5rzOMrxgXSfZKuWIyYQTgAHaKa&pid=Api&P=0&h=180", descripcion: "Las aventuras de Alicia en un mundo surrealista." },
+    { id: 41, titulo: "Las aventuras de Tom Sawyer", autor: "Mark Twain", genero: "Aventura", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.drd_-dBLSqXaFMlowkckwwHaJv&pid=Api&P=0&h=180", descripcion: "Las travesuras de un joven en el río Misisipi." },
+    { id: 42, titulo: "Huckleberry Finn", autor: "Mark Twain", genero: "Aventura", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.3s5xwwHr3zZ1eSqBzaEVYAHaL9&pid=Api&P=0&h=180", descripcion: "La continuación de las aventuras de Huck en busca de libertad." },
+    { id: 43, titulo: "La isla del tesoro", autor: "Robert Louis Stevenson", genero: "Aventura", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.MLkJPyFvup40leCWOb0ReQHaHZ&pid=Api&P=0&h=180", descripcion: "Una búsqueda de un tesoro pirata lleno de peligros." },
+    { id: 44, titulo: "Veinte mil leguas de viaje submarino", autor: "Julio Verne", genero: "Aventura", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.PmXDMRUbSlMUORfQMbV6EwHaKM&pid=Api&P=0&h=180", descripcion: "Un viaje submarino con el capitán Nemo." },
+    { id: 45, titulo: "La vuelta al mundo en 80 días", autor: "Julio Verne", genero: "Aventura", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.8awkUWERI1U3nL_yGYMQOQHaKQ&pid=Api&P=0&h=180", descripcion: "Una carrera contra el tiempo alrededor del mundo." },
+    { id: 46, titulo: "Drácula", autor: "Bram Stoker", genero: "Terror", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.-tlgDWVOD42tolN_kSrJ6gHaLQ&pid=Api&P=0&h=180", descripcion: "La clásica historia del vampiro más famoso." },
+    { id: 47, titulo: "Frankenstein", autor: "Mary Shelley", genero: "Terror", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.UMssI7V8veQY_QcOTPPmSgHaLH&pid=Api&P=0&h=180", descripcion: "Un científico crea un ser con trágicas consecuencias." },
+    { id: 48, titulo: "El resplandor", autor: "Stephen King", genero: "Terror", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.QrernvvfkGSdnH7XHMiUBAHaLH&pid=Api&P=0&h=180", descripcion: "Un hotel embrujado lleva a la locura a un hombre." },
+    { id: 49, titulo: "It", autor: "Stephen King", genero: "Terror", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.55hYoVk27fQVf1PewaY8qgHaLR&pid=Api&P=0&h=180", descripcion: "Un grupo de amigos enfrenta a un ente maligno." },
+    { id: 50, titulo: "El exorcista", autor: "William Peter Blatty", genero: "Terror", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.XijRiE6mWHDJro4bhPqvIAHaLT&pid=Api&P=0&h=180", descripcion: "Un caso de posesión demoníaca que aterroriza." },
+    { id: 51, titulo: "La sombra del viento", autor: "Carlos Ruiz Zafón", genero: "Misterio", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.nhZOHUXlLgiEuJlFDyvX2QHaLN&pid=Api&P=0&h=180", descripcion: "Un joven descubre un libro maldito en Barcelona." },
+    { id: 52, titulo: "El juego del ángel", autor: "Carlos Ruiz Zafón", genero: "Misterio", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.M6bdPCukO5-EF3fvxyMNPwHaLT&pid=Api&P=0&h=180", descripcion: "Un escritor recibe una oferta oscura." },
+    { id: 53, titulo: "El nombre del viento", autor: "Patrick Rothfuss", genero: "Misterio", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.Ee_XZXymjpzWxWEs0XHMmgHaJl&pid=Api&P=0&h=180", descripcion: "La vida de un mago y músico legendario." },
+    { id: 54, titulo: "El paciente", autor: "Juan Gómez-Jurado", genero: "Misterio", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.y1ZTpFXnF8KPgfjdTa8fKwHaLQ&pid=Api&P=0&h=180", descripcion: "Un cirujano enfrenta un dilema moral." },
+    { id: 55, titulo: "El código Da Vinci", autor: "Dan Brown", genero: "Misterio", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.xAGf71lirNXuj2Cyr3dwXAHaLH&pid=Api&P=0&h=180", descripcion: "Un thriller sobre secretos religiosos." },
+    { id: 56, titulo: "Sapiens", autor: "Yuval Noah Harari", genero: "No ficción", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.-V796zja84Bulac1WiW-7gHaLP&pid=Api&P=0&h=180", descripcion: "Una historia de la humanidad desde sus orígenes." },
+    { id: 57, titulo: "Homo Deus", autor: "Yuval Noah Harari", genero: "No ficción", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.DWlMbmm-cA7JJ7_dTPfcWgHaLW&pid=Api&P=0&h=180", descripcion: "El futuro de la humanidad según Harari." },
+    { id: 58, titulo: "Viento, arena y estrellas", autor: "Antoine de Saint-Exupéry", genero: "No ficción", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.vYsvNXeL4fUpto486J5xSwHaKc&pid=Api&P=0&h=180", descripcion: "Reflexiones de un piloto sobre la vida." },
+    { id: 59, titulo: "Educated", autor: "Tara Westover", genero: "No ficción", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.Kn8v8LjGkvpgg8BanIjFnAHaLQ&pid=Api&P=0&h=180", descripcion: "Una memoria sobre la educación y la superación." },
+    { id: 60, titulo: "Becoming", autor: "Michelle Obama", genero: "No ficción", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.e__NEYvJpiqMPy4lAR_zHgHaLQ&pid=Api&P=0&h=180", descripcion: "La inspiradora vida de Michelle Obama." },
+    { id: 61, titulo: "Breve historia del tiempo", autor: "Stephen Hawking", genero: "Ciencia", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.vSfvFJDFbCktSJ0s2Nc7MgAAAA&pid=Api&P=0&h=180", descripcion: "Una introducción a la cosmología moderna." },
+    { id: 62, titulo: "El universo en una cáscara de nuez", autor: "Stephen Hawking", genero: "Ciencia", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.eIctUhRnlELGWyInBIlaKQHaLH&pid=Api&P=0&h=180", descripcion: "Conceptos complejos de física explicados claramente." },
+    { id: 63, titulo: "Cosmos", autor: "Carl Sagan", genero: "Ciencia", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.jM_vcIR0J8bxWtrQHP_bAgAAAA&pid=Api&P=0&h=180", descripcion: "Un viaje por el universo y su historia." },
+    { id: 64, titulo: "El mundo y sus demonios", autor: "Carl Sagan", genero: "Ciencia", disponible: true, imagen: "https://tse1.mm.bing.net/th?id=OIP.j6u8gJ7FATdH99u0dpb3tAHaKy&pid=Api&P=0&h=180", descripcion: "Un alegato por el pensamiento científico." },
+    { id: 65, titulo: "El gen egoísta", autor: "Richard Dawkins", genero: "Ciencia", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.EWV0_fT8dTCvrqasF2r9nQHaLv&pid=Api&P=0&h=180", descripcion: "Una explicación de la evolución desde los genes." },
+    { id: 66, titulo: "Meditaciones", autor: "Marco Aurelio", genero: "Filosofía", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.QsyYkY2x7rKvAyLeOT7Q7gHaLH&pid=Api&P=0&h=180", descripcion: "Reflexiones filosóficas de un emperador romano." },
+    { id: 67, titulo: "El arte de la guerra", autor: "Sun Tzu", genero: "Filosofía", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.7MzZqvbL31ti8sqYv1MpcQHaLH&pid=Api&P=0&h=180", descripcion: "Un tratado clásico sobre estrategia militar." },
+    { id: 68, titulo: "Más allá del bien y del mal", autor: "Friedrich Nietzsche", genero: "Filosofía", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.hFkh6zExBv5O3UFrvMQ3UwHaLQ&pid=Api&P=0&h=180", descripcion: "Una crítica a la moral tradicional." },
+    { id: 69, titulo: "El hombre en busca de sentido", autor: "Viktor Frankl", genero: "Psicología", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.nHq-3JvQ0UwZqI8yO3cRyQHaLQ&pid=Api&P=0&h=180", descripcion: "Una reflexión sobre el sentido de la vida." },
+    { id: 70, titulo: "Inteligencia emocional", autor: "Daniel Goleman", genero: "Psicología", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.xSYp3w96ZepjMKWL3Y2uiwHaLQ&pid=Api&P=0&h=180", descripcion: "Un estudio sobre las emociones y su impacto." },
+    { id: 71, titulo: "El poder del ahora", autor: "Eckhart Tolle", genero: "Autoayuda", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.gQtT9bYr9B7fXOcZCKhznQHaLQ&pid=Api&P=0&h=180", descripcion: "Una guía para vivir en el presente." },
+    { id: 72, titulo: "Los cuatro acuerdos", autor: "Miguel Ruiz", genero: "Autoayuda", disponible: true, imagen: "https://tse4.mm.bing.net/th?id=OIP.tl3RLwC_klftPV7ZjXz15QHaLQ&pid=Api&P=0&h=180", descripcion: "Cuatro principios para una vida plena." },
+    { id: 73, titulo: "El alquimista", autor: "Paulo Coelho", genero: "Ficción espiritual", disponible: true, imagen: "https://tse3.mm.bing.net/th?id=OIP.nsg6Ih2P7ZpjbIn1RJRL-wHaLQ&pid=Api&P=0&h=180", descripcion: "Un viaje en busca de los sueños." },
+    { id: 74, titulo: "Cometas en el cielo", autor: "Khaled Hosseini", genero: "Drama", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.T8j2XEZLj_4kKnFpj9UcpQHaLH&pid=Api&P=0&h=180", descripcion: "Una historia de amistad y redención en Afganistán." },
+    { id: 75, titulo: "Bajo la misma estrella", autor: "John Green", genero: "Romántica", disponible: true, imagen: "https://tse2.mm.bing.net/th?id=OIP.KwU6QoC2ke07y6t3-AzmyQHaLQ&pid=Api&P=0&h=180", descripcion: "Un amor adolescente enfrentado a la enfermedad." }
+  ];
+
+  // Cargar libros desde el backend (si se usa base de datos)
+  async function loadBooks() {
+    try {
+      const response = await fetch('/entrepaginas/books');
+      if (response.ok) {
+        libros = await response.json();
+        initCatalogo();
+      } else {
+        console.error('Error al cargar libros:', response.status);
+        initCatalogo(); // Usar libros estáticos si falla
+      }
+    } catch (error) {
+      console.error('Error al conectar con el servidor:', error);
+      initCatalogo(); // Usar libros estáticos como respaldo
+    }
+  }
+
+  // Utility: escapar HTML
+  function escapeHtml(text) {
+    if (!text && text !== 0) return '';
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  // Agrupar por género
+  function agruparPorGenero(lista) {
+    const grupos = {};
+    lista.forEach(libro => {
+      const g = libro.genero || "Otros";
+      if (!grupos[g]) grupos[g] = [];
+      grupos[g].push(libro);
+    });
+    Object.keys(grupos).forEach(g => grupos[g].sort((a, b) => a.titulo.localeCompare(b.titulo, 'es')));
+    return grupos;
+  }
+
+  // Generar ID válido a partir del nombre de género
+  function slugify(text) {
+    return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+  }
+
+  // Renderizar botones de categoría y secciones
+  function initCatalogo(filteredBooks = libros) {
+    const grupos = agruparPorGenero(filteredBooks);
+    const barra = document.getElementById('barraCategorias');
+    const seccionesCont = document.getElementById('secciones');
+    barra.innerHTML = '';
+    seccionesCont.innerHTML = '';
+
+    // Crear botón "Todas"
+    const btnTodas = document.createElement('button');
+    btnTodas.className = 'categoria-btn activa';
+    btnTodas.textContent = 'Todas';
+    btnTodas.dataset.genre = 'todas';
+    barra.appendChild(btnTodas);
+
+    btnTodas.addEventListener('click', () => {
+      activarBoton(btnTodas);
+      document.querySelectorAll('.seccion-genero').forEach(s => s.style.display = '');
+    });
+
+    // Crear botones y secciones por cada género
+    Object.keys(grupos).sort().forEach((genero, idx) => {
+      const slug = slugify(genero);
+
+      // Botón
+      const btn = document.createElement('button');
+      btn.className = 'categoria-btn';
+      btn.textContent = genero;
+      btn.dataset.genre = slug;
+      barra.appendChild(btn);
+
+      btn.addEventListener('click', () => {
+        activarBoton(btn);
+        document.querySelectorAll('.seccion-genero').forEach(s => {
+          s.style.display = s.id === 'sec-' + slug ? '' : 'none';
+        });
+        if (!document.querySelectorAll('.seccion-genero:not([style*="display: none"])').length) {
+          document.querySelectorAll('.seccion-genero').forEach(s => s.style.display = '');
+          activarBoton(document.querySelector('.categoria-btn[data-genre="todas"]'));
+        }
+      });
+
+      // Sección con los libros de este género
+      const seccion = document.createElement('section');
+      seccion.className = 'seccion-genero mb-8';
+      seccion.id = 'sec-' + slug;
+
+      const titulo = document.createElement('h2');
+      titulo.className = 'seccion-titulo text-2xl font-semibold';
+      titulo.innerHTML = `<i class="fas fa-book-reader text-yellow-500"></i> ${escapeHtml(genero)} <span class="ml-3 text-sm text-gray-600">(${grupos[genero].length})</span>`;
+      seccion.appendChild(titulo);
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6';
+
+      grupos[genero].forEach(libro => {
+        const tarjeta = document.createElement('article');
+        tarjeta.className = 'tarjeta-libro';
+
+        tarjeta.innerHTML = `
+          <img src="${libro.imagen}" alt="Portada ${escapeHtml(libro.titulo)}" onerror="this.src='https://via.placeholder.com/300x420?text=Sin+imagen'">
+          <div class="card-body">
+            <h3 class="text-lg font-bold text-blue-800">${escapeHtml(libro.titulo)}</h3>
+            <p class="text-gray-700 text-sm">ID: ${libro.id}</p>
+            <p class="text-gray-700 text-sm">Autor: ${escapeHtml(libro.autor)}</p>
+            <p class="text-gray-700 text-sm">Género: ${escapeHtml(libro.genero)}</p>
+            <p class="text-gray-700 text-sm truncate">${escapeHtml(libro.descripcion)}</p>
+            <p class="estado ${libro.disponible ? 'text-green-600' : 'text-red-600'}">${libro.disponible ? 'Disponible' : 'Prestado'}</p>
+            <div class="mt-3">
+              <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition mb-2" onclick="verMas(${libro.id})">
+                <i class="fas fa-info-circle mr-1"></i> Ver más
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(tarjeta);
+      });
+
+      seccion.appendChild(grid);
+      seccionesCont.appendChild(seccion);
+    });
+  }
+
+  // Marca visual del botón activo
+  function activarBoton(btn) {
+    document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('activa'));
+    btn.classList.add('activa');
+  }
+
+  // Modal "Ver más"
+  function verMas(id) {
+    const libro = libros.find(l => l.id === id);
+    if (!libro) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Libro no encontrado',
+        icon: 'error',
+        confirmButtonColor: '#1E40AF'
+      });
+      return;
+    }
+    const contenido = `
+      <div style="text-align:left">
+        <strong>ID:</strong> ${libro.id}<br/>
+        <strong>Título:</strong> ${escapeHtml(libro.titulo)}<br/>
+        <strong>Autor:</strong> ${escapeHtml(libro.autor)}<br/>
+        <strong>Género:</strong> ${escapeHtml(libro.genero)}<br/>
+        <strong>Descripción:</strong> ${escapeHtml(libro.descripcion)}<br/>
+        <strong>Estado:</strong> ${libro.disponible ? '<span style="color:green">Disponible</span>' : '<span style="color:red">Prestado</span>'}
+      </div>
+    `;
+    Swal.fire({
+      title: libro.titulo,
+      html: contenido,
+      imageUrl: libro.imagen,
+      imageAlt: libro.titulo,
+      confirmButtonColor: '#1E40AF',
+      background: '#fffef0'
+    });
+  }
+
+  // Función de búsqueda (prioriza ID)
+  function buscarLibros(query) {
+    const trimmedQuery = query.trim();
+    let filteredBooks = libros;
+    if (trimmedQuery) {
+      const isNumeric = !isNaN(trimmedQuery);
+      filteredBooks = libros.filter(libro => {
+        if (isNumeric) {
+          return libro.id.toString() === trimmedQuery ||
+                 libro.titulo.toLowerCase().includes(trimmedQuery.toLowerCase()) ||
+                 libro.autor.toLowerCase().includes(trimmedQuery.toLowerCase()) ||
+                 libro.genero.toLowerCase().includes(trimmedQuery.toLowerCase());
+        }
+        return libro.titulo.toLowerCase().includes(trimmedQuery.toLowerCase()) ||
+               libro.autor.toLowerCase().includes(trimmedQuery.toLowerCase()) ||
+               libro.genero.toLowerCase().includes(trimmedQuery.toLowerCase());
+      });
+    }
+    initCatalogo(filteredBooks);
+  }
+
+  // Inicializar búsqueda
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    buscarLibros(e.target.value);
+  });
+
+  // Manejar subida de imagen
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+      if (result.success) {
+        const bookId = parseInt(formData.get('bookId'));
+        const newImageUrl = result.imageUrl;
+        const libro = libros.find(l => l.id === bookId);
+        if (libro) {
+          libro.imagen = newImageUrl;
+          initCatalogo(); // Re-renderizar el catálogo
+          Swal.fire({
+            title: 'Éxito',
+            text: `Imagen actualizada para el libro ID: ${bookId}`,
+            icon: 'success',
+            confirmButtonColor: '#1E40AF'
+          });
+        } else {
+          Swal.fire({
+            title: 'Error',
+            text: `Libro con ID ${bookId} no encontrado`,
+            icon: 'error',
+            confirmButtonColor: '#1E40AF'
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: result.message || 'Error al subir la imagen',
+          icon: 'error',
+          confirmButtonColor: '#1E40AF'
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Error al conectar con el servidor: ' + error.message,
+        icon: 'error',
+        confirmButtonColor: '#1E40AF'
+      });
+    }
+  });
+
+  // Inicializar
+  loadBooks();
+</script>
+</body>
+</html>

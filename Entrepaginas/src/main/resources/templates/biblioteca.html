@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entre Páginas y Sabores</title>
+    <!-- Change this line -->
+    <link rel="stylesheet" th:href="@{/css/stylebiblio.css}">
+</head>
+<body>
+<!-- Modal Biblioteca -->
+<div id="modalBiblioteca" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalBiblioteca()">&times;</span>
+    <h2>Nueva llegada</h2>
+    <p>Ya está disponible el nuevo libro de Isabel Allende en nuestra biblioteca.</p>
+  </div>
+</div>
+
+<header>
+  <div class="container">
+    <div class="logo">
+      <h1><i class="fas fa-book-open"></i> Entre Páginas y Sabores</h1>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Buscar libros o préstamos...">
+      <button id="search-btn"><i class="fas fa-search"></i></button>
+    </div>
+    <button class="hamburger" id="hamburger-btn">
+      <i class="fas fa-bars"></i>
+    </button>
+    <nav class="nav-links">
+      <ul class="flex flex-col md:flex-row md:gap-6 text-white">
+        <li><a th:href="@{/}">Inicio</a></li>
+        <li><a th:href="@{/catalogo}">Catálogo</a></li>
+        <li><a th:href="@{/prestamos}">Préstamos</a></li>
+        <li><a th:href="@{/maraton}">Maratón</a></li>
+        <li><a th:href="@{/eventos}">Eventos</a></li>
+        <li><a th:href="@{/write}">Escribe</a></li>
+        <li><a th:href="@{/contacto}">Contacto</a></li>
+        <li><a id="register-link">Registro</a></li>
+        <li><a th:href="@{/login}">Iniciar Sesión</a></li>
+        <div class="login-buttons">
+          <label class="switch">
+            <input id="theme-toggle-input" type="checkbox">
+            <span class="slider round">
+                            <i class="fas fa-sun sun-icon"></i>
+                            <i class="fas fa-moon moon-icon"></i>
+                        </span>
+          </label>
+        </div>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="carousel">
+    <h2>Libros Destacados</h2>
+    <div class="carousel-container">
+      <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+      <div class="carousel-slides">
+        <div class="carousel-slide active">
+          <img src="https://statics.uniradioinforma.com/2023/07/crop/64a330d58847f__940x940.webp" alt="Romper el Círculo">
+          <h3>Romper el Círculo</h3>
+          <p>Colleen Hoover</p>
+          <button class="tts-btn" data-text="Lily no siempre lo ha tenido fácil, pero eso nunca le ha impedido luchar por la vida que quiere."><i class="fas fa-volume-up"></i> Escuchar</button>
+        </div>
+        <div class="carousel-slide">
+          <img src="https://m.media-amazon.com/images/I/91CcrfPNjSL._SL1500_.jpg" alt="Culpa Mía">
+          <h3>Culpa Mía</h3>
+          <p>Mercedes Ron</p>
+          <button class="tts-btn" data-text="Una historia de amor prohibido entre hermanastros en el glamuroso mundo de Hollywood."><i class="fas fa-volume-up"></i> Escuchar</button>
+        </div>
+        <div class="carousel-slide">
+          <img src="https://www.libreriaespanola.com/wp-content/uploads/2022/05/05057347.jpg" alt="A través de mi ventana">
+          <h3>A Través de Mi Ventana</h3>
+          <p>Ariana Godoy</p>
+          <button class="tts-btn" data-text="Una trilogía de amor y misterio sobre Raquel y Ares, dos vecinos que se enamoran sin conocerse."><i class="fas fa-volume-up"></i> Escuchar</button>
+        </div>
+      </div>
+      <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <section id="catalogo" class="py-16 px-4 max-w-6xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-8">Catálogo de Libros</h2>
+    <div class="category-filter">
+      <select id="category-select" onchange="renderCatalogo()">
+        <option value="">Todas las categorías</option>
+        <option value="Drama">Drama</option>
+        <option value="Novela">Novela</option>
+        <option value="Poesía">Poesía</option>
+        <option value="Fantasía">Fantasía</option>
+        <option value="Clásico">Clásico</option>
+        <option value="Romántica">Romántica</option>
+        <option value="Distopía">Distopía</option>
+        <option value="Infantil">Infantil</option>
+        <option value="Aventura">Aventura</option>
+        <option value="Terror">Terror</option>
+        <option value="Misterio">Misterio</option>
+        <option value="No ficción">No ficción</option>
+        <option value="Ciencia">Ciencia</option>
+      </select>
+    </div>
+    <div id="book-grid" class="book-grid"></div>
+    <div class="pagination">
+      <button class="pagination-prev"><i class="fas fa-chevron-left"></i></button>
+      <div id="pagination-numbers" class="pagination-numbers"></div>
+      <button class="pagination-next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <section id="prestamos" class="py-16 px-4 max-w-6xl mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-8">Registro de Préstamos</h2>
+    <div id="prestamo-grid" class="prestamo-grid"></div>
+  </section>
+
+  <section id="boletin" class="boletin-socio">
+    <h2>¡Bienvenido al Club de Socios!</h2>
+    <p>Únete a nuestra comunidad exclusiva y disfruta de beneficios especiales en "Entre Páginas y Sabores".</p>
+    <p><strong>Beneficios:</strong></p>
+    <ul>
+      <li>Acceso a eventos literarios y cafetería exclusivos.</li>
+      <li>10% de descuento en compras de café y libros.</li>
+      <li>Prioridad en la reserva de préstamos.</li>
+    </ul>
+    <p><strong>Sistema de Puntos:</strong> Gana puntos con cada acción:</p>
+    <ul>
+      <li>1 punto por cada libro prestado.</li>
+      <li>2 puntos por cada compra en la cafetería.</li>
+      <li>Canjea 10 puntos por un libro gratis o un café especial.</li>
+    </ul>
+    <div class="puntos-container">
+      Tus puntos acumulados: <span id="puntos-usuario">0</span>
+    </div>
+    <p>¡Regístrate o inicia sesión para empezar a acumular puntos hoy mismo!</p>
+  </section>
+
+  <section id="maraton" class="maraton">
+    <h2>Maratón de Libros 2025</h2>
+    <p>¡Únete a nuestro desafío de lectura! Lee 5 libros en un mes y comparte tus reseñas.</p>
+    <ul>
+      <li><strong>Fecha:</strong> 1-30 de Junio, 2025</li>
+      <li><strong>Tema:</strong> Aventuras y Fantasía</li>
+      <li><strong>Premio:</strong> Membresía gratuita por un año</li>
+    </ul>
+  </section>
+  <main>
+    <section id="duo-magico" class="py-16 px-4 max-w-6xl mx-auto">
+
+      <section id="poemas-diarios" class="duo-item">
+        <h2 class="text-4xl font-bold mb-8">📜 Poema del Día 🖋️</h2>
+        <h3 id="poema-titulo" class="text-2xl font-bold mb-3">Cargando Título...</h3>
+        <div class="poema-contenedor">
+          <p id="poema-texto" class="text-xl italic mb-4 poema-error">Error al cargar los poemas. Inténtalo más tarde.</p>
+          <p id="poema-autor" class="text-lg font-semibold">- Autor Desconocido</p>
+        </div>
+      </section>
+
+      <section id="write" class="write-share duo-item">
+        <h2>Escribe Tu Historia</h2>
+        <div class="write-share-content">
+          <textarea id="story-input" placeholder="Escribe tu historia aquí..."></textarea>
+          <div>
+            <button id="save-draft"><i class="fas fa-save"></i> Guardar Borrador</button>
+            <button id="publish-story"><i class="fas fa-upload"></i> Publicar</button>
+            <button id="tts-story"><i class="fas fa-volume-up"></i> Escuchar</button>
+          </div>
+        </div>
+        <div id="story-list" class="story-list"></div>
+      </section>
+
+    </section>
+  </main>
+
+  <section id="eventos">
+    <h2>Eventos de la Biblioteca</h2>
+    <div class="eventos-grid">
+      <div class="evento">
+        <h3>Lectura de Poesía</h3>
+        <p><i class="fas fa-calendar-alt"></i> 25 de Mayo, 2025</p>
+        <p>Únete a nuestra noche de poesía con autores locales.</p>
+      </div>
+      <div class="evento">
+        <h3>Taller de Escritura</h3>
+        <p><i class="fas fa-calendar-alt"></i> 30 de Mayo, 2025</p>
+        <p>Aprende técnicas de escritura creativa con expertos.</p>
+      </div>
+      <div class="evento">
+        <h3>Club de Lectura</h3>
+        <p><i class="fas fa-calendar-alt"></i> 5 de Junio, 2025</p>
+        <p>Discutimos "El Principito" en un ambiente acogedor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <h2>Suscríbete a Nuestro Boletín</h2>
+    <form id="newsletter-form">
+      <input type="email" id="newsletter-input" placeholder="Tu correo electrónico" required>
+      <button type="submit"><i class="fas fa-envelope"></i> Suscribirse</button>
+    </form>
+    <div class="subscribers">
+      <h3>Suscriptores</h3>
+      <ul id="subscriber-list"></ul>
+    </div>
+  </section>
+</main>
+
+<div id="register-modal" class="modal">
+  <div class="register-container">
+    <button class="close-modal">×</button>
+    <h2 class="text-2xl font-bold text-center mb-4">Registro de Usuario</h2>
+    <div id="register-notification" class="register-notification"></div>
+    <form id="registroForm">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required placeholder="Ingresa tu nombre">
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" required placeholder="Ingresa tu correo">
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" required placeholder="Ingresa tu número de contacto">
+      <label for="direccion">Dirección:</label>
+      <input type="text" id="direccion" name="direccion" required placeholder="Ingresa tu dirección">
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña">
+      <button type="submit">Registrarse</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+  </div>
+</div>
+
+<footer id="contacto">
+  <p>📍 Av. San Martín 234 - Chiclayo, Perú | ☎️ (084) 123-456</p>
+  <p>© 2025 Entre Páginas y Sabores | Contacto: <a href="mailto:info@entrepaginasysabores.org">info@entrepaginasysabores.org</a></p>
+</footer>
+
+<div class="notification" id="loan-notification">
+  <span id="notification-text"></span>
+</div>
+
+
+
+<script th:src="@{/js/biblioteca.js}"></script>
+</body>
+</html>

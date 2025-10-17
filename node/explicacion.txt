@@ -1,0 +1,70 @@
+======================================================
+ EXPLICACIÓN DEL PROYECTO DE VENTA TECNOLÓGICA
+======================================================
+
+Este documento describe la arquitectura, el flujo de trabajo y los pasos para ejecutar el proyecto completo.
+
+
+### 1. Enunciado del Problema
+
+El objetivo era diseñar y construir una aplicación de venta de productos tecnológicos con una arquitectura de microservicios desacoplada. Los requerimientos eran:
+
+1.  **Frontend (HTML/JS):** Una interfaz web para que el usuario vea una lista de productos y pueda seleccionarlos para una venta.
+2.  **Servicio de Catálogo (Node.js):** Un microservicio independiente que expone una lista de productos tecnológicos desde un archivo de datos estático (mock).
+3.  **Backend de Negocio (Spring Boot/Java):** El servicio principal que maneja la lógica de negocio. Debe recibir la venta desde el frontend, consultar los detalles de los productos al servicio de Node.js y persistir la información de la factura y los productos vendidos en una base de datos MySQL usando JPA/Hibernate.
+
+
+### 2. Arquitectura y Solución Implementada
+
+La solución se divide en tres componentes que se comunican entre sí:
+
+*   **Frontend (`index.html`):**
+    *   Al cargar la página, realiza una petición `GET` al servicio de Node.js (`http://localhost:3001/api/products`) para obtener la lista de productos.
+    *   Muestra los productos en tarjetas, permitiendo al usuario "Agregar a Venta".
+    *   Mantiene un resumen de la venta actual (productos y total).
+    *   Al hacer clic en "Facturar Venta", envía una petición `POST` al backend de Spring Boot (`/api/v1/facturar`) con un array de los IDs de los productos seleccionados.
+
+*   **Servicio de Catálogo (`node/server.js`):**
+    *   Es un servidor simple creado con Express.js.
+    *   Su única responsabilidad es leer el archivo `data.json` y exponerlo a través de un endpoint `GET /api/products`.
+    *   Utiliza el paquete `cors` para permitir que el frontend (que se sirve desde otro puerto) pueda hacerle peticiones.
+
+*   **Backend de Negocio (Spring Boot):**
+    *   **Cerebro de la Aplicación:** Este servicio orquesta toda la lógica de negocio.
+    *   **Configuración de Comunicación (`WebClientConfig.java`):** En lugar de escribir la URL del servicio Node.js directamente en el controlador, se ha creado una clase de configuración. Esta clase define un `Bean` de `WebClient` que centraliza la URL base (`http://localhost:3001`). Esto es una buena práctica porque si la URL del microservicio cambia en el futuro, solo hay que modificarla en un único lugar.
+    *   **Controlador (`FacturacionController`):** Recibe la lista de IDs desde el frontend. Utiliza el `WebClient` configurado para hacer una llamada HTTP al servicio de Node.js y obtener los detalles completos de los productos.
+    *   **Modelado de Datos y Creación Automática de Tablas (Paquete `model`):**
+        *   Las clases `Producto.java`, `Facturacion.java` y `Caracteristicas.java` son entidades JPA. No solo representan los datos en Java, sino que actúan como un plano para la base de datos.
+        *   Gracias a la configuración de Spring Boot y Hibernate (propiedad `spring.jpa.hibernate.ddl-auto`), al iniciar la aplicación, **Hibernate lee estas entidades y crea automáticamente las tablas en la base de datos MySQL** (`producto`, `caracteristicas`, `facturacion` y la tabla de unión `factura_producto`). Esto elimina la necesidad de ejecutar scripts SQL manualmente durante el desarrollo.
+    *   **Lógica Transaccional Segura (`TransactionTemplate`):**
+        *   El controlador mezcla programación reactiva (la llamada con `WebClient`) y programación bloqueante (las operaciones con la base de datos JPA). Para manejar esto de forma segura, se utiliza un `TransactionTemplate`.
+        *   Esto asegura que todo el bloque de operaciones de base de datos (consultar productos existentes, crear nuevos y guardar la factura) se ejecute dentro de una **única transacción atómica**. Si algo falla a mitad de camino, la transacción se revierte y la base de datos queda en un estado consistente.
+    *   **Lógica de "Encontrar o Crear":**
+        1.  Consulta su propia base de datos para ver cuáles de los productos de la venta ya existen.
+        2.  Si un producto ya existe, lo reutiliza (evitando duplicados).
+        3.  Si un producto no existe, crea una nueva entidad `Producto` (y `Caracteristicas`) a partir de los datos obtenidos del servicio Node.js.
+    *   Finalmente, crea una nueva entidad `Facturacion`, la asocia con la lista de productos (tanto los existentes como los nuevos) y guarda todo en la base de datos.
+
+
+### 3. Comandos para Compilación y Ejecución
+
+Para que la aplicación funcione, necesitas tener dos procesos corriendo simultáneamente: el backend de Spring y el servicio de Node.js.
+
+**A. Iniciar el Servicio de Catálogo (Node.js):**
+
+1.  Abre una terminal.
+2.  Navega a la carpeta `node` del proyecto:
+    `cd d:\demo\node`
+3.  Si es la primera vez, crea el `package.json` e instala las dependencias:
+    `npm init -y`
+    `npm install express cors`
+4.  Inicia el servidor:
+    `node server.js`
+    (Deberías ver el mensaje: "Servidor Node.js escuchando en http://localhost:3001")
+
+**B. Iniciar el Backend (Spring Boot):**
+
+1.  Abre una **segunda terminal** o utiliza tu IDE (IntelliJ IDEA, Eclipse, etc.).
+2.  Asegúrate de que tu servidor de base de datos MySQL esté corriendo.
+3.  Ejecuta la aplicación Spring Boot. Desde el IDE, puedes hacer clic derecho en `DemoApplication.java` y seleccionar "Run".
+4.  Una vez que ambos servidores estén corriendo, abre tu navegador y ve a `http://localhost:8080`. La aplicación debería funcionar completamente.

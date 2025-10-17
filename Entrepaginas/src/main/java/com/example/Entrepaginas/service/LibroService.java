@@ -1,0 +1,35 @@
+package com.example.Entrepaginas.service;
+
+import com.example.Entrepaginas.model.Libro;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.Entrepaginas.repository.LibroRepository;
+
+import java.util.List;
+
+@Service
+public class LibroService {
+
+    @Autowired
+    private LibroRepository libroRepository;
+
+    public long contarLibros() {
+        return libroRepository.count();
+    }
+
+    public List<Libro> obtenerTodos() {
+        return libroRepository.findAll();
+    }
+
+    public Libro obtenerPorId(Long id) {
+        return libroRepository.findById(id).orElse(null);
+    }
+
+    public Libro guardar(Libro libro) {
+        return libroRepository.save(libro);
+    }
+
+    public void eliminar(Long id) {
+        libroRepository.deleteById(id);
+    }
+}
