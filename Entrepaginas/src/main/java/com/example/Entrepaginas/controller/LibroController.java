@@ -1,5 +1,6 @@
 package com.example.Entrepaginas.controller;
 
+import com.example.Entrepaginas.config.FileUploadConfig;
 import com.example.Entrepaginas.model.Libro;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class LibroController {
     @Autowired
     private LibroService libroService;
 
-    private static String directorioSubida = System.getProperty("user.dir") + "/src/main/resources/static/images";
+    @Autowired
+    private FileUploadConfig fileUploadConfig;
 
     @GetMapping
     public String listarLibros(Model model, HttpSession session) {
@@ -61,10 +63,11 @@ public class LibroController {
 
         if (!imagenFile.isEmpty()) {
             try {
-                byte[] bytes = imagenFile.getBytes();
-                Path ruta = Paths.get(directorioSubida + "/" + imagenFile.getOriginalFilename());
+                byte[] bytes = imagenFile.getBytes(); // Definir bytes aquí
+                String uploadDir = fileUploadConfig.getUploadDirLibros();
+                Path ruta = Paths.get(uploadDir + imagenFile.getOriginalFilename());
                 Files.write(ruta, bytes);
-                libro.setImagen("/images/" + imagenFile.getOriginalFilename());
+                libro.setImagen("/static/uploads/libros/" + imagenFile.getOriginalFilename()); // Actualizar la ruta relativa para la base de datos
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -109,10 +112,11 @@ public class LibroController {
 
         if (!imagenFile.isEmpty()) {
             try {
-                byte[] bytes = imagenFile.getBytes();
-                Path ruta = Paths.get(directorioSubida + "/" + imagenFile.getOriginalFilename());
+                byte[] bytes = imagenFile.getBytes(); // Definir bytes aquí
+                String uploadDir = fileUploadConfig.getUploadDirLibros();
+                Path ruta = Paths.get(uploadDir + imagenFile.getOriginalFilename());
                 Files.write(ruta, bytes);
-                libroExistente.setImagen("/images/" + imagenFile.getOriginalFilename());
+                libroExistente.setImagen("/static/uploads/libros/" + imagenFile.getOriginalFilename()); // Actualizar la ruta relativa para la base de datos
             } catch (IOException e) {
                 e.printStackTrace();
             }
