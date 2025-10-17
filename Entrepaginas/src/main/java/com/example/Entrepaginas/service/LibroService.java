@@ -32,4 +32,8 @@ public class LibroService {
     public void eliminar(Long id) {
         libroRepository.deleteById(id);
     }
+
+    public long contarLibrosDisponibles() {
+        return libroRepository.countByDisponibleTrue();
+    }
 }

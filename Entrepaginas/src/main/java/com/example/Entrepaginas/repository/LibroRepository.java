@@ -17,4 +17,6 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
             "LOWER(l.autor) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(l.genero) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Libro> buscarPorQuery(@Param("query") String query);
+
+    Long countByDisponibleTrue();
 }

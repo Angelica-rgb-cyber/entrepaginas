@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/catalogo")
-@CrossOrigin(origins = "*")  // Permite peticiones desde tu frontend HTML/JS
+@RequestMapping("/catalogo")
 public class CatalagoController {
 
     @Autowired

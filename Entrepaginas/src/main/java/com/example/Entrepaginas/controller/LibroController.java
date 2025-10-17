@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Controller
-@RequestMapping("/entrepaginas")
+@RequestMapping("/libros")
 public class LibroController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class LibroController {
 
     private static String directorioSubida = System.getProperty("user.dir") + "/src/main/resources/static/images";
 
-    @GetMapping("/libros")
+    @GetMapping
     public String listarLibros(Model model, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
@@ -37,7 +37,7 @@ public class LibroController {
         return "libros";
     }
 
-    @GetMapping("/libros/nuevo")
+    @GetMapping("/nuevo")
     public String formularioNuevoLibro(Model model, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
@@ -50,10 +50,10 @@ public class LibroController {
         return "nuevo-libro";
     }
 
-    @PostMapping("/libros")
+    @PostMapping
     public String guardarLibro(@ModelAttribute Libro libro, 
-                             @RequestParam("imagenFile") MultipartFile imagenFile,
-                             HttpSession session) {
+                               @RequestParam("imagenFile") MultipartFile imagenFile,
+                               HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
             return "redirect:/entrepaginas/login";
@@ -73,7 +73,7 @@ public class LibroController {
         return "redirect:/entrepaginas/libros";
     }
 
-    @GetMapping("/libros/editar/{id}")
+    @GetMapping("/editar/{id}")
     public String formularioEditarLibro(@PathVariable Long id, Model model, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
@@ -87,7 +87,7 @@ public class LibroController {
         return "editar-libro";
     }
 
-    @PostMapping("/libros/editar/{id}")
+    @PostMapping("/editar/{id}")
     public String actualizarLibro(@PathVariable Long id, 
                                 @ModelAttribute Libro libro, 
                                 @RequestParam("imagenFile") MultipartFile imagenFile,
@@ -122,7 +122,7 @@ public class LibroController {
         return "redirect:/entrepaginas/libros";
     }
 
-    @GetMapping("/libros/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminarLibro(@PathVariable Long id, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {

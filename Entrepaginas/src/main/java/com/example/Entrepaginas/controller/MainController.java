@@ -13,9 +13,11 @@ public class MainController {
         return "biblioteca";
     }
 
-    @GetMapping({"/catalogo", "/catalogo.html"})
-    public String catalogo() { return "catalogo"; }
-
+    @GetMapping({"/catalogos", "/catalogo.html"})
+    public String catalogo() {
+        return "catalogo";
+    }
+ 
     @GetMapping({"/maraton", "/maraton.html"})
     public String maraton() { return "maraton"; }
 

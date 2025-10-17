@@ -13,13 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/entrepaginas")
+@RequestMapping("/clientes")
 public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping("/clientes")
+    @GetMapping
     public String listarClientes(Model model, HttpSession session) {
         // Check session
         Object nombre = session.getAttribute("usuarioNombre");
@@ -35,7 +35,7 @@ public class ClienteController {
         return "clientes";
     }
 
-    @GetMapping("/clientes/nuevo")
+    @GetMapping("/nuevo")
     public String formularioNuevoCliente(Model model, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
@@ -48,13 +48,13 @@ public class ClienteController {
         return "nuevo-cliente";
     }
 
-    @PostMapping("/clientes")
+    @PostMapping
     public String guardarCliente(@ModelAttribute Cliente cliente) {
         clienteService.guardar(cliente);
         return "redirect:/entrepaginas/clientes";
     }
 
-    @GetMapping("/clientes/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable Long id, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
@@ -65,7 +65,7 @@ public class ClienteController {
         return "redirect:/entrepaginas/clientes";
     }
 
-    @GetMapping("/clientes/consultar-dni/{dni}")
+    @GetMapping("/consultar-dni/{dni}")
     public ResponseEntity<Map<String, Object>> consultarDni(@PathVariable String dni) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);

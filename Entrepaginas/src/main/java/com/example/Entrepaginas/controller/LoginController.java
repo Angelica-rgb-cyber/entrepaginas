@@ -61,18 +61,18 @@ public class LoginController {
         return "redirect:/entrepaginas/login?logout";
     }
 
-    @GetMapping("/dashboard")
-    public String showDashboard(Model model, HttpSession session) {
-        Object usuarioNombre = session.getAttribute("usuarioNombre");
-        Object usuarioRol = session.getAttribute("usuarioRol");
-        if (usuarioNombre != null) {
-            model.addAttribute("loggedInUser", usuarioNombre.toString());
-        }
-        if (usuarioRol != null) {
-            model.addAttribute("userRole", usuarioRol.toString());
-        }
-        return "dashboard"; // O "Dashboard" según tu template
-    }
+    // @GetMapping("/dashboard")
+    // public String showDashboard(Model model, HttpSession session) {
+    //     Object usuarioNombre = session.getAttribute("usuarioNombre");
+    //     Object usuarioRol = session.getAttribute("usuarioRol");
+    //     if (usuarioNombre != null) {
+    //         model.addAttribute("loggedInUser", usuarioNombre.toString());
+    //     }
+    //     if (usuarioRol != null) {
+    //         model.addAttribute("userRole", usuarioRol.toString());
+    //     }
+    //     return "dashboard";
+    // }
 
     @GetMapping("/catalogo")
     public String showCatalog(Model model) {
@@ -80,6 +80,6 @@ public class LoginController {
         model.addAttribute("loggedInUser", auth.getName());
         model.addAttribute("userRole", auth.getAuthorities().stream()
                 .findFirst().orElse(null).getAuthority().replace("ROLE_", ""));
-        return "catalogo"; // Returns catalogo.html
+        return "catalogo";
     }
 }

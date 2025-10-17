@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 
 @Controller
-@RequestMapping("/entrepaginas/prestamos")  // Changed base path
+@RequestMapping("/prestamos")  // Changed base path
 public class PrestamoController {
 
     @Autowired
