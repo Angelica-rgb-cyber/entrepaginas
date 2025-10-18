@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
 
-    @GetMapping({"/", "/index", "/biblioteca", "/biblioteca.html"})
-    public String biblioteca() {
-        return "biblioteca";
-    }
 
     @GetMapping("/catalogos")
     public String catalogo() {
