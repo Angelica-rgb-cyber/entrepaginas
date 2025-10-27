@@ -51,18 +51,18 @@ public class ClienteController {
     @PostMapping
     public String guardarCliente(@ModelAttribute Cliente cliente) {
         clienteService.guardar(cliente);
-        return "redirect:/entrepaginas/clientes";
+        return "redirect:/clientes";
     }
 
     @GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable Long id, HttpSession session) {
         Object nombre = session.getAttribute("usuarioNombre");
         if (nombre == null) {
-            return "redirect:/entrepaginas/login";
+            return "redirect:/clientes";
         }
 
         clienteService.eliminar(id);
-        return "redirect:/entrepaginas/clientes";
+        return "redirect:/clientes";
     }
 
     @GetMapping("/consultar-dni/{dni}")

@@ -117,6 +117,125 @@
         transform: scale(1.05);
       }
 
+      /* === BOTÓN TOGGLE DISPONIBLE SÍ/NO - ANIMADO Y MOVIBLE === */
+      .toggle-disponible {
+        position: relative;
+        width: 80px;
+        height: 36px;
+        background: #e5e7eb;
+        border-radius: 18px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border: 2px solid #d1d5db;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 4px;
+      }
+
+      /* ESTADO DISPONIBLE (VERDE) */
+      .toggle-disponible.disponible {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-color: #059669;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      /* ESTADO NO DISPONIBLE (ROJO) */
+      .toggle-disponible.no-disponible {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-color: #dc2626;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
+      /* CÍRCULO MOVIBLE */
+      .toggle-slider {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+      }
+
+      /* POSICIÓN INICIAL (NO DISPONIBLE - ROJO) */
+      .toggle-disponible.no-disponible .toggle-slider {
+        transform: translateX(4px);
+      }
+
+      /* POSICIÓN FINAL (DISPONIBLE - VERDE) */
+      .toggle-disponible.disponible .toggle-slider {
+        transform: translateX(48px);
+      }
+
+      /* ICONOS ANIMADOS */
+      .toggle-icon {
+        font-size: 12px;
+        color: white;
+        font-weight: bold;
+        z-index: 1;
+        transition: all 0.3s ease;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      /* ANIMACIÓN ICONOS */
+      .toggle-disponible.no-disponible .icon-si {
+        opacity: 0;
+        transform: scale(0);
+      }
+
+      .toggle-disponible.disponible .icon-no {
+        opacity: 0;
+        transform: scale(0);
+      }
+
+      /* HOVER EFECTOS */
+      .toggle-disponible:hover {
+        transform: scale(1.05);
+      }
+
+      .toggle-disponible:hover .toggle-slider {
+        transform: scale(1.1) translateX(48px);
+      }
+
+      .toggle-disponible.no-disponible:hover .toggle-slider {
+        transform: scale(1.1) translateX(4px);
+      }
+
+      /* LOADING STATE */
+      .toggle-disponible.loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .toggle-disponible.loading .toggle-icon {
+        opacity: 0;
+      }
+
+      .toggle-disponible.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid transparent;
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 3;
+      }
+
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
       /* Footer - Azul Marino Consistente */
       footer {
         background: linear-gradient(90deg, #1e3a8a, #1e40af);
@@ -130,6 +249,31 @@
       footer a:hover {
         color: #eff6ff;
       }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .toggle-disponible {
+          width: 70px;
+          height: 32px;
+        }
+        
+        .toggle-slider {
+          width: 24px;
+          height: 24px;
+        }
+        
+        .toggle-disponible.disponible .toggle-slider {
+          transform: translateX(42px);
+        }
+        
+        .toggle-disponible.no-disponible .toggle-slider {
+          transform: translateX(2px);
+        }
+        
+        .toggle-icon {
+          font-size: 10px;
+        }
+      }
     </style>
   </head>
 
@@ -140,6 +284,7 @@
           ><i class="fas fa-book-open mr-2"></i>Entre Páginas</a
         >
         <div class="flex items-center space-x-4">
+          <span th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'"></span>
           <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
           <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
           <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
@@ -152,11 +297,21 @@
         </div>
       </div>
     </nav>
+
     <main class="flex-1 p-6">
       <div class="contenedor p-8 max-w-7xl mx-auto">
         <h1 class="text-4xl font-bold text-center mb-6">
           <i class="fas fa-book mr-2"></i>Gestión de Libros
         </h1>
+
+        <!-- MENSAJE DE ÉXITO -->
+        <div th:if="${mensajeExito}" 
+             class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+            <span th:text="${mensajeExito}" class="font-medium"></span>
+          </div>
+        </div>
 
         <div class="flex justify-between items-center mb-6">
           <a th:href="@{/libros/nuevo}" class="boton-primario">
@@ -185,11 +340,18 @@
                 <td class="border p-3" th:text="${libro.titulo}"></td>
                 <td class="border p-3" th:text="${libro.autor}"></td>
                 <td class="border p-3" th:text="${libro.genero}"></td>
-                <td
-                  class="border p-3 text-center font-semibold"
-                  th:classappend="${libro.disponible ? 'text-green-600' : 'text-red-600'}"
-                  th:text="${libro.disponible ? 'Sí' : 'No'}"
-                ></td>
+                
+                <!-- BOTÓN TOGGLE DISPONIBLE - ANIMADO -->
+                <td class="border p-3 text-center">
+                  <div class="toggle-disponible"
+                       th:classappend="${libro.disponible ? 'disponible' : 'no-disponible'}"
+                       th:attr="data-id=${libro.id}, data-estado=${libro.disponible}">
+                    <div class="toggle-slider"></div>
+                    <span class="toggle-icon icon-no">❌</span>
+                    <span class="toggle-icon icon-si">✅</span>
+                  </div>
+                </td>
+                
                 <td class="border p-3 text-center">
                   <img
                     th:if="${libro.imagen}"
@@ -251,18 +413,71 @@
           text: '¡No podrás revertir esta acción!',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: '#DC2626', // Rojo
-          cancelButtonColor: '#3B82F6', // Azul
+          confirmButtonColor: '#DC2626',
+          cancelButtonColor: '#3B82F6',
           confirmButtonText: 'Sí, eliminar',
           cancelButtonText: 'Cancelar',
           background: '#fffef0',
         }).then((result) => {
           if (result.isConfirmed) {
-            // RUTA ACTUALIZADA
-            window.location.href = `/entrepaginas/libros/eliminar/${id}`;
+            window.location.href = `/libros/eliminar/${id}`;
           }
         });
       }
+
+      // === FUNCIONALIDAD BOTÓN TOGGLE DISPONIBLE ===
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggles = document.querySelectorAll('.toggle-disponible');
+        
+        toggles.forEach(toggle => {
+          toggle.addEventListener('click', function() {
+            const libroId = this.getAttribute('data-id');
+            const estadoActual = this.getAttribute('data-estado') === 'true';
+            const nuevoEstado = !estadoActual;
+            
+            // MOSTRAR LOADING
+            this.classList.add('loading');
+            
+            // ENVIAR PETICIÓN AJAX
+            fetch(`/libros/cambiar-disponible/${libroId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                // CAMBIAR ESTADO VISUAL
+                this.classList.remove('disponible', 'no-disponible', 'loading');
+                this.classList.add(nuevoEstado ? 'disponible' : 'no-disponible');
+                this.setAttribute('data-estado', nuevoEstado);
+                
+                // MOSTRAR ÉXITO
+                Swal.fire({
+                  icon: 'success',
+                  title: nuevoEstado ? '¡Libro Disponible!' : 'Libro No Disponible',
+                  text: `El libro ahora está ${nuevoEstado ? 'disponible' : 'no disponible'}`,
+                  timer: 1500,
+                  showConfirmButton: false,
+                  background: '#fffef0',
+                  customClass: {
+                    popup: 'rounded-lg shadow-lg'
+                  }
+                });
+              } else {
+                // ERROR - RECARGAR
+                location.reload();
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              this.classList.remove('loading');
+              location.reload();
+            });
+          });
+        });
+      });
     </script>
   </body>
 </html>

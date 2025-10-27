@@ -14,8 +14,9 @@ public class Perfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre; // Ejemplo: "Administrador", "Bibliotecario"
+    private String nombre;
     private String descripcion;
 
-   
+    @Lob
+    private String foto; 
 }

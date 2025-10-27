@@ -31,6 +31,11 @@ public class CategoriaController {
         categoriaService.guardar(categoria);
         return "redirect:/categorias";
     }
+    @GetMapping("/editar/{id}")
+    public String editarCategoria(@PathVariable Long id, Model model) {
+        categoriaService.eliminar(id);
+        return "redirect:/categorias";
+    }
 
     @GetMapping("/eliminar/{id}")
     public String eliminarCategoria(@PathVariable Long id) {

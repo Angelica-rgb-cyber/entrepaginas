@@ -1,219 +1,227 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Perfiles - Entre Páginas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        /* === Estilos Base Unificados === */
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            color: #222;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Perfiles - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 0;
-        }
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #222;
+    }
 
-        nav, main, footer {
-            position: relative;
-            z-index: 1;
-        }
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
 
-        /* === Estilos Navbar (Azul) === */
-        .navbar {
-            background: linear-gradient(90deg, #1E3A8A, #1E40AF);
-        }
+    nav, main, footer {
+      position: relative;
+      z-index: 1;
+    }
 
-        .navbar a {
-            color: #93c5fd;
-            transition: color 0.3s;
-        }
+    .navbar {
+      background: linear-gradient(90deg, #1E3A8A, #1E40AF);
+    }
 
-        .navbar a:hover {
-            color: #eff6ff;
-        }
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
 
-        .contenedor-perfiles {
-            background: linear-gradient(135deg, #fffef0, #f9f9f9);
-            border: 3px solid #d4af37;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-        }
+    .navbar a:hover {
+      color: #eff6ff;
+    }
 
-        h1 {
-            font-family: 'Merriweather', serif;
-            color: #1E3A8A;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
+    .contenedor-perfiles {
+      background: linear-gradient(135deg, #fffef0, #f9f9f9);
+      border: 3px solid #d4af37;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
 
-        table th {
-          background-color: #1E3A8A;
-          color: white;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1E3A8A;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
 
-        table tr:hover {
-          background-color: #f0f4ff;
-          transition: 0.2s;
-        }
+    table th {
+      background-color: #1E3A8A;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .boton-nuevo {
-            background: linear-gradient(90deg, #1E40AF, #2563eb);
-            color: white;
-            font-weight: 600;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s;
-        }
+    table tr:hover {
+      background-color: #f0f4ff;
+      transition: 0.2s;
+    }
 
-        .boton-nuevo:hover {
-            background: linear-gradient(90deg, #1E3A8A, #1E40AF);
-            transform: translateY(-2px);
-        }
+    .boton-nuevo {
+      background: linear-gradient(90deg, #1E40AF, #2563eb);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s;
+    }
 
-        .boton-accion {
-          font-weight: 600;
-          padding: 0.25rem 0.5rem;
-          border-radius: 6px;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
+    .boton-nuevo:hover {
+      background: linear-gradient(90deg, #1E3A8A, #1E40AF);
+      transform: translateY(-2px);
+    }
 
-        .boton-accion:hover {
-          opacity: 0.9;
-          transform: scale(1.05);
-        }
+    .boton-accion {
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
 
-        /* Footer - Azul Marino Consistente */
-        footer {
-            background: linear-gradient(90deg, #1E3A8A, #1E40AF);
-        }
+    .boton-accion:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
 
-        footer a {
-            color: #93c5fd;
-            transition: color 0.3s;
-        }
+    footer {
+      background: linear-gradient(90deg, #1E3A8A, #1E40AF);
+    }
 
-        footer a:hover {
-            color: #eff6ff;
-        }
-    </style>
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-<nav class="navbar text-white py-4 px-6">
+  <nav class="navbar text-white py-4 px-6">
     <div class="container mx-auto flex justify-between items-center">
-        <a th:href="@{/entrepaginas/das
-            hboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
-        <div class="flex items-center space-x-4">
-            <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}" ></span>
-            <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
-            <a th:href="@{/usuarios}" >Usuarios</a>
-            <a th:href="@{/clientes}" >Clientes</a>
-            <a th:href="@{/libros}" >Libros</a>
-            <a th:href="@{/categorias}" >Categorías</a>
-            <a th:href="@{/prestamos}" >Préstamos</a>
-            <a th:href="@{/perfiles}" >Perfiles</a>
-            <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
-            <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
-        </div>
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}">Usuarios</a>
+        <a th:href="@{/clientes}">Clientes</a>
+        <a th:href="@{/libros}">Libros</a>
+        <a th:href="@{/categorias}">Categorías</a>
+        <a th:href="@{/prestamos}">Préstamos</a>
+        <a th:href="@{/perfiles}">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
     </div>
-</nav>
-<main class="flex-1 p-6">
-    <div class="contenedor-perfiles p-8 mx-auto max-w-4xl">
-        <h1 class="text-4xl font-bold text-center mb-6"><i class="fas fa-user-cog mr-2"></i> Gestión de Perfiles</h1>
+  </nav>
 
-        <div class="flex justify-start mb-6">
-            <a th:href="@{/entrepaginas/perfiles/nuevo}" class="boton-nuevo">
-                <i class="fas fa-plus mr-2"></i> Nuevo Perfil
-            </a>
-        </div>
+  <main class="flex-1 p-6">
+    <div class="contenedor-perfiles p-8 mx-auto max-w-5xl">
+      <h1 class="text-4xl font-bold text-center mb-6"><i class="fas fa-user-cog mr-2"></i> Gestión de Perfiles</h1>
 
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow">
-                <thead>
-                <tr>
-                    <th class="border p-3">ID</th>
-                    <th class="border p-3">Nombre</th>
-                    <th class="border p-3">Descripción</th>
-                    <th class="border p-3 w-40">Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="perfil : ${perfiles}">
-                    <td class="border p-3 text-center font-mono" th:text="${perfil.id}"></td>
-                    <td class="border p-3 font-semibold" th:text="${perfil.nombre}"></td>
-                    <td class="border p-3 text-sm text-gray-700" th:text="${perfil.descripcion}"></td>
-                    <td class="border p-3 text-center space-x-2 whitespace-nowrap">
-                        <a th:href="@{/entrepaginas/perfiles/editar/{id}(id=${perfil.id})}" class="boton-accion text-blue-700 bg-blue-100">
-                            <i class="fas fa-edit"></i> Editar
-                        </a>
-                        <a href="#" th:onclick="|confirmarEliminacion('${perfil.id}');|" class="boton-accion text-red-700 bg-red-100">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(perfiles)}">
-                    <td colspan="4" class="border p-4 text-center text-gray-500 font-semibold">No hay perfiles de usuario registrados.</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+      <div class="flex justify-start mb-6">
+        <a th:href="@{/perfiles/nuevo}" class="boton-nuevo">
+          <i class="fas fa-plus mr-2"></i> Nuevo Perfil
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow">
+          <thead>
+            <tr>
+              <th class="border p-3">ID</th>
+              <th class="border p-3">Imagen</th>
+              <th class="border p-3">Nombre</th>
+              <th class="border p-3">Descripción</th>
+              <th class="border p-3 w-40">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="perfil : ${perfiles}">
+              <td class="border p-3 text-center font-mono" th:text="${perfil.id}"></td>
+
+              <!-- Columna Imagen -->
+              <td class="border p-3 text-center">
+                <img th:src="${perfil.imagen != null ? perfil.imagen : '/images/avatar-default.png'}"
+                     alt="Imagen del perfil"
+                     class="w-14 h-14 rounded-full mx-auto object-cover border-2 border-yellow-400 shadow-md">
+              </td>
+
+              <td class="border p-3 font-semibold" th:text="${perfil.nombre}"></td>
+              <td class="border p-3 text-sm text-gray-700" th:text="${perfil.descripcion}"></td>
+
+              <td class="border p-3 text-center space-x-2 whitespace-nowrap">
+                <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="boton-accion text-blue-700 bg-blue-100">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="#" th:onclick="|confirmarEliminacion('${perfil.id}');|" class="boton-accion text-red-700 bg-red-100">
+                  <i class="fas fa-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(perfiles)}">
+              <td colspan="5" class="border p-4 text-center text-gray-500 font-semibold">
+                No hay perfiles de usuario registrados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-</main>
+  </main>
 
-<footer class="text-white py-4 text-center mt-8">
+  <footer class="text-white py-4 text-center mt-8">
     <p>© 2025 Entre Páginas | Contacto:
-        <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
-        | <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚" class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      | <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚" class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
     </p>
-</footer>
+  </footer>
 
-<script>
-    // Usando SweetAlert2 para la confirmación de eliminación
+  <script>
     function confirmarEliminacion(id) {
-        Swal.fire({
-            title: '¿Estás segura(o)?',
-            text: "Eliminar este perfil podría afectar a los usuarios asociados. ¡No podrás revertir esta acción!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#DC2626', // Rojo
-            cancelButtonColor: '#3B82F6', // Azul
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            background: '#fffef0'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // RUTA ACTUALIZADA
-                window.location.href = `/entrepaginas/perfiles/eliminar/${id}`;
-            }
-        });
+      Swal.fire({
+        title: '¿Estás segura(o)?',
+        text: "Eliminar este perfil podría afectar a los usuarios asociados. ¡No podrás revertir esta acción!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#3B82F6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: '#fffef0'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/perfiles/eliminar/${id}`;
+        }
+      });
     }
-</script>
+  </script>
 </body>
 </html>
