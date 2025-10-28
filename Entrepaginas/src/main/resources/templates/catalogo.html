@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Catálogo - Entre Páginas</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Libros - Entre Páginas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -13,26 +13,32 @@
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- AÑADIDO: Script de SweetAlert2 -->
     <style>
+      /* === Estilos Base Unificados === */
       body {
         font-family: 'Open Sans', sans-serif;
-        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97');
         background-size: cover;
         background-position: center;
+        background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
         position: relative;
-        color: #222;
         display: flex;
         flex-direction: column;
       }
+
       body::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.45); /* Capa oscura consistente */
         z-index: 0;
       }
+
       nav,
       main,
       footer {
@@ -40,135 +46,86 @@
         z-index: 1;
       }
 
+      /* === Estilos Navbar (Azul) === */
       .navbar {
         background: linear-gradient(90deg, #1e3a8a, #1e40af);
       }
+
       .navbar a {
         color: #93c5fd;
         transition: color 0.3s;
       }
+
       .navbar a:hover {
         color: #eff6ff;
       }
 
       .contenedor-catalogo {
-        background: linear-gradient(135deg, #fffef0, #f5f5f5);
-        border: 3px solid #d4af37;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        background: linear-gradient(135deg, #fffef0, #f9f9f9);
+        border: 3px solid #d4af37; /* Borde dorado consistente */
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(8px);
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 2rem auto;
-        animation: aparecer 0.8s ease-in-out;
-        flex-grow: 1;
       }
-      @keyframes aparecer {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+
       h1 {
         font-family: 'Merriweather', serif;
         color: #1e3a8a;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
-      .categoria-btn {
-        background: #d4af37;
-        color: white;
-        border-radius: 10px;
-        padding: 0.45rem 0.9rem;
-        margin: 0.25rem;
-        transition: all 0.18s;
-        cursor: pointer;
-        border: none;
+
+      /* Estilos para las tarjetas de libros */
+      .card-libro {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       }
-      .categoria-btn:hover {
-        background: #b38600;
-        transform: scale(1.03);
+
+      .card-libro:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
       }
-      .categoria-btn.activa {
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-        transform: translateY(-2px);
+
+      .card-libro img {
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
       }
-      .seccion-titulo {
-        font-family: 'Merriweather', serif;
-        color: #1e40af;
-        margin: 1.2rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
+
+      .card-libro .disponible {
+        color: #10b981; /* green-500 */
+        font-weight: 600;
       }
-      .tarjeta-libro {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
-        transition: transform 0.25s, box-shadow 0.25s;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-      .tarjeta-libro:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
-      }
-      .tarjeta-libro img {
-        height: 220px;
-        object-fit: cover;
-        width: 100%;
-      }
-      .card-body {
-        padding: 0.9rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        flex: 1;
-      }
-      .estado {
-        font-weight: 700;
+
+      .card-libro .no-disponible {
+        color: #ef4444; /* red-500 */
+        font-weight: 600;
       }
       footer {
         background: linear-gradient(90deg, #1e3a8a, #1e40af);
-        color: #fff;
-        padding: 1rem;
-        text-align: center;
       }
+
       footer a {
-        color: #cfe9ff;
+        color: #93c5fd;
+        transition: color 0.3s;
       }
-      .search-bar {
-        border: 2px solid #d4af37;
-        border-radius: 8px;
-        padding: 0.5rem;
-        width: 100%;
-        max-width: 500px;
-      }
-      @media (max-width: 640px) {
-        .contenedor-catalogo {
-          padding: 1rem;
-          margin: 1rem;
-        }
-        .tarjeta-libro img {
-          height: 180px;
-        }
+
+      footer a:hover {
+        color: #eff6ff;
       }
     </style>
   </head>
   <body class="flex flex-col min-h-screen">
     <nav class="navbar text-white py-4 px-6">
       <div class="container mx-auto flex justify-between items-center">
-        <a href="/dashboard" class="text-xl font-bold"
+        <a th:href="@{/dashboard}" class="text-xl font-bold"
           ><i class="fas fa-book-open mr-2"></i>Entre Páginas</a
         >
         <div class="flex items-center space-x-4">
           <span
-            th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'"
-            th:if="${loggedInUser}"
+            th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'"
+            th:if="${usuarioNombre}"
           ></span>
           <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
           <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
@@ -182,60 +139,332 @@
         </div>
       </div>
     </nav>
-    <main class="flex-1">
-      <div class="contenedor-catalogo">
-        <h1 class="text-3xl font-bold text-center mb-2">
-          <i class="fas fa-book-open text-yellow-500 mr-2"></i>Catálogo de
-          Libros
-        </h1>
-        <p class="text-center text-sm text-gray-700 mb-6">
-          Explora el universo de historias que te esperan en cada página...
-        </p>
 
-        <div class="mb-6 text-center">
+    <main class="flex-1 p-6">
+      <div class="contenedor-catalogo p-8 mx-auto max-w-7xl">
+        <h1 class="text-4xl font-bold text-center mb-8">
+          <i class="fas fa-book-reader mr-2"></i> Catálogo de Libros
+        </h1>
+
+        <!-- Formulario de búsqueda y filtro -->
+        <form
+          th:action="@{/catalogos}"
+          method="get"
+          class="mb-8 flex flex-wrap gap-4 items-center justify-center"
+        >
           <input
             type="text"
-            id="searchInput"
-            class="search-bar"
-            placeholder="Buscar por ID, título, autor o género..."
+            name="query"
+            th:value="${queryBusqueda}"
+            placeholder="Buscar por título o autor..."
+            class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow max-w-xs"
           />
+          <select
+            name="genero"
+            class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todos los géneros</option>
+            <!-- Aquí puedes iterar sobre una lista de géneros si la pasas desde el controlador -->
+            <option
+              value="Ficción"
+              th:selected="${generoSeleccionado == 'Ficción'}"
+            >
+              Ficción
+            </option>
+            <option
+              value="Ciencia Ficción"
+              th:selected="${generoSeleccionado == 'Ciencia Ficción'}"
+            >
+              Ciencia Ficción
+            </option>
+            <option
+              value="Fantasía"
+              th:selected="${generoSeleccionado == 'Fantasía'}"
+            >
+              Fantasía
+            </option>
+            <option
+              value="Misterio"
+              th:selected="${generoSeleccionado == 'Misterio'}"
+            >
+              Misterio
+            </option>
+            <option
+              value="Romance"
+              th:selected="${generoSeleccionado == 'Romance'}"
+            >
+              Romance
+            </option>
+            <option
+              value="Historia"
+              th:selected="${generoSeleccionado == 'Historia'}"
+            >
+              Historia
+            </option>
+            <option
+              value="Biografía"
+              th:selected="${generoSeleccionado == 'Biografía'}"
+            >
+              Biografía
+            </option>
+            <option
+              value="Educación"
+              th:selected="${generoSeleccionado == 'Educación'}"
+            >
+              Educación
+            </option>
+            <!-- Agrega más géneros según sea necesario -->
+          </select>
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200"
+          >
+            <i class="fas fa-filter mr-2"></i> Filtrar
+          </button>
+          <a
+            th:href="@{/catalogos}"
+            class="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200"
+          >
+            <i class="fas fa-times mr-2"></i> Limpiar
+          </a>
+        </form>
+
+        <!-- Lista de libros -->
+        <div
+          th:if="${#lists.isEmpty(libros)}"
+          class="text-center text-gray-600 text-lg mt-10"
+        >
+          No se encontraron libros que coincidan con tu búsqueda.
         </div>
 
         <div
-          id="barraCategorias"
-          class="flex flex-wrap justify-center mb-6"
-        ></div>
-        <div id="secciones"></div>
+          th:unless="${#lists.isEmpty(libros)}"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+        >
+          <div th:each="libro : ${libros}" class="card-libro">
+            <!-- Ya tienes un enlace a detalle-libro.html en la imagen y el título -->
+            <a th:href="@{/catalogo/{id}(id=${libro.id})}">
+              <img
+                th:src="@{${libro.imagen != null ? libro.imagen : '/images/book-default.png'}}"
+                th:onerror="|this.src='@{/images/book-default.png}'|"
+                alt="Portada del libro"
+                class="w-full h-64 object-cover"
+              />
+            </a>
+            <div class="p-4">
+              <h2 class="text-xl font-bold text-blue-800 mb-2">
+                <a
+                  th:href="@{/catalogos/{id}(id=${libro.id})}"
+                  class="hover:underline"
+                  th:text="${libro.titulo}"
+                  >Título del Libro</a
+                >
+              </h2>
+              <p class="text-gray-700 text-sm mb-1" th:text="${libro.autor}">
+                Autor
+              </p>
+              <p class="text-gray-600 text-xs mb-3" th:text="${libro.genero}">
+                Género
+              </p>
+              <div
+                th:classappend="${libro.disponible} ? 'disponible' : 'no-disponible'"
+                class="text-sm"
+              >
+                <i
+                  th:classappend="${libro.disponible} ? 'fa-check-circle' : 'fa-times-circle'"
+                  class="fas mr-1"
+                ></i>
+                <span
+                  th:text="${libro.disponible} ? 'Disponible' : 'No Disponible'"
+                ></span>
+              </div>
 
-        <div class="text-center mt-6">
-          <a
-            th:href="@{/libros}"
-            class="inline-block bg-yellow-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-yellow-600 transition"
-          >
-            <i class="fas fa-cogs mr-1"></i> Gestionar Libros
-          </a>
-          <a
-            th:href="@{/libros}"
-            class="inline-block bg-gray-400 text-white px-5 py-2 rounded-lg font-semibold cursor-not-allowed"
-          >
-            <i class="fas fa-cogs mr-1"></i> Gestionar Libros (Acceso
-            Restringido)
-          </a>
+              <div class="mt-4 flex flex-col gap-2">
+                <button
+                  type="button"
+                  class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+                  th:data-id="${libro.id}"
+                  th:data-titulo="${libro.titulo}"
+                  th:data-autor="${libro.autor}"
+                  th:data-genero="${libro.genero}"
+                  th:data-isbn="${libro.isbn}"
+                  th:data-descripcion="${libro.descripcion}"
+                  th:data-imagen="@{${libro.imagen != null ? libro.imagen : '/images/book-default.png'}}"
+                  th:data-disponible="${libro.disponible}"
+                  onclick="verMas(this)"
+                >
+                  <i class="fas fa-info-circle mr-1"></i> Ver más
+                </button>
+
+                <button
+                  type="button"
+                  class="w-full py-2 rounded transition font-semibold"
+                  th:data-id="${libro.id}"
+                  th:data-titulo="${libro.titulo}"
+                  th:data-disponible="${libro.disponible}"
+                  th:classappend="${libro.disponible} ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'"
+                  onclick="toggleDisponibilidad(this)"
+                >
+                  <i
+                    th:classappend="${libro.disponible} ? 'fa-times-circle' : 'fa-check-circle'"
+                    class="fas mr-1"
+                  ></i>
+                  <span
+                    th:text="${libro.disponible} ? 'Desactivar' : 'Activar'"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
 
-    <footer>
-      © 2025 Entre Páginas |
-      <a href="mailto:info@entrepaginas.org">info@entrepaginas.org</a> |
-      <a
-        href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
-        target="_blank"
-        ><i class="fab fa-whatsapp"></i> WhatsApp</a
-      >
+    <footer class="text-white py-4 text-center mt-auto">
+      <p>
+        © 2025 Entre Páginas | Contacto:
+        <a href="mailto:info@entrepaginas.org" class="underline"
+          >info@entrepaginas.org</a
+        >
+        |
+        <a
+          href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+          class="underline bg-green-500 px-2 py-1 rounded"
+          >WhatsApp</a
+        >
+      </p>
     </footer>
 
-     <script th:src="@{/js/catalogo.js}"></script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
 
+      // Función para escapar HTML (útil para SweetAlert2)
+      function escapeHtml(text) {
+        if (!text && text !== 0) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // Función para mostrar detalles del libro en un modal (Ver más)
+      function verMas(buttonElement) {
+        const id = buttonElement.dataset.id;
+        const titulo = buttonElement.dataset.titulo;
+        const autor = buttonElement.dataset.autor;
+        const genero = buttonElement.dataset.genero;
+        const isbn = buttonElement.dataset.isbn;
+        const descripcion = buttonElement.dataset.descripcion;
+        const imagen = buttonElement.dataset.imagen;
+        const disponible = buttonElement.dataset.disponible === 'true'; // Convertir a booleano
+
+        const contenido = `
+          <div style="text-align:left; font-size: 1rem; line-height: 1.5; color: #333;">
+            <p><strong>ID:</strong> ${escapeHtml(id)}</p>
+            <p><strong>Autor:</strong> ${escapeHtml(autor)}</p>
+            <p><strong>Género:</strong> ${escapeHtml(genero)}</p>
+            <p><strong>ISBN:</strong> ${escapeHtml(isbn)}</p>
+            <p style="margin-top: 10px;"><strong>Descripción:</strong> ${escapeHtml(
+              descripcion
+            )}</p>
+            <p style="margin-top: 10px;"><strong>Estado:</strong> ${
+              disponible
+                ? '<span style="color:green; font-weight: bold;">DISPONIBLE</span>'
+                : '<span style="color:red; font-weight: bold;">NO DISPONIBLE</span>'
+            }</p>
+          </div>
+        `;
+
+        Swal.fire({
+          title: `<h3 style="font-family: 'Merriweather', serif; color: #1E40AF; margin: 0;">${escapeHtml(
+            titulo
+          )}</h3>`,
+          html: contenido,
+          imageUrl: imagen,
+          imageAlt: `Portada ${escapeHtml(titulo)}`,
+          confirmButtonColor: '#1E40AF',
+          background: '#E0FFFF', // AZUL BEBÉ
+          width: '400px', // Tamaño chico
+          imageHeight: 250,
+          imageWidth: 170,
+          customClass: {
+            title: 'text-xl font-bold',
+            content: 'text-base',
+          },
+        });
+      }
+
+      // Función para cambiar el estado de disponibilidad (Activar/Desactivar)
+      async function toggleDisponibilidad(buttonElement) {
+        const libroId = buttonElement.dataset.id;
+
+        // **Líneas de depuración añadidas:**
+        console.log("toggleDisponibilidad llamado para libroId:", libroId);
+        console.log("Tipo de libroId:", typeof libroId);
+
+        if (!libroId || libroId === "null" || libroId === "undefined" || libroId.trim() === "") {
+          showMessage("Error: No se pudo obtener el ID del libro para actualizar la disponibilidad.", "error");
+          console.error("ID de libro no válido o ausente:", libroId);
+          return; // Detener la ejecución si el ID no es válido
+        }
+
+        const estaDisponible = buttonElement.dataset.disponible === 'true';
+        const nuevaDisponibilidad = !estaDisponible;
+
+        try {
+          // Construir la URL de forma segura
+          const baseUrl = /*[[@{/catalogos/toggle-disponibilidad/}]]*/;
+          const url = `${baseUrl}${libroId}`; // Usar template literal para concatenación clara
+
+          // **Línea de depuración añadida:**
+          console.log("URL de la solicitud PUT construida:", url);
+
+          const response = await fetch(
+            url,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ disponible: nuevaDisponibilidad }), // Enviar el nuevo estado
+            }
+          );
+          const data = await response.json();
+
+          Swal.close();
+
+          if (response.ok && data.success) {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Estado actualizado!',
+              text: data.message,
+              confirmButtonColor: '#3085d6',
+            }).then(() => {
+              window.location.reload(); // Recargar la página para reflejar el cambio
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text:
+                data.message || 'No se pudo actualizar el estado del libro.',
+              confirmButtonColor: '#d33',
+            });
+          }
+        } catch (error) {
+          Swal.close();
+          console.error('Error al cambiar disponibilidad:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor para actualizar la disponibilidad.',
+            confirmButtonColor: '#d33',
+          });
+        }
+      }
+      /*]]>*/
+    </script>
   </body>
 </html>

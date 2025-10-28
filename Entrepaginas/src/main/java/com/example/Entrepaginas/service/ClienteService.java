@@ -13,7 +13,7 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public long contarClientes() {
+    public long contarTodosLosClientes() {
         return clienteRepository.count();
     }
 

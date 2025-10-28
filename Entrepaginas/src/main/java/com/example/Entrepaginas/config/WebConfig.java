@@ -22,16 +22,16 @@ public class WebConfig implements WebMvcConfigurer {
 
         // Para perfiles (MODIFICADO para mayor robustez en Windows con file:///)
         String perfilesUploadDir = fileUploadConfig.getUploadDirPerfiles();
-        
+
         // Normalizar la ruta y asegurar que termina con un separador de directorio
         Path perfilesPath = Paths.get(perfilesUploadDir).toAbsolutePath().normalize();
         String perfilesLocation = "file:///" + perfilesPath.toString().replace("\\", "/");
         if (!perfilesLocation.endsWith("/")) {
-            perfilesLocation += "/";
+             perfilesLocation += "/";
         }
 
         System.out.println("DEBUG WebConfig: Mapeando /uploads/perfiles/** a la ubicación: " + perfilesLocation);
-        
+
         registry.addResourceHandler("/uploads/perfiles/**")
                 .addResourceLocations(perfilesLocation);
 

@@ -10,13 +10,19 @@ import java.util.List;
 
 @Repository
 public interface LibroRepository extends JpaRepository<Libro, Long> {
+
     List<Libro> findByGenero(String genero);
 
-    @Query("SELECT l FROM Libro l WHERE " +
-            "LOWER(l.titulo) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(l.autor) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(l.genero) LIKE LOWER(CONCAT('%', :query, '%'))")
+    @Query("SELECT l FROM Libro l WHERE "
+            + "LOWER(l.titulo) LIKE LOWER(CONCAT('%', :query, '%')) OR "
+            + "LOWER(l.autor) LIKE LOWER(CONCAT('%', :query, '%')) OR "
+            + "LOWER(l.genero) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Libro> buscarPorQuery(@Param("query") String query);
 
     Long countByDisponibleTrue();
+
+    Long countByDisponibleFalse();
+
+    Long countByDisponible(boolean disponible);
+
 }

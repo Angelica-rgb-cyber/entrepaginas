@@ -22,22 +22,4 @@ public class Prestamo {
     private LocalDate fechaDevolucion;
     private boolean activo;
 
-    public void setCliente(Cliente cliente) {
-    }
-
-    public void setLibro(Libro libro) {
-    }
-
-    public void setFechaPrestamo(LocalDate now) {
-    }
-
-    public void setActivo(boolean b) {
-    }
-
-    public void setFechaDevolucion(LocalDate now) {
-    }
-
-    public Libro getLibro() {
-        return null;
-    }
 }

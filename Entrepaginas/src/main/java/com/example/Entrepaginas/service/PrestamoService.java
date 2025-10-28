@@ -1,5 +1,6 @@
 package com.example.Entrepaginas.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,20 @@ public class PrestamoService {
         prestamoRepository.deleteById(id);
     }
 
-    public long contarPrestamosActivos() {
-        return prestamoRepository.countByActivoTrue();
+    public long contarTodosLosPrestamos() {
+        return prestamoRepository.count();
+    }
+
+    public long contarPrestamosVencidos() {
+        return prestamoRepository.countByFechaDevolucionBeforeAndActivoTrue(LocalDate.now());
     }
 
     public long contarPrestamos() {
         return prestamoRepository.count();
+    }
+
+    public long contarPrestamosActivos() {
+        return prestamoRepository.countByActivoTrue();
     }
 
     public List<Prestamo> obtenerUltimosPrestamos(int cantidad) {

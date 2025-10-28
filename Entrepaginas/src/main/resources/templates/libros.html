@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestión de Libros - Entre Páginas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ¡Añadir esta línea! -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -18,10 +19,9 @@
       /* === Estilos Base Unificados === */
       body {
         font-family: 'Open Sans', sans-serif;
-        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+        /* background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b');*/
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
         background-attachment: fixed;
         min-height: 100vh;
         position: relative;
@@ -33,11 +33,8 @@
       body::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
         z-index: 0;
       }
 
@@ -62,178 +59,36 @@
         color: #eff6ff;
       }
 
-      .contenedor {
-        background: linear-gradient(135deg, #fffef0, #f9f9f9);
+      /* === Contenedor Principal (Dorado) === */
+      .contenedor-libros {
+        background: linear-gradient(135deg, #fffef0, #f5f5f5);
         border: 3px solid #d4af37;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(8px);
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 2rem auto;
       }
 
+      /* === Títulos === */
       h1 {
         font-family: 'Merriweather', serif;
         color: #1e3a8a;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
 
-      table th {
-        background-color: #1e3a8a;
+      /* === Tabla y Footer === */
+      th {
+        background-color: #1e40af;
         color: white;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        border-color: #3b82f6;
       }
 
-      table tr:hover {
-        background-color: #f0f4ff;
-        transition: 0.2s;
-      }
-
-      a.boton-primario {
-        background-color: #1e3a8a;
-        color: white;
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        transition: all 0.3s;
-      }
-
-      a.boton-primario:hover {
-        background-color: #3748c7;
-        transform: translateY(-2px);
-      }
-
-      .boton-accion {
-        font-weight: 600;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-      }
-
-      .boton-accion:hover {
-        opacity: 0.9;
-        transform: scale(1.05);
-      }
-
-      /* === BOTÓN TOGGLE DISPONIBLE SÍ/NO - ANIMADO Y MOVIBLE === */
-      .toggle-disponible {
-        position: relative;
-        width: 80px;
-        height: 36px;
-        background: #e5e7eb;
-        border-radius: 18px;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        border: 2px solid #d1d5db;
+      .table-container {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
         overflow: hidden;
-        display: inline-flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 4px;
-      }
-
-      /* ESTADO DISPONIBLE (VERDE) */
-      .toggle-disponible.disponible {
-        background: linear-gradient(135deg, #10b981, #059669);
-        border-color: #059669;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      }
-
-      /* ESTADO NO DISPONIBLE (ROJO) */
-      .toggle-disponible.no-disponible {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        border-color: #dc2626;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-      }
-
-      /* CÍRCULO MOVIBLE */
-      .toggle-slider {
-        position: absolute;
-        width: 28px;
-        height: 28px;
-        background: white;
-        border-radius: 50%;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        z-index: 2;
-      }
-
-      /* POSICIÓN INICIAL (NO DISPONIBLE - ROJO) */
-      .toggle-disponible.no-disponible .toggle-slider {
-        transform: translateX(4px);
-      }
-
-      /* POSICIÓN FINAL (DISPONIBLE - VERDE) */
-      .toggle-disponible.disponible .toggle-slider {
-        transform: translateX(48px);
-      }
-
-      /* ICONOS ANIMADOS */
-      .toggle-icon {
-        font-size: 12px;
-        color: white;
-        font-weight: bold;
-        z-index: 1;
-        transition: all 0.3s ease;
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      /* ANIMACIÓN ICONOS */
-      .toggle-disponible.no-disponible .icon-si {
-        opacity: 0;
-        transform: scale(0);
-      }
-
-      .toggle-disponible.disponible .icon-no {
-        opacity: 0;
-        transform: scale(0);
-      }
-
-      /* HOVER EFECTOS */
-      .toggle-disponible:hover {
-        transform: scale(1.05);
-      }
-
-      .toggle-disponible:hover .toggle-slider {
-        transform: scale(1.1) translateX(48px);
-      }
-
-      .toggle-disponible.no-disponible:hover .toggle-slider {
-        transform: scale(1.1) translateX(4px);
-      }
-
-      /* LOADING STATE */
-      .toggle-disponible.loading {
-        pointer-events: none;
-        opacity: 0.7;
-      }
-
-      .toggle-disponible.loading .toggle-icon {
-        opacity: 0;
-      }
-
-      .toggle-disponible.loading::after {
-        content: '';
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: 2px solid transparent;
-        border-top: 2px solid white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        z-index: 3;
-      }
-
-      @keyframes spin {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
       }
 
       /* Footer - Azul Marino Consistente */
@@ -250,41 +105,30 @@
         color: #eff6ff;
       }
 
-      /* RESPONSIVE */
-      @media (max-width: 768px) {
-        .toggle-disponible {
-          width: 70px;
-          height: 32px;
+      /* Media Query */
+      @media (max-width: 600px) {
+        .contenedor-libros {
+          padding: 1rem;
+          margin: 1rem auto;
         }
-        
-        .toggle-slider {
-          width: 24px;
-          height: 24px;
-        }
-        
-        .toggle-disponible.disponible .toggle-slider {
-          transform: translateX(42px);
-        }
-        
-        .toggle-disponible.no-disponible .toggle-slider {
-          transform: translateX(2px);
-        }
-        
-        .toggle-icon {
-          font-size: 10px;
+        h1 {
+          font-size: 1.75rem;
         }
       }
     </style>
   </head>
 
-  <body class="flex flex-col min-h-screen">
+  <body class="min-h-screen flex flex-col justify-between">
     <nav class="navbar text-white py-4 px-6">
       <div class="container mx-auto flex justify-between items-center">
         <a th:href="@{/dashboard}" class="text-xl font-bold"
           ><i class="fas fa-book-open mr-2"></i>Entre Páginas</a
         >
         <div class="flex items-center space-x-4">
-          <span th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'"></span>
+          <span
+            th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'"
+            th:if="${usuarioNombre}"
+          ></span>
           <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
           <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
           <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
@@ -298,90 +142,126 @@
       </div>
     </nav>
 
-    <main class="flex-1 p-6">
-      <div class="contenedor p-8 max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold text-center mb-6">
-          <i class="fas fa-book mr-2"></i>Gestión de Libros
-        </h1>
-
-        <!-- MENSAJE DE ÉXITO -->
-        <div th:if="${mensajeExito}" 
-             class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg">
-          <div class="flex items-center">
-            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-            <span th:text="${mensajeExito}" class="font-medium"></span>
-          </div>
+    <main class="flex-1 p-4 sm:p-8">
+      <div class="contenedor-libros mx-auto max-w-7xl">
+        <div class="text-center mb-6">
+          <i
+            class="fas fa-book text-5xl text-yellow-500 mb-2 drop-shadow-lg"
+          ></i>
+          <h1 class="text-4xl font-bold drop-shadow-lg">Gestión de Libros</h1>
+          <p class="text-gray-700 text-sm mt-1">
+            Administra la información de los libros disponibles.
+          </p>
         </div>
 
         <div class="flex justify-between items-center mb-6">
-          <a th:href="@{/libros/nuevo}" class="boton-primario">
+          <a
+            th:href="@{/libros/nuevo}"
+            class="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-yellow-600 hover:to-amber-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition duration-300 inline-block"
+          >
             <i class="fas fa-plus mr-2"></i> Nuevo Libro
           </a>
         </div>
 
-        <div class="overflow-x-auto">
-          <table
-            class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow"
-          >
+        <div class="overflow-x-auto table-container bg-white">
+          <table class="w-full border-collapse text-center">
             <thead>
-              <tr>
-                <th class="border p-3">ID</th>
-                <th class="border p-3">Título</th>
-                <th class="border p-3">Autor</th>
-                <th class="border p-3">Género</th>
-                <th class="border p-3">Disponible</th>
-                <th class="border p-3">Imagen</th>
-                <th class="border p-3">Acciones</th>
+              <tr class="text-white">
+                <th class="border border-blue-600 p-3 rounded-tl-xl">🆔 ID</th>
+                <th class="border border-blue-600 p-3">🖼️ Imagen</th>
+                <th class="border border-blue-600 p-3">📚 Título</th>
+                <th class="border border-blue-600 p-3">✍️ Autor</th>
+                <th class="border border-blue-600 p-3">🏷️ Género</th>
+                <th class="border border-blue-600 p-3">#️⃣ ISBN</th>
+                <th class="border border-blue-600 p-3">📝 Descripción</th>
+                <th class="border border-blue-600 p-3">✅ Disponible</th>
+                <th class="border border-blue-600 p-3 rounded-tr-xl">
+                  ⚙️ Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr th:each="libro : ${libros}">
-                <td class="border p-3 text-center" th:text="${libro.id}"></td>
-                <td class="border p-3" th:text="${libro.titulo}"></td>
-                <td class="border p-3" th:text="${libro.autor}"></td>
-                <td class="border p-3" th:text="${libro.genero}"></td>
-                
-                <!-- BOTÓN TOGGLE DISPONIBLE - ANIMADO -->
-                <td class="border p-3 text-center">
-                  <div class="toggle-disponible"
-                       th:classappend="${libro.disponible ? 'disponible' : 'no-disponible'}"
-                       th:attr="data-id=${libro.id}, data-estado=${libro.disponible}">
-                    <div class="toggle-slider"></div>
-                    <span class="toggle-icon icon-no">❌</span>
-                    <span class="toggle-icon icon-si">✅</span>
-                  </div>
-                </td>
-                
-                <td class="border p-3 text-center">
+              <tr
+                th:each="libro : ${libros}"
+                class="even:bg-gray-50 hover:bg-yellow-100 transition duration-300"
+              >
+                <td
+                  class="border border-gray-300 p-3"
+                  th:text="${libro.id}"
+                ></td>
+                <td class="border border-gray-300 p-3">
                   <img
-                    th:if="${libro.imagen}"
+                    th:if="${libro.imagen != null and !libro.imagen.isEmpty()}"
                     th:src="@{${libro.imagen}}"
-                    alt="Imagen del libro"
-                    class="w-16 h-20 object-cover mx-auto rounded shadow border border-gray-300"
+                    alt="Portada del libro"
+                    class="w-16 h-20 object-cover mx-auto rounded shadow"
+                    th:onerror="|this.src='@{/images/book-default.png}'|"
+                  />
+                  <img
+                    th:unless="${libro.imagen != null and !libro.imagen.isEmpty()}"
+                    th:src="@{/images/book-default.png}"
+                    alt="Portada por defecto"
+                    class="w-16 h-20 object-cover mx-auto rounded shadow"
                   />
                 </td>
-                <td class="border p-3 text-center space-x-2 whitespace-nowrap">
+                <td
+                  class="border border-gray-300 p-3 font-semibold"
+                  th:text="${libro.titulo}"
+                ></td>
+                <td
+                  class="border border-gray-300 p-3"
+                  th:text="${libro.autor}"
+                ></td>
+                <td
+                  class="border border-gray-300 p-3"
+                  th:text="${libro.genero}"
+                ></td>
+                <td
+                  class="border border-gray-300 p-3"
+                  th:text="${libro.isbn}"
+                ></td>
+                <td
+                  class="border border-gray-300 p-3 text-sm max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+                  th:text="${libro.descripcion}"
+                ></td>
+                <td class="border border-gray-300 p-3">
+                  <span
+                    th:classappend="${libro.disponible} ? 'text-green-600' : 'text-red-600'"
+                    class="font-bold"
+                  >
+                    <i
+                      th:classappend="${libro.disponible} ? 'fas fa-check-circle' : 'fas fa-times-circle'"
+                      class="mr-1"
+                    ></i>
+                    <span th:text="${libro.disponible} ? 'Sí' : 'No'"></span>
+                  </span>
+                </td>
+                <td
+                  class="border border-gray-300 p-3 space-x-3 whitespace-nowrap"
+                >
                   <a
                     th:href="@{/libros/editar/{id}(id=${libro.id})}"
-                    class="boton-accion text-blue-700 bg-blue-100"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm transition duration-300 inline-block"
                   >
                     <i class="fas fa-edit"></i> Editar
                   </a>
-                  <a
-                    href="#"
-                    th:onclick="|confirmarEliminacion('${libro.id}');|"
-                    class="boton-accion text-red-700 bg-red-100"
+                  <button
+                    type="button"
+                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm transition duration-300 inline-block"
+                    th:data-id="${libro.id}"
+                    th:data-titulo="${libro.titulo}"
+                    onclick="eliminarLibro(this)"
                   >
-                    <i class="fas fa-trash"></i> Eliminar
-                  </a>
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                  </button>
                 </td>
               </tr>
               <tr th:if="${#lists.isEmpty(libros)}">
                 <td
-                  colspan="7"
-                  class="border p-4 text-center text-gray-500 font-semibold"
+                  colspan="9"
+                  class="border border-gray-300 p-4 text-gray-600 font-semibold"
                 >
-                  No hay libros registrados en el sistema.
+                  No hay libros registrados en la base de datos.
                 </td>
               </tr>
             </tbody>
@@ -390,7 +270,7 @@
       </div>
     </main>
 
-    <footer class="text-white py-4 text-center mt-8">
+    <footer class="text-white py-4 text-center">
       <p>
         © 2025 Entre Páginas | Contacto:
         <a href="mailto:info@entrepaginas.org" class="underline"
@@ -399,13 +279,11 @@
         |
         <a
           href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
-          class="underline bg-green-500 px-2 py-1 rounded"
+          class="underline bg-green-500 hover:bg-green-600 px-2 py-1 rounded"
           >WhatsApp</a
         >
       </p>
     </footer>
-
-        <script th:src="@{/js/libros.js}"></script>
-
+    <script th:src="@{/js/libros.js}"></script>
   </body>
 </html>

@@ -18,7 +18,8 @@ public class Libro {
     private String titulo;
     private String autor;
     private String genero;
+    private String isbn;
     private boolean disponible;
-    private String imagen; // Ruta de la imagen JPG
+    private String imagen;
 
 }

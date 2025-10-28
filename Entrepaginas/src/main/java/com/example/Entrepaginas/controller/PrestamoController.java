@@ -80,7 +80,24 @@ public class PrestamoController {
             prestamoService.guardar(prestamo);
         }
         
-        return "redirect:/entrepaginas/prestamos";
+        return "redirect:/prestamos";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String formularioEditarPrestamo(@PathVariable Long id, Model model, HttpSession session) {
+        Object nombre = session.getAttribute("usuarioNombre");
+        if (nombre == null) {
+            return "redirect:/entrepaginas/login";
+        }
+
+        Prestamo prestamo = prestamoService.obtenerPorId(id);
+        model.addAttribute("prestamo", prestamo);
+        model.addAttribute("clientes", clienteService.obtenerTodos());
+        model.addAttribute("libros", libroService.obtenerTodos());
+        model.addAttribute("usuarioNombre", nombre.toString());
+        model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
+        
+        return "editar-prestamo";
     }
 
     @GetMapping("/devolver/{id}")
@@ -89,6 +106,7 @@ public class PrestamoController {
         if (nombre == null) {
             return "redirect:/entrepaginas/login";
         }
+
 
         Prestamo prestamo = prestamoService.obtenerPorId(id);
         if (prestamo != null && prestamo.isActivo()) {
@@ -102,6 +120,28 @@ public class PrestamoController {
             prestamoService.guardar(prestamo);
         }
         
-        return "redirect:/entrepaginas/prestamos";
+        return "redirect:/prestamos"; // Redirige a la lista de préstamos
+    }
+
+    @GetMapping("/eliminar/{id}") // NUEVO: Endpoint para eliminar un préstamo
+    public String eliminarPrestamo(@PathVariable Long id, HttpSession session) {
+        Object nombre = session.getAttribute("usuarioNombre");
+        if (nombre == null) {
+            return "redirect:/entrepaginas/login";
+        }
+
+        Prestamo prestamo = prestamoService.obtenerPorId(id);
+        if (prestamo != null) {
+            // Si el préstamo está activo, primero asegúrate de que el libro vuelva a estar disponible
+            if (prestamo.isActivo()) {
+                Libro libro = prestamo.getLibro();
+                if (libro != null) {
+                    libro.setDisponible(true);
+                    libroService.guardar(libro);
+                }
+            }
+            prestamoService.eliminar(id);
+        }
+        return "redirect:/prestamos"; // Redirige a la lista de préstamos
     }
 }

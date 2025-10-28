@@ -13,8 +13,16 @@ public class LibroService {
     @Autowired
     private LibroRepository libroRepository;
 
-    public long contarLibros() {
+    public long contarTodosLosLibros() {
         return libroRepository.count();
+    }
+
+    public long contarLibrosDisponibles() {
+        return libroRepository.countByDisponible(true);+
+    }
+
+    public long contarLibrosNoDisponibles() {
+        return libroRepository.countByDisponible(false);
     }
 
     public List<Libro> obtenerTodos() {
@@ -31,9 +39,5 @@ public class LibroService {
 
     public void eliminar(Long id) {
         libroRepository.deleteById(id);
-    }
-
-    public long contarLibrosDisponibles() {
-        return libroRepository.countByDisponibleTrue();
     }
 }

@@ -18,7 +18,7 @@
       body {
         font-family: 'Open Sans', sans-serif;
         /* Fondo de biblioteca consistente */
-        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+        background-image: url('https://i.pinimg.com/originals/f1/b2/f');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -117,7 +117,7 @@
           <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
           <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
           <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
-          <a th:href="@{/catalogo}" class="hover:underline">Catálogo</a>
+          <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
           <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
         </div>
       </div>
@@ -125,6 +125,7 @@
     <main class="flex-1 flex items-center justify-center p-6">
       <form
         th:action="@{/libros}"
+        th:object="${libro}"
         method="post"
         enctype="multipart/form-data"
         class="contenedor-form w-full max-w-md p-8 space-y-5"
@@ -185,21 +186,46 @@
           >
         </div>
 
-        <div>
-          <label for="imagenFile" class="block text-gray-700 font-medium mb-1"
-            >Imagen (JPG)</label
+        <div class="mb-4">
+          <label for="isbn" class="block text-gray-700 text-sm font-bold mb-2"
+            >ISBN:</label
+          >
+          <input
+            type="text"
+            id="isbn"
+            th:field="*{isbn}"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="descripcion"
+            class="block text-gray-700 text-sm font-bold mb-2"
+            >Descripción:</label
+          >
+          <textarea
+            id="descripcion"
+            th:field="*{descripcion}"
+            rows="4"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          ></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label
+            for="imagenFile"
+            class="block text-gray-700 text-sm font-bold mb-2"
+            >Imagen del Libro:</label
           >
           <input
             type="file"
             id="imagenFile"
             name="imagenFile"
-            accept=".jpg"
-            required
-            class="w-full border border-gray-300 p-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            accept="image/*"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
-          <p class="text-xs text-gray-500 mt-1">
-            Sube una imagen con formato .jpg para la portada.
-          </p>
         </div>
 
         <button
