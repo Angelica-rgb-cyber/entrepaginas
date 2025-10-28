@@ -2,12 +2,19 @@ package com.example.Entrepaginas.controller;
 
 import com.example.Entrepaginas.model.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value; // Importar Value
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.Entrepaginas.service.ClienteService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate; // Importar RestTemplate
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +25,15 @@ public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private RestTemplate restTemplate; // Inyectar RestTemplate
+
+    @Value("${reniec.api.url}") // Inyectar la URL de la API desde application.properties
+    private String reniecApiUrl;
+
+    @Value("${reniec.api.token}") // Inyectar el token de la API desde application.properties
+    private String reniecApiToken;
 
     @GetMapping
     public String listarClientes(Model model, HttpSession session) {
@@ -65,11 +81,55 @@ public class ClienteController {
         return "redirect:/clientes";
     }
 
-    @GetMapping("/consultar-dni/{dni}")
+    @GetMapping("/consultar-dni/{dni}") // Modificado para llamar a la API de RENIEC
     public ResponseEntity<Map<String, Object>> consultarDni(@PathVariable String dni) {
         Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("data", Map.of("nombre", "Juan Pérez"));
+
+        if (dni == null || dni.length() != 8 || !dni.matches("\\d+")) {
+            response.put("success", false);
+            response.put("message", "El DNI debe tener 8 dígitos numéricos.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.set("Authorization", "Bearer " + reniecApiToken); // Usar el token inyectado
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            String url = reniecApiUrl + dni; // Construir la URL con el DNI
+            
+            System.out.println("DEBUG: Llamando a RENIEC API con URL: " + url); // Depuración
+            
+            ResponseEntity<Map> reniecResponse = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                Map.class
+            );
+
+            if (reniecResponse.getStatusCode().is2xxSuccessful() && reniecResponse.getBody() != null) {
+                Map<String, Object> reniecData = reniecResponse.getBody();
+                response.put("success", true);
+                response.put("data", reniecData);
+                System.out.println("DEBUG: Respuesta de RENIEC: " + reniecData); // Depuración
+            } else {
+                response.put("success", false);
+                response.put("message", "No se pudo obtener información de RENIEC. Código: " + reniecResponse.getStatusCode());
+                System.err.println("ERROR: Respuesta no exitosa de RENIEC: " + reniecResponse.getStatusCode() + " - " + reniecResponse.getBody()); // Depuración
+            }
+
+        } catch (HttpClientErrorException e) {
+            response.put("success", false);
+            response.put("message", "Error al consultar RENIEC: " + e.getResponseBodyAsString());
+            System.err.println("ERROR: HttpClientErrorException al consultar RENIEC: " + e.getMessage() + " - " + e.getResponseBodyAsString()); // Depuración
+            return ResponseEntity.status(e.getStatusCode()).body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error interno al consultar RENIEC: " + e.getMessage());
+            System.err.println("ERROR: Excepción general al consultar RENIEC: " + e.getMessage()); // Depuración
+        }
         return ResponseEntity.ok(response);
     }
 }
