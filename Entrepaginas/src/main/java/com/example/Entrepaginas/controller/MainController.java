@@ -7,12 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
-
-
-    @GetMapping("/catalogos")
-    public String catalogo() {
-        return "catalogo";
-    }
  
     @GetMapping({"/maraton", "/maraton.html"})
     public String maraton() { return "maraton"; }

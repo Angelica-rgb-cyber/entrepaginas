@@ -13,6 +13,10 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+    public Categoria actualizar(Long id) {
+        return categoriaRepository.findById(id).orElse(null);
+    }
+
     public List<Categoria> obtenerTodos() {
         return categoriaRepository.findAll();
     }

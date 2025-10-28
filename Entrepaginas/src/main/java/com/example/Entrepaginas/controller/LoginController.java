@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
-@RequestMapping("/entrepaginas")
 public class LoginController {
 
     @Autowired
@@ -24,18 +23,6 @@ public class LoginController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @GetMapping("/login")
-    public String showLoginForm(Model model, @RequestParam(value = "error", required = false) String error,
-                                @RequestParam(value = "logout", required = false) String logout) {
-        if (error != null) {
-            model.addAttribute("error", "Usuario o contraseña incorrectos.");
-        }
-        if (logout != null) {
-            model.addAttribute("message", "Has cerrado sesión correctamente.");
-        }
-        return "login"; // Returns login.html
-    }
 
     @PostMapping("/acceder")
     public String processLogin(@RequestParam String correo,
@@ -47,7 +34,7 @@ public class LoginController {
             // Guardar datos en sesión
             session.setAttribute("usuarioNombre", usuario.getCorreo());
             session.setAttribute("usuarioRol", usuario.getRol());
-            return "redirect:/entrepaginas/dashboard";  // Make sure this matches your route
+            return "redirect:/dashboard";
         } else {
             model.addAttribute("error", "Usuario o contraseña incorrectos.");
             return "login";
@@ -58,17 +45,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout() {
         SecurityContextHolder.clearContext();
-        return "redirect:/entrepaginas/login?logout";
+        return "redirect:/login?logout";
     }
 
-
-
-    @GetMapping("/catalogo")
-    public String showCatalog(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("loggedInUser", auth.getName());
-        model.addAttribute("userRole", auth.getAuthorities().stream()
-                .findFirst().orElse(null).getAuthority().replace("ROLE_", ""));
-        return "catalogo";
-    }
 }
