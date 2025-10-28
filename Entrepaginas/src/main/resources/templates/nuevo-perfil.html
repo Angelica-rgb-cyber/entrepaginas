@@ -1,270 +1,292 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nuevo Perfil - Entre Páginas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo Perfil - Entre Páginas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
 
-  <style>
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg') center/cover no-repeat fixed;
-      position: relative;
-      min-height: 100vh;
-      color: #222;
-    }
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        background: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d970cc1f3a42d12c39f1.jpg')
+          center/cover no-repeat fixed;
+        color: #222;
+        min-height: 100vh;
+        position: relative;
+      }
+      body::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 0;
+      }
+      nav,
+      main,
+      footer {
+        position: relative;
+        z-index: 1;
+      }
 
-    body::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 0;
-    }
+      .navbar {
+        backdrop-filter: blur(12px);
+        background: rgba(30, 58, 138, 0.9);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .navbar a {
+        color: #dbeafe;
+        transition: color 0.3s;
+      }
+      .navbar a:hover {
+        color: #fff;
+      }
 
-    nav, main, footer {
-      position: relative;
-      z-index: 1;
-    }
+      .contenedor-formulario {
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+        padding: 2.5rem;
+        max-width: 860px;
+        width: 100%;
+        margin: 0 auto;
+        animation: fadeIn 0.8s ease-in-out;
+      }
 
-    .navbar {
-      backdrop-filter: blur(10px);
-      background: rgba(30, 58, 138, 0.9);
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    .navbar a {
-      color: #dbeafe;
-      transition: color 0.3s;
-    }
+      .btn-accion {
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 0.7rem 1.5rem;
+        display: inline-flex;
+        gap: 0.6rem;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .btn-accion:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      }
 
-    .navbar a:hover {
-      color: #ffffff;
-    }
+      .btn-guardar {
+        background: linear-gradient(90deg, #1e40af, #2563eb);
+        color: #fff;
+      }
+      .btn-cancelar {
+        background: #6b7280;
+        color: #fff;
+      }
 
-    .contenedor-formulario {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      padding: 2rem;
-      max-width: 800px;
-      width: 100%;
-      backdrop-filter: blur(8px);
-    }
+      .foto-perfil {
+        position: relative;
+        display: inline-block;
+      }
+      .foto-perfil input[type='file'] {
+        display: none;
+      }
+      .foto-perfil img {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #1e3a8a;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+        cursor: pointer;
+        transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .foto-perfil img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      }
 
-    .btn-accion {
-      font-weight: 600;
-      border-radius: 8px;
-      padding: 0.6rem 1.2rem;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-guardar {
-      background: linear-gradient(90deg, #1E40AF, #2563EB);
-      color: white;
-    }
-
-    .btn-guardar:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(30, 64, 175, 0.4);
-    }
-
-    .btn-cancelar {
-      background-color: #6B7280;
-      color: white;
-    }
-
-    .btn-cancelar:hover {
-      background-color: #4B5563;
-      transform: translateY(-2px);
-    }
-
-    footer {
-      background: linear-gradient(90deg, #1E3A8A, #1E40AF);
-    }
-
-    .foto-perfil {
-      position: relative;
-      display: inline-block;
-    }
-
-    .foto-perfil input[type="file"] {
-      display: none;
-    }
-
-    .foto-perfil img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #1E3A8A;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    .foto-perfil img:hover {
-      transform: scale(1.05);
-    }
-
-    .permiso-group-title {
-      background-color: #e0e7ff;
-      color: #1E3A8A;
-      padding: 0.5rem;
-      border-radius: 6px;
-      font-weight: 600;
-      margin-top: 1rem;
-    }
-
-  </style>
-</head>
-
-<body class="flex flex-col min-h-screen">
-
-  <!-- Navbar -->
-  <nav class="navbar text-white py-4 px-6">
-    <div class="container mx-auto flex justify-between items-center">
-      <a th:href="@{/dashboard}" class="text-xl font-bold flex items-center gap-2">
-        <i class="fas fa-book-open"></i> Entre Páginas
-      </a>
-      <div class="flex items-center space-x-4 text-sm">
-        <span th:text="'Bienvenido, ' + ${loggedInUser} + ' (' + ${userRole} + ')'" th:if="${loggedInUser}"></span>
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/usuarios}">Usuarios</a>
-        <a th:href="@{/clientes}">Clientes</a>
-        <a th:href="@{/libros}">Libros</a>
-        <a th:href="@{/categorias}">Categorías</a>
-        <a th:href="@{/prestamos}">Préstamos</a>
-        <a th:href="@{/perfiles}" class="underline font-bold">Perfiles</a>
-        <a th:href="@{/catalogos}">Catálogo</a>
-        <a th:href="@{/logout}" class="hover:underline">Salir</a>
+      .permiso-container {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+      }
+      input[type='text'],
+      textarea {
+        transition: all 0.3s;
+      }
+      input:focus,
+      textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+      }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <!-- NAVBAR -->
+    <nav class="navbar text-white py-4 px-6">
+      <div class="container mx-auto flex justify-between items-center">
+        <a
+          th:href="@{/dashboard}"
+          class="text-xl font-bold flex items-center gap-2"
+        >
+          <i class="fas fa-book-open"></i> Entre Páginas
+        </a>
+        <div class="flex items-center space-x-4 text-sm">
+          <a th:href="@{/dashboard}">Dashboard</a>
+          <a th:href="@{/perfiles}">Perfiles</a>
+          <a th:href="@{/logout}" class="hover:underline">Salir</a>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <!-- Contenido -->
-  <main class="flex-1 flex justify-center items-start pt-12">
-    <div class="contenedor-formulario">
+    <!-- MAIN -->
+    <main class="flex-1 flex justify-center items-start pt-12 px-4">
+      <div class="contenedor-formulario w-full">
+        <h1 class="text-4xl font-bold text-center mb-10 text-blue-900">
+          <i class="fas fa-user-plus mr-2"></i>Nuevo Perfil
+        </h1>
 
-      <h1 class="text-4xl font-bold text-center mb-8 text-blue-900">
-        <i class="fas fa-user-plus mr-2"></i>Nuevo Perfil
-      </h1>
-
-      <!-- Foto de perfil -->
-      <div class="flex flex-col items-center mb-6">
-        <div class="foto-perfil">
-          <label for="fotoPerfil">
-            <img id="previewFoto"
-                 src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                 alt="Foto de perfil">
-          </label>
-          <input id="fotoPerfil" type="file" name="imagenFile" accept="image/*"
-                 onchange="mostrarPreview(event)">
-        </div>
-        <p class="text-sm text-gray-600 mt-2">Haz clic en la foto para subir una imagen</p>
-      </div>
-
-      <!-- Formulario -->
-      <form th:action="@{/perfiles}" th:object="${perfil}" method="post" enctype="multipart/form-data" class="space-y-6">
-
-        <div>
-          <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre del Perfil:</label>
-          <input type="text" id="nombre" th:field="*{nombre}" required
-            class="w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-600 focus:border-blue-600"
-            placeholder="Ej: Bibliotecario Jefe">
-        </div>
-
-        <div>
-          <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción:</label>
-          <textarea id="descripcion" th:field="*{descripcion}" rows="2" required
-            class="w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-600 focus:border-blue-600"
-            placeholder="Funciones principales y permisos asociados"></textarea>
-        </div>
-
-        <div class="border-t border-gray-300 pt-6">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-            <i class="fas fa-key mr-2 text-yellow-600"></i> Permisos de Acceso
-          </h2>
-
-          <div class="permiso-container space-y-4">
-
-            <div class="permiso-group-title"><i class="fas fa-book mr-2"></i>Gestión de Libros y Catálogo</div>
-            <div class="grid grid-cols-2 gap-2" th:each="permiso : ${allPermisos}" 
-                 th:if="${#strings.startsWith(permiso.nombre, 'LIBRO_') or #strings.startsWith(permiso.nombre, 'CATALOGO_')}">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="permisosSeleccionados" th:value="${permiso.id}"
-                       class="h-4 w-4 text-blue-600 rounded">
-                <span th:text="${#strings.replace(permiso.nombre, '_', ' ')}"></span>
+        <form
+          th:action="@{/perfiles}"
+          th:object="${perfil}"
+          method="post"
+          enctype="multipart/form-data"
+          class="space-y-6"
+        >
+          <!-- FOTO PERFIL -->
+          <div class="flex flex-col items-center mb-6">
+            <div class="foto-perfil">
+              <label for="imagenFile">
+                <img
+                  id="previewFoto"
+                  src="/images/avatar-default.png"
+                  alt="Foto de perfil por defecto"
+                />
               </label>
+              <input
+                id="imagenFile"
+                type="file"
+                name="imagenFile"
+                accept="image/*"
+                onchange="mostrarPreview(event)"
+              />
             </div>
+            <p class="text-sm text-gray-600 mt-2">
+              Haz clic en la foto para agregar una
+            </p>
+          </div>
 
-            <div class="permiso-group-title"><i class="fas fa-user-friends mr-2"></i>Gestión de Usuarios y Clientes</div>
-            <div class="grid grid-cols-2 gap-2" th:each="permiso : ${allPermisos}" 
-                 th:if="${#strings.startsWith(permiso.nombre, 'USUARIO_') or #strings.startsWith(permiso.nombre, 'CLIENTE_')}">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="permisosSeleccionados" th:value="${permiso.id}"
-                       class="h-4 w-4 text-blue-600 rounded">
-                <span th:text="${#strings.replace(permiso.nombre, '_', ' ')}"></span>
-              </label>
-            </div>
+          <!-- CAMPOS -->
+          <div>
+            <label for="nombre" class="block text-sm font-medium text-gray-700"
+              >Nombre del Perfil:</label
+            >
+            <input
+              type="text"
+              id="nombre"
+              th:field="*{nombre}"
+              required
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-600 focus:border-blue-600"
+              placeholder="Ej: Administrador"
+            />
+          </div>
 
-            <div class="permiso-group-title"><i class="fas fa-exchange-alt mr-2"></i>Gestión de Préstamos</div>
-            <div class="grid grid-cols-2 gap-2" th:each="permiso : ${allPermisos}" 
-                 th:if="${#strings.startsWith(permiso.nombre, 'PRESTAMO_')}">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="permisosSeleccionados" th:value="${permiso.id}"
-                       class="h-4 w-4 text-blue-600 rounded">
-                <span th:text="${#strings.replace(permiso.nombre, '_', ' ')}"></span>
-              </label>
-            </div>
+          <div>
+            <label
+              for="descripcion"
+              class="block text-sm font-medium text-gray-700"
+              >Descripción:</label
+            >
+            <textarea
+              id="descripcion"
+              th:field="*{descripcion}"
+              rows="3"
+              required
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-600 focus:border-blue-600"
+              placeholder="Funciones principales y permisos asociados"
+            ></textarea>
+          </div>
 
-            <div class="permiso-group-title"><i class="fas fa-lock mr-2"></i>Permisos de Sistema</div>
-            <div class="grid grid-cols-2 gap-2" th:each="permiso : ${allPermisos}" 
-                 th:if="${#strings.startsWith(permiso.nombre, 'PERFIL_') or #strings.startsWith(permiso.nombre, 'DASHBOARD_')}">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="permisosSeleccionados" th:value="${permiso.id}"
-                       class="h-4 w-4 text-blue-600 rounded">
-                <span th:text="${#strings.replace(permiso.nombre, '_', ' ')}"></span>
-              </label>
+          <!-- PERMISOS -->
+          <div class="border-t border-gray-300 pt-6" th:if="${todosPermisos}">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-key mr-2 text-yellow-600"></i> Permisos de Acceso
+            </h2>
+
+            <div class="permiso-container space-y-3">
+              <!-- Aquí puedes replicar la estructura de grupos de permisos de editar-perfil.html si lo deseas -->
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <label
+                  th:each="permiso : ${todosPermisos}"
+                  class="flex items-center gap-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    name="permisoIds"
+                    th:value="${permiso.id}"
+                    class="h-4 w-4 text-blue-600 rounded"
+                  />
+                  <span
+                    th:text="${#strings.replace(permiso.nombre, '_', ' ')}"
+                  ></span>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="flex justify-end space-x-4 pt-4 border-t border-gray-300 mt-6">
-          <a th:href="@{/perfiles}" class="btn-accion btn-cancelar"><i class="fas fa-times"></i> Cancelar</a>
-          <button type="submit" class="btn-accion btn-guardar"><i class="fas fa-save"></i> Guardar Perfil</button>
-        </div>
-      </form>
+          <div class="flex justify-end gap-4">
+            <a
+              th:href="@{/perfiles}"
+              class="btn-accion btn-cancelar inline-flex items-center"
+            >
+              <i class="fas fa-times-circle"></i> Cancelar
+            </a>
+            <button
+              type="submit"
+              class="btn-accion btn-guardar inline-flex items-center"
+            >
+              <i class="fas fa-save"></i> Guardar Perfil
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
 
-    </div>
-  </main>
-
-  <footer class="text-white py-4 text-center mt-8">
-    <p>© 2025 Entre Páginas | Contacto:
-      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a> |
-      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚" class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
-    </p>
-  </footer>
-
-  <script>
-    function mostrarPreview(event) {
-      const imagen = document.getElementById('previewFoto');
-      const archivo = event.target.files[0];
-      if (archivo) {
-        const lector = new FileReader();
-        lector.onload = e => imagen.src = e.target.result;
-        lector.readAsDataURL(archivo);
+    <script>
+      function mostrarPreview(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const preview = document.getElementById('previewFoto');
+          preview.src = reader.result;
+        };
+        if (event.target.files[0]) {
+          reader.readAsDataURL(event.target.files[0]);
+        }
       }
-    }
-  </script>
 
-</body>
+      // Lógica para los acordeones de permisos (si los agregas)
+      document.querySelectorAll('.toggle-group').forEach((button) => {
+        button.addEventListener('click', () => {
+          const group = button.nextElementSibling;
+          const icon = button.querySelector('.fas.fa-chevron-down');
+          group.classList.toggle('hidden');
+          icon.classList.toggle('rotate-180');
+        });
+      });
+    </script>
+  </body>
 </html>
