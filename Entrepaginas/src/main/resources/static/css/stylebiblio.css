@@ -1,3 +1,25 @@
+/* ====================================
+   1. VARIABLES DE COLOR AZUL
+   ==================================== */
+:root {
+    /* Blue Colors - Tema Principal */
+    --color-primary: #1a3c5e;    /* Azul Oscuro (Header, Títulos, Botones principales) */
+    --color-secondary: #4a90e2;  /* Azul Medio (Gradientes, Hover, Links) */
+    --color-accent: #a8c7fa;     /* Azul Claro/Mágico (Acentos, Sparkle, Botones secundarios) */
+    --color-hover-dark: #132a45; /* Tono más oscuro para hover de primarios */
+    
+    /* Backgrounds/Entrepaginas & Cards */
+    --color-bg-light: #fff8e1;   /* Fondo Claro (Tu original creamy/amarillento - Entrepaginas Claro) */
+    --color-bg-dark: #1e1e1e;    /* Fondo Oscuro (Entrepaginas Oscuro) */
+    --color-bg-card-light: #FFFFFF; /* Fondo de Tarjetas Claras */
+    --color-bg-card-dark: #2a2a2a;  /* Fondo de Tarjetas Oscuras */
+    
+    /* Colors for Text/Misc */
+    --color-text-dark: #333333;
+    --color-text-light: #e0e0e0;
+}
+
+/* Reset y Base */
 * {
     margin: 0;
     padding: 0;
@@ -7,23 +29,25 @@
 body {
     font-family: 'Open Sans', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #fff8e1;
+    color: var(--color-text-dark);
+    /* Fondo Claro (Entrepaginas) */
+    background-color: var(--color-bg-light); 
     transition: background-color 0.3s, color 0.3s;
 }
 
 body.dark-mode {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
+    /* Fondo Oscuro (Entrepaginas) */
+    background-color: var(--color-bg-dark); 
+    color: var(--color-text-light);
 }
 
 h1, h2, h3 {
     font-family: 'Lora', serif;
-    color: #1a3c5e;
+    color: var(--color-primary); /* Azul Oscuro en Modo Claro */
 }
 
 body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
-    color: #a8c7fa;
+    color: var(--color-accent); /* Azul Claro en Modo Oscuro */
 }
 
 .container {
@@ -37,7 +61,7 @@ body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
 }
 
 header {
-    background: linear-gradient(90deg, #1a3c5e, #4a90e2);
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); 
     color: white;
     padding: 1rem;
     position: relative;
@@ -45,7 +69,7 @@ header {
 }
 
 body.dark-mode header {
-    background: linear-gradient(90deg, #0d1a2d, #2a4b7c);
+    background: linear-gradient(90deg, var(--color-hover-dark), #2a4b7c); /* Tonos oscuros de azul */
 }
 
 .logo h1 {
@@ -66,7 +90,8 @@ body.dark-mode header {
 
 .logo i:hover, .search-bar button i:hover, .login-buttons button i:hover, nav ul li a i:hover {
     transform: scale(1.2);
-    filter: drop-shadow(0 0 8px rgba(244, 162, 97, 0.8));
+    /* Brillo de acento azul */
+    filter: drop-shadow(0 0 8px var(--color-accent)); 
 }
 
 .search-bar {
@@ -85,12 +110,12 @@ body.dark-mode header {
 
 body.dark-mode .search-bar input {
     background: #333;
-    color: #e0e0e0;
+    color: var(--color-text-light);
     border: 1px solid #666;
 }
 
 .search-bar button {
-    background: #f4a261;
+    background: var(--color-accent); /* Azul claro */
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
@@ -99,7 +124,7 @@ body.dark-mode .search-bar input {
 }
 
 .search-bar button:hover {
-    background: #e76f51;
+    background: var(--color-secondary); /* Azul medio */
     transform: scale(1.05);
 }
 
@@ -119,7 +144,7 @@ body.dark-mode .search-bar input {
     top: 70px;
     left: 0;
     width: 100%;
-    background-color: #1a3c5e;
+    background-color: var(--color-primary);
     padding: 20px 0;
     z-index: 1000;
     transition: all 0.3s ease-in-out;
@@ -152,7 +177,7 @@ body.dark-mode .search-bar input {
 .nav-links ul li a:hover {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
-    color: #f4a261;
+    color: var(--color-accent); /* Azul claro/mágico */
 }
 
 .nav-links ul li a:hover::before {
@@ -172,7 +197,7 @@ body.dark-mode .search-bar input {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: -5px;
     right: 10%;
@@ -205,7 +230,7 @@ body.dark-mode .search-bar input {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #f4a261;
+    background-color: var(--color-secondary); /* Azul medio */
     transition: background-color 0.4s;
     border-radius: 34px;
 }
@@ -217,18 +242,18 @@ body.dark-mode .search-bar input {
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background-color: #fff8e1;
+    background-color: var(--color-bg-light); /* Fondo claro de entrepaginas */
     transition: transform 0.4s;
     border-radius: 50%;
 }
 
 input:checked + .slider {
-    background-color: #1e1e1e;
+    background-color: var(--color-hover-dark); /* Azul oscuro para el fondo del switch en dark mode */
 }
 
 input:checked + .slider:before {
     transform: translateX(26px);
-    background-color: #e0e0e0;
+    background-color: var(--color-text-light);
 }
 
 .sun-icon, .moon-icon {
@@ -236,7 +261,7 @@ input:checked + .slider:before {
     top: 50%;
     transform: translateY(-50%);
     font-size: 20px;
-    color: #f7fafc;
+    color: var(--color-text-light);
 }
 
 .sun-icon {
@@ -260,24 +285,24 @@ input:checked + .slider .moon-icon {
 .carousel {
     padding: 2rem;
     text-align: center;
-    background: #f9f9f9;
+    background: var(--color-bg-card-light);
     border-radius: 10px;
     margin: 2rem auto;
     max-width: 800px;
 }
 
 body.dark-mode .carousel {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .carousel h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #1a3c5e;
+    color: var(--color-primary);
 }
 
 body.dark-mode .carousel h2 {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .carousel-container {
@@ -295,14 +320,14 @@ body.dark-mode .carousel h2 {
     display: none;
     text-align: center;
     padding: 1rem;
-    background: white;
+    background: var(--color-bg-card-light);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
 
 body.dark-mode .carousel-slide {
-    background: #333;
+    background: var(--color-bg-card-dark);
 }
 
 .carousel-slide.active {
@@ -316,7 +341,7 @@ body.dark-mode .carousel-slide {
     height: 350px;
     object-fit: cover;
     border-radius: 8px;
-    border: 2px solid #f4a261;
+    border: 2px solid var(--color-accent);
     margin: 0 auto;
     display: block;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -328,17 +353,17 @@ body.dark-mode .carousel-slide {
 }
 
 body.dark-mode .carousel-slide img {
-    border-color: #e76f51;
+    border-color: var(--color-secondary);
 }
 
 .carousel-slide h3 {
     font-size: 1.5rem;
     margin: 0.75rem 0 0.25rem;
-    color: #1a3c5e;
+    color: var(--color-primary);
 }
 
 body.dark-mode .carousel-slide h3 {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .carousel-slide p {
@@ -355,7 +380,7 @@ body.dark-mode .carousel-slide p {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--color-primary);
     color: white;
     border: none;
     padding: 12px;
@@ -373,7 +398,7 @@ body.dark-mode .carousel-slide p {
 }
 
 .carousel-prev:hover, .carousel-next:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--color-secondary);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -394,7 +419,7 @@ body.dark-mode .carousel-slide p {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -402,8 +427,8 @@ body.dark-mode .carousel-slide p {
 }
 
 .tts-btn {
-    background: #f4a261;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-primary);
     border: none;
     padding: 8px 15px;
     border-radius: 5px;
@@ -414,7 +439,7 @@ body.dark-mode .carousel-slide p {
 }
 
 .tts-btn:hover {
-    background: #e76f51;
+    background: var(--color-secondary);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -435,7 +460,7 @@ body.dark-mode .carousel-slide p {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -458,25 +483,25 @@ body.dark-mode .carousel-slide p {
 
 @keyframes glow {
     0% {
-        box-shadow: 0 0 5px rgba(244, 162, 97, 0.5);
+        box-shadow: 0 0 5px var(--color-secondary);
     }
     50% {
-        box-shadow: 0 0 15px rgba(244, 162, 97, 0.8);
+        box-shadow: 0 0 15px var(--color-secondary);
     }
     100% {
-        box-shadow: 0 0 5px rgba(244, 162, 97, 0.5);
+        box-shadow: 0 0 5px var(--color-secondary);
     }
 }
 
 @keyframes glow-dark {
     0% {
-        box-shadow: 0 0 5px rgba(168, 199, 250, 0.5);
+        box-shadow: 0 0 5px var(--color-accent);
     }
     50% {
-        box-shadow: 0 0 15px rgba(168, 199, 250, 0.8);
+        box-shadow: 0 0 15px var(--color-accent);
     }
     100% {
-        box-shadow: 0 0 5px rgba(168, 199, 250, 0.5);
+        box-shadow: 0 0 5px var(--color-accent);
     }
 }
 
@@ -498,7 +523,7 @@ body.dark-mode .carousel-slide p {
 }
 
 .book-card {
-    background: white;
+    background: var(--color-bg-card-light);
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -509,7 +534,7 @@ body.dark-mode .carousel-slide p {
 }
 
 body.dark-mode .book-card {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .book-card:hover {
@@ -535,7 +560,7 @@ body.dark-mode .book-card {
     position: absolute;
     width: 6px;
     height: 6px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     top: 60%;
     right: 20%;
@@ -565,8 +590,8 @@ body.dark-mode .book-card p {
 }
 
 .book-card button {
-    background: #f4a261;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-primary);
     border: none;
     padding: 8px 15px;
     border-radius: 5px;
@@ -577,7 +602,7 @@ body.dark-mode .book-card p {
 }
 
 .book-card button:hover {
-    background: #e76f51;
+    background: var(--color-secondary);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -598,7 +623,7 @@ body.dark-mode .book-card p {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -619,8 +644,8 @@ body.dark-mode .book-card p {
 }
 
 .pagination-prev, .pagination-next {
-    background: #f4a261;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-primary);
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
@@ -629,7 +654,7 @@ body.dark-mode .book-card p {
 }
 
 .pagination-prev:hover, .pagination-next:hover {
-    background: #e76f51;
+    background: var(--color-secondary);
     transform: scale(1.05);
 }
 
@@ -644,7 +669,7 @@ body.dark-mode .book-card p {
 }
 
 .pagination-number {
-    background: #4a90e2;
+    background: var(--color-primary);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -654,11 +679,12 @@ body.dark-mode .book-card p {
 }
 
 .pagination-number:hover {
-    background: #357abd;
+    background: var(--color-secondary);
 }
 
 .pagination-number.active {
-    background: #e76f51;
+    background: var(--color-accent);
+    color: var(--color-primary);
     font-weight: bold;
 }
 
@@ -681,7 +707,7 @@ body.dark-mode .book-card p {
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: var(--color-bg-card-light);
     margin: auto;
     padding: 20px;
     border-radius: 10px;
@@ -690,7 +716,7 @@ body.dark-mode .book-card p {
 }
 
 body.dark-mode .modal-content {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .close {
@@ -698,15 +724,15 @@ body.dark-mode .modal-content {
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
-    color: #1a3c5e;
+    color: var(--color-primary);
 }
 
 body.dark-mode .close {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .register-container {
-    background: white;
+    background: var(--color-bg-card-light);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -716,18 +742,18 @@ body.dark-mode .close {
 }
 
 body.dark-mode .register-container {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .register-container label {
     display: block;
     font-weight: 600;
-    color: #1a3c5e;
+    color: var(--color-primary);
     margin-bottom: 0.5rem;
 }
 
 body.dark-mode .register-container label {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .register-container input {
@@ -741,12 +767,12 @@ body.dark-mode .register-container label {
 
 body.dark-mode .register-container input {
     background: #444;
-    color: #e0e0e0;
+    color: var(--color-text-light);
     border-color: #666;
 }
 
 .register-container button {
-    background: #4a90e2;
+    background: var(--color-secondary);
     color: white;
     border: none;
     padding: 8px;
@@ -758,7 +784,7 @@ body.dark-mode .register-container input {
 }
 
 .register-container button:hover {
-    background: #357abd;
+    background: var(--color-hover-dark);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -779,7 +805,7 @@ body.dark-mode .register-container input {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -792,27 +818,27 @@ body.dark-mode .register-container input {
 }
 
 .register-container a {
-    color: #4a90e2;
+    color: var(--color-secondary);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 body.dark-mode .register-container a {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .register-container a:hover {
-    color: #e76f51;
+    color: var(--color-primary);
 }
 
 .close-modal {
     position: absolute;
     top: 5px;
     right: 5px;
-    background: #f4a261;
+    background: var(--color-accent);
     border: none;
     font-size: 1rem;
-    color: white;
+    color: var(--color-primary);
     cursor: pointer;
     width: 24px;
     height: 24px;
@@ -824,19 +850,20 @@ body.dark-mode .register-container a {
 }
 
 .close-modal:hover {
-    background: #e76f51;
+    background: var(--color-secondary);
 }
 
 body.dark-mode .close-modal {
-    background: #e76f51;
+    background: var(--color-secondary);
+    color: var(--color-text-light);
 }
 
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #f4a261;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-primary);
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -848,7 +875,8 @@ body.dark-mode .close-modal {
 }
 
 body.dark-mode .notification {
-    background: #e76f51;
+    background: var(--color-secondary);
+    color: var(--color-text-light);
 }
 
 .notification.show {
@@ -900,7 +928,7 @@ body.dark-mode .notification {
 }
 
 .evento {
-    background: white;
+    background: var(--color-bg-card-light);
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -910,7 +938,7 @@ body.dark-mode .notification {
 }
 
 body.dark-mode .evento {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .evento:hover {
@@ -935,7 +963,7 @@ body.dark-mode .evento {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 20%;
     right: 20%;
@@ -950,7 +978,7 @@ body.dark-mode .evento {
 }
 
 .prestamo-card {
-    background: white;
+    background: var(--color-bg-card-light);
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -961,7 +989,7 @@ body.dark-mode .evento {
 }
 
 body.dark-mode .prestamo-card {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .prestamo-card:hover {
@@ -987,7 +1015,7 @@ body.dark-mode .prestamo-card {
     position: absolute;
     width: 6px;
     height: 6px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     top: 60%;
     right: 20%;
@@ -1004,7 +1032,7 @@ body.dark-mode .prestamo-card p {
 }
 
 .countdown {
-    color: #e76f51;
+    color: var(--color-secondary);
     font-weight: bold;
 }
 
@@ -1050,12 +1078,12 @@ body.dark-mode .prestamo-card p {
 
 body.dark-mode .write-share textarea {
     background: #333;
-    color: #e0e0e0;
+    color: var(--color-text-light);
     border-color: #555;
 }
 
 .write-share button {
-    background: #4a90e2;
+    background: var(--color-secondary);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -1067,7 +1095,7 @@ body.dark-mode .write-share textarea {
 }
 
 .write-share button:hover {
-    background: #357abd;
+    background: var(--color-hover-dark);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -1088,7 +1116,7 @@ body.dark-mode .write-share textarea {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -1100,7 +1128,7 @@ body.dark-mode .write-share textarea {
 }
 
 .story {
-    background: white;
+    background: var(--color-bg-card-light);
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 10px;
@@ -1108,7 +1136,7 @@ body.dark-mode .write-share textarea {
 }
 
 body.dark-mode .story {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .story p {
@@ -1124,19 +1152,19 @@ body.dark-mode .story {
 
 body.dark-mode .story input {
     background: #333;
-    color: #e0e0e0;
+    color: var(--color-text-light);
     border-color: #555;
 }
 
 .newsletter {
     padding: 2rem;
     text-align: center;
-    background: #f4a261;
+    background: var(--color-secondary);
     color: white;
 }
 
 body.dark-mode .newsletter {
-    background: #e76f51;
+    background: var(--color-hover-dark);
 }
 
 .newsletter form {
@@ -1156,11 +1184,11 @@ body.dark-mode .newsletter {
 
 body.dark-mode .newsletter input {
     background: #333;
-    color: #e0e0e0;
+    color: var(--color-text-light);
 }
 
 .newsletter button {
-    background: #1a3c5e;
+    background: var(--color-primary);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -1171,7 +1199,7 @@ body.dark-mode .newsletter input {
 }
 
 .newsletter button:hover {
-    background: #357abd;
+    background: var(--color-hover-dark);
     animation: glow 1.5s ease-in-out infinite;
 }
 
@@ -1192,7 +1220,7 @@ body.dark-mode .newsletter input {
     position: absolute;
     width: 5px;
     height: 5px;
-    background: radial-gradient(circle, rgba(244, 162, 97, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
     border-radius: 50%;
     bottom: 10%;
     right: 10%;
@@ -1213,7 +1241,7 @@ body.dark-mode .newsletter input {
 
 .boletin-socio {
     padding: 2rem;
-    background: #fff3e0;
+    background: var(--color-bg-light);
     border-radius: 10px;
     margin: 2rem auto;
     max-width: 800px;
@@ -1222,16 +1250,16 @@ body.dark-mode .newsletter input {
 }
 
 body.dark-mode .boletin-socio {
-    background: #2a2a2a;
+    background: var(--color-bg-card-dark);
 }
 
 .boletin-socio h2 {
-    color: #1a3c5e;
+    color: var(--color-primary);
     margin-bottom: 1rem;
 }
 
 body.dark-mode .boletin-socio h2 {
-    color: #a8c7fa;
+    color: var(--color-accent);
 }
 
 .boletin-socio p {
@@ -1244,46 +1272,58 @@ body.dark-mode .boletin-socio p {
 }
 
 .puntos-container {
-    background: #f4a261;
+    background: var(--color-accent);
     padding: 1rem;
     border-radius: 5px;
     display: inline-block;
-    color: white;
+    color: var(--color-primary);
     font-weight: bold;
 }
 
 body.dark-mode .puntos-container {
-    background: #e76f51;
+    background: var(--color-secondary);
+    color: var(--color-text-light);
 }
 
+/* ====================================
+   2. ESTILO FOOTER (EFECTO LIBRO)
+   ==================================== */
 footer {
-    background: #1a3c5e;
+    /* Mantenemos el color base azul oscuro */
+    background: var(--color-primary); 
     color: white;
     text-align: center;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem; /* Un poco más de padding */
+    position: relative; 
+    z-index: 5;
+    /* Efecto de borde grueso/lomo de libro */
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.4); 
+    border-top: 5px solid var(--color-secondary); /* Borde azul medio como acento */
+    font-family: 'Lora', serif; /* Tipo de letra más clásica */
 }
 
 body.dark-mode footer {
-    background: #0d1a2d;
+    background: var(--color-hover-dark); 
+    border-top: 5px solid var(--color-secondary); 
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Unificamos el estilo del .footer (para consistencia si se usa como contenedor) */
+.footer {
+    background-color: transparent;
+    padding: 0;
+    font-family: 'Lora', serif;
 }
 
 footer a {
-    color: #f4a261;
+    color: var(--color-accent);
     text-decoration: none;
     margin-left: 10px;
     transition: color 0.3s ease;
 }
 
 footer a:hover {
-    color: #e76f51;
-}
-
-.footer {
-    background-color: #1e3a8a;
-    color: white;
-    text-align: center;
-    padding: 2rem;
-    font-family: 'Roboto', sans-serif;
+    color: var(--color-secondary);
 }
 
 .button-container {
@@ -1293,7 +1333,7 @@ footer a:hover {
 .return-button {
     display: inline-flex;
     align-items: center;
-    background-color: #2563eb;
+    background-color: var(--color-secondary);
     color: white;
     text-decoration: none;
     font-weight: bold;
@@ -1304,7 +1344,7 @@ footer a:hover {
 }
 
 .return-button:hover {
-    background-color: #1d4ed8;
+    background-color: var(--color-primary);
 }
 
 .return-button .icon {
@@ -1313,6 +1353,56 @@ footer a:hover {
     margin-right: 8px;
     fill: white;
 }
+
+/* ====================================
+   3. ESTILO DE BOTÓN FLOTANTE WHATSAPP (WSP)
+   ==================================== */
+.whatsapp-floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366; /* Color oficial de WhatsApp */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.whatsapp-floating-btn:hover {
+    background-color: #1aae53; 
+    transform: scale(1.1);
+    /* Aplicamos un pulso azul para integrarlo al tema */
+    animation: whatsappPulse 1.5s infinite;
+}
+
+/* Animación de pulso azul para el WSP, usando el color secundario del tema */
+@keyframes whatsappPulse {
+    0% {
+        box-shadow: 0 0 0 0 var(--color-secondary);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(74, 144, 226, 0); /* Opacidad a 0 del color secundario */
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+    }
+}
+
+.whatsapp-floating-btn i {
+    color: white;
+}
+
+/* ************************************ */
+/* REGLAS DE OVERRIDES PARA DARK MODE   */
+/* ************************************ */
 
 body.dark-mode .book-card:hover::before,
 body.dark-mode .book-card:hover::after,
@@ -1336,7 +1426,7 @@ body.dark-mode .newsletter button:hover::before,
 body.dark-mode .newsletter button:hover::after,
 body.dark-mode .prestamo-card:hover::before,
 body.dark-mode .prestamo-card:hover::after {
-    background: radial-gradient(circle, rgba(168, 199, 250, 0.9) 20%, transparent 80%);
+    background: radial-gradient(circle, var(--color-accent) 20%, transparent 80%);
 }
 
 body.dark-mode .book-card:hover,
@@ -1363,21 +1453,21 @@ body.dark-mode .prestamo-card:hover {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1rem;
-    background: white;
-    color: #333;
+    background: var(--color-bg-card-light);
+    color: var(--color-text-dark);
     cursor: pointer;
     width: 200px;
 }
 
 body.dark-mode .category-filter select {
     background: #333;
-    color: #e0e0e0;
+    color: var(--color-text-light);
     border-color: #666;
 }
 
 .category-filter select:focus {
     outline: none;
-    border-color: #4a90e2;
+    border-color: var(--color-secondary);
 }
 
 @media (min-width: 768px) {
@@ -1411,7 +1501,7 @@ body.dark-mode .category-filter select {
 
     .nav-links ul li a:hover {
         background: none;
-        color: #f4a261;
+        color: var(--color-accent);
     }
 }
 
@@ -1557,92 +1647,87 @@ body.dark-mode .category-filter select {
 
 /* Contenedor principal para un toque suave */
 #poemas-diarios {
-    /* Clases ya existentes: py-16 px-4 max-w-6xl mx-auto text-center */
-
     /* Fondo que simula papel antiguo o pergamino (si es claro) */
-    background-color: var(--color-paper, #fcfcf5);
+    background-color: var(--color-bg-card-light); 
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.05); /* Sombra elegante */
     margin-bottom: 40px;
     position: relative;
-    overflow: hidden; /* Para contener los detalles de fondo */
+    overflow: hidden; 
     border: 1px solid #e0e0e0;
 }
 
 /* Modo Oscuro (Ajusta si estás usando variables CSS) */
-/* Si usas un sistema de variables CSS (var(--bg-dark), etc.), ajústalo */
-.dark #poemas-diarios {
-    background-color: var(--bg-dark-poema, #1e293b); /* Un azul oscuro/gris oscuro */
+body.dark-mode #poemas-diarios {
+    background-color: var(--color-bg-card-dark); /* Fondo Tarjeta Oscura */
     border: 1px solid #334155;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 
 /* =======================================
-   Estilos para el Diseño de Dos Paneles (Duo Mágico)
+   Estilos para el Diseño de Dos Paneles (Duo Mágico - Azul)
    ======================================= */
 
 /* Contenedor principal para activar el diseño lado a lado */
 #duo-magico {
     display: flex;
-    flex-wrap: wrap; /* Permite que las secciones se apilen en móviles */
-    gap: 30px; /* Espacio entre los dos paneles */
-    align-items: stretch; /* Asegura que ambos paneles tengan la misma altura */
+    flex-wrap: wrap; 
+    gap: 30px; 
+    align-items: stretch; 
 }
 
 /* Estilo Base para Cada Panel (Poema y Escribe) */
 .duo-item {
-    flex: 1 1 calc(50% - 15px); /* Ocupa casi el 50% con espacio entre ellos */
+    flex: 1 1 calc(50% - 15px); 
     padding: 30px;
-    border-radius: 15px; /* Bordes suaves */
+    border-radius: 15px; 
     text-align: center;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra marcada */
-    min-height: 450px; /* Altura mínima para que se vean bien */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); 
+    min-height: 450px; 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .duo-item:hover {
-    transform: translateY(-5px); /* Pequeño efecto de elevación al pasar el ratón */
+    transform: translateY(-5px); 
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* --- Panel Izquierdo: Poema del Día (Tono Azul Mágico) --- */
+/* --- Panel Izquierdo: Poema del Día (Tono Claro) --- */
 #poemas-diarios {
-    /* Clases ya existentes: py-16 px-4 max-w-6xl mx-auto text-center */
-    background: linear-gradient(145deg, #a8c7fa, #8faefc); /* Degradado azul suave */
-    color: #1a3c5e;
+    background: var(--color-bg-card-light); /* FONDO TARJETA CLARA */
+    color: var(--color-text-dark);
 }
 
 /* Título de la sección del poema */
 #poemas-diarios h2 {
-    color: #1a3c5e !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.5); /* Línea divisoria blanca */
+    color: var(--color-primary) !important; /* AZUL OSCURO/CLARO */
+    border-bottom: 2px solid var(--color-secondary); /* AZUL MEDIO */
     padding-bottom: 10px;
     margin-bottom: 20px !important;
 }
 
 /* Texto del Poema */
 #poema-texto {
-    color: #1a3c5e !important;
+    color: var(--color-primary) !important; /* AZUL OSCURO/CLARO */
     font-size: 1.5rem !important;
     font-weight: 500;
 }
 
 /* Autor */
 #poema-autor {
-    color: #3f5d81 !important;
+    color: #666 !important; 
     font-weight: bold;
 }
 
 /* Estilo para el Mensaje de Error en la sección Poemas */
-/* Asegura que el error contraste en el fondo azul */
 .poema-error {
-    color: #fca311 !important; /* Naranja/Amarillo brillante */
-    background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para el error */
+    color: #e74c3c !important; 
+    background-color: rgba(255, 255, 255, 0.8); 
     font-size: 1.4rem !important;
     font-weight: bold;
     padding: 15px;
-    border: 3px solid #1a3c5e; /* Borde de advertencia oscuro */
+    border: 3px solid #e74c3c; 
     border-radius: 8px;
     display: inline-block;
 }
@@ -1650,13 +1735,17 @@ body.dark-mode .category-filter select {
 
 /* --- Panel Derecho: Escribe Tu Historia (Tono Azul Oscuro y Elegante) --- */
 #write {
-    background: linear-gradient(145deg, #1a3c5e, #132a45); /* Degradado azul oscuro */
+    background: linear-gradient(145deg, var(--color-primary), var(--color-hover-dark)); 
     color: white;
+}
+
+body.dark-mode #write {
+    background: var(--color-hover-dark); /* Tono oscuro fijo en Dark Mode */
 }
 
 /* Título de la sección de escritura */
 #write h2 {
-    color: #a8c7fa !important; /* Azul claro para el título en el fondo oscuro */
+    color: var(--color-accent) !important; /* AZUL CLARO */
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 10px;
     margin-bottom: 20px !important;
@@ -1665,36 +1754,35 @@ body.dark-mode .category-filter select {
 /* Área de texto */
 .write-share textarea {
     background: rgba(255, 255, 255, 0.9);
-    color: #1a3c5e;
+    color: var(--color-primary); /* AZUL OSCURO */
     border: none;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    min-height: 250px; /* Más espacio para escribir */
+    min-height: 250px; 
 }
 
 /* Botones dentro de la sección de escritura */
 #write button {
-    background: #a8c7fa; /* Botón de color azul claro/mágico */
-    color: #1a3c5e;
+    background: var(--color-accent); /* AZUL CLARO */
+    color: var(--color-primary); /* AZUL OSCURO */
     font-weight: bold;
     transition: background 0.3s ease, transform 0.1s ease;
 }
 
 #write button:hover {
-    background: #8faefc;
-    animation: none; /* Desactivamos el glow que tenías para un diseño más limpio aquí */
+    background: var(--color-secondary); /* AZUL MEDIO */
+    animation: none; 
 }
 
 /* --- Responsividad para Pantallas Pequeñas --- */
 @media (max-width: 992px) {
     #duo-magico {
-        flex-direction: column; /* Apila las secciones verticalmente */
-        gap: 40px; /* Más espacio entre ellas */
+        flex-direction: column; 
+        gap: 40px; 
     }
 
     .duo-item {
-        flex: 1 1 100%; /* Cada sección ocupa el ancho completo */
-        min-height: auto; /* Permite que la altura se ajuste al contenido */
+        flex: 1 1 100%; 
+        min-height: auto; 
     }
-
 }
 }

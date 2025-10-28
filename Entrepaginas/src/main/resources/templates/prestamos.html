@@ -238,46 +238,7 @@
     </p>
 </footer>
 
-<script>
-    // Usando SweetAlert2 para la confirmación de devolución
-    function confirmarDevolucion(id, cliente, libro) {
-        Swal.fire({
-            title: 'Confirmar Devolución',
-            html: `¿Estás seguro de que el libro **${libro}** ha sido devuelto por **${cliente}**?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#1E40AF', // Azul
-            cancelButtonColor: '#6B7280', // Gris
-            confirmButtonText: 'Sí, Confirmar Devolución',
-            cancelButtonText: 'Cancelar',
-            background: '#fffef0'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // RUTA ACTUALIZADA
-                window.location.href = `/prestamos/devolver/${id}`;
-            }
-        });
-    }
+    <script th:src="@{/js/prestamos.js}"></script>
 
-    // Usando SweetAlert2 para la confirmación de eliminación (Añadido)
-    function confirmarEliminacion(id, cliente, libro) {
-        Swal.fire({
-            title: 'Confirmar Eliminación',
-            html: `¿Estás seguro de que deseas **eliminar** el préstamo del libro **${libro}** de **${cliente}**? Esta acción es irreversible.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#DC2626', // Rojo
-            cancelButtonColor: '#6B7280', // Gris
-            confirmButtonText: 'Sí, Eliminar',
-            cancelButtonText: 'Cancelar',
-            background: '#fffef0'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Redireccionar a la ruta de eliminación (ejemplo)
-                window.location.href = `/prestamos/eliminar/${id}`;
-            }
-        });
-    }
-</script>
 </body>
 </html>

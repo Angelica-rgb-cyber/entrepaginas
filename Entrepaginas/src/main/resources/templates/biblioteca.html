@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Entre Páginas y Sabores</title>
-    <!-- Change this line -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/stylebiblio.css}" />
   </head>
   <body>
-    <!-- Modal Biblioteca -->
     <div id="modalBiblioteca" class="modal">
       <div class="modal-content">
         <span class="close" onclick="cerrarModalBiblioteca()">&times;</span>
@@ -38,13 +41,13 @@
         </button>
         <nav class="nav-links">
           <ul class="flex flex-col md:flex-row md:gap-6 text-white">
-            <li><a th:href="@{/}">Inicio</a></li>
-            <li><a th:href="@{/catalogo}">Catálogo</a></li>
-            <li><a th:href="@{/prestamos}">Préstamos</a></li>
-            <li><a th:href="@{/maraton}">Maratón</a></li>
-            <li><a th:href="@{/eventos}">Eventos</a></li>
-            <li><a th:href="@{/write}">Escribe</a></li>
-            <li><a th:href="@{/contacto}">Contacto</a></li>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#catalogo">Catálogo</a></li>
+            <li><a href="#prestamos">Préstamos</a></li>
+            <li><a href="#maraton">Maratón</a></li>
+            <li><a href="#eventos">Eventos</a></li>
+            <li><a href="#write">Escribe</a></li>
+            <li><a href="#contacto">Contacto</a></li>
             <li><a id="register-link">Registro</a></li>
             <li><a th:href="@{/login}">Iniciar Sesión</a></li>
             <div class="login-buttons">
@@ -62,10 +65,10 @@
     </header>
 
     <main>
-      <section class="carousel">
+      <section id="carousel-section" class="carousel">
         <h2>Libros Destacados</h2>
         <div class="carousel-container">
-          <button class="carousel-prev">
+          <button class="carousel-prev" id="carousel-prev-btn">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="carousel-slides">
@@ -112,7 +115,7 @@
               </button>
             </div>
           </div>
-          <button class="carousel-next">
+          <button class="carousel-next" id="carousel-next-btn">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -195,46 +198,44 @@
           <li><strong>Premio:</strong> Membresía gratuita por un año</li>
         </ul>
       </section>
-      <main>
-        <section id="duo-magico" class="py-16 px-4 max-w-6xl mx-auto">
-          <section id="poemas-diarios" class="duo-item">
-            <h2 class="text-4xl font-bold mb-8">📜 Poema del Día 🖋️</h2>
-            <h3 id="poema-titulo" class="text-2xl font-bold mb-3">
-              Cargando Título...
-            </h3>
-            <div class="poema-contenedor">
-              <p id="poema-texto" class="text-xl italic mb-4 poema-error">
-                Error al cargar los poemas. Inténtalo más tarde.
-              </p>
-              <p id="poema-autor" class="text-lg font-semibold">
-                - Autor Desconocido
-              </p>
-            </div>
-          </section>
-
-          <section id="write" class="write-share duo-item">
-            <h2>Escribe Tu Historia</h2>
-            <div class="write-share-content">
-              <textarea
-                id="story-input"
-                placeholder="Escribe tu historia aquí..."
-              ></textarea>
-              <div>
-                <button id="save-draft">
-                  <i class="fas fa-save"></i> Guardar Borrador
-                </button>
-                <button id="publish-story">
-                  <i class="fas fa-upload"></i> Publicar
-                </button>
-                <button id="tts-story">
-                  <i class="fas fa-volume-up"></i> Escuchar
-                </button>
-              </div>
-            </div>
-            <div id="story-list" class="story-list"></div>
-          </section>
+      <section id="duo-magico" class="py-16 px-4 max-w-6xl mx-auto">
+        <section id="poemas-diarios" class="duo-item">
+          <h2 class="text-4xl font-bold mb-8">📜 Poema del Día 🖋️</h2>
+          <h3 id="poema-titulo" class="text-2xl font-bold mb-3">
+            Cargando Título...
+          </h3>
+          <div class="poema-contenedor">
+            <p id="poema-texto" class="text-xl italic mb-4 poema-error">
+              Cargando poemas...
+            </p>
+            <p id="poema-autor" class="text-lg font-semibold">
+              - Autor Desconocido
+            </p>
+          </div>
         </section>
-      </main>
+
+        <section id="write" class="write-share duo-item">
+          <h2>Escribe Tu Historia</h2>
+          <div class="write-share-content">
+            <textarea
+              id="story-input"
+              placeholder="Escribe tu historia aquí..."
+            ></textarea>
+            <div>
+              <button id="save-draft">
+                <i class="fas fa-save"></i> Guardar Borrador
+              </button>
+              <button id="publish-story">
+                <i class="fas fa-upload"></i> Publicar
+              </button>
+              <button id="tts-story">
+                <i class="fas fa-volume-up"></i> Escuchar
+              </button>
+            </div>
+          </div>
+          <div id="story-list" class="story-list"></div>
+        </section>
+      </section>
 
       <section id="eventos">
         <h2>Eventos de la Biblioteca</h2>
@@ -332,9 +333,15 @@
     <footer id="contacto">
       <p>📍 Av. San Martín 234 - Chiclayo, Perú | ☎️ (084) 123-456</p>
       <p>
-        © 2025 Entre Páginas y Sabores | Contacto:
-        <a href="mailto:info@entrepaginasysabores.org"
-          >info@entrepaginasysabores.org</a
+        © 2025 Entre Páginas | Contacto:
+        <a href="mailto:info@entrepaginas.org" class="underline"
+          >info@entrepaginas.org</a
+        >
+        |
+        <a
+          href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+          class="underline bg-green-500 px-2 py-1 rounded"
+          >WhatsApp</a
         >
       </p>
     </footer>

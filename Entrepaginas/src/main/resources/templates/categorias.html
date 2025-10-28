@@ -231,26 +231,7 @@
     </p>
 </footer>
 
-<script>
-    // SWEETALERT PARA ELIMINAR
-    function confirmarEliminacion(id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: '¡No podrás revertir esta acción!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#DC2626',
-            cancelButtonColor: '#3B82F6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            background: '#fffef0',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = `/eliminar/${id}`;
-            }
-        });
-    }
-</script>
+    <script th:src="@{/js/categorias.js}"></script>
 
 </body>
 </html>
