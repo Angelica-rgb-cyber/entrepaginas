@@ -25,4 +25,7 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     Long countByDisponible(boolean disponible);
 
+    //metodo para listar libros con stock
+    List<Libro> findByStockGreaterThan(int stock);
+
 }

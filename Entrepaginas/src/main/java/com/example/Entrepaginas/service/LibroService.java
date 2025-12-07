@@ -21,6 +21,11 @@ public class LibroService {
         return libroRepository.countByDisponible(true); //seguro que si jajajja
     }
 
+    //metodo para listar libros con stock 
+    public List<Libro> listarLibrosConStock() {
+        return libroRepository.findByStockGreaterThan(0);
+    }
+
     public long contarLibrosNoDisponibles() {
         return libroRepository.countByDisponible(false);
     }

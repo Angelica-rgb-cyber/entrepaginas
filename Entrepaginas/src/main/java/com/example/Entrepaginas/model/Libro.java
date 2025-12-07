@@ -22,6 +22,7 @@ public class Libro {
     private boolean disponible; 
     private String imagen;
     private String descripcion;
+    private int stock;
 
 }
 

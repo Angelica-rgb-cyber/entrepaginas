@@ -80,7 +80,7 @@ public class VentaController {
         try {
             // Asignar Cliente (si se seleccionó uno)
             if (clienteId != null) {
-                Cliente cliente = clienteService.buscarClientePorId(clienteId);
+                Cliente cliente = clienteService.obtenerPorId(clienteId);
                 venta.setCliente(cliente);
             }
             
@@ -177,7 +177,7 @@ public class VentaController {
         try {
             // Asignar Cliente
             if (clienteId != null) {
-                Cliente cliente = clienteService.buscarClientePorId(clienteId);
+                Cliente cliente = clienteService.obtenerPorId(clienteId);
                 venta.setCliente(cliente);
             }
             

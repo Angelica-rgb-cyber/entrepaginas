@@ -13,6 +13,11 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    //metodo listar todos
+    public List<Cliente> listarClientes() {
+        return clienteRepository.findAll();
+    }
+
     public long contarTodosLosClientes() {
         return clienteRepository.count();
     }

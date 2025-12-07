@@ -1,0 +1,10 @@
+@Base = "http://localhost:8080/entrepaginas"
+
+#teno miedo
+GET {{Base}}/libros/listar
+
+
+//-----//
+#hola blo
+GET {{Base}}/libros/listarDisponibles
+

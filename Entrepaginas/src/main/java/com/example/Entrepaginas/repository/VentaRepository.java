@@ -1,10 +1,9 @@
 package com.example.Entrepaginas.repository;
 
-package com.entrepaginas.repository;
-
-import com.entrepaginas.model.Venta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.example.Entrepaginas.model.Venta;
 
 // La anotación @Repository es opcional en las interfaces que extienden de JpaRepository,
 // pero es buena práctica incluirla.
