@@ -16,6 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 @Controller
 @RequestMapping("/perfiles")
@@ -28,7 +34,7 @@ public class PerfilController {
     private PermisoRepository permisoRepository;
 
     @Autowired
-    private FileStorageService fileStorageService; // Inyecta el servicio de almacenamiento de archivos
+    private FileStorageService fileStorageService;
 
     @GetMapping
     public String listarPerfiles(Model model) {
@@ -167,4 +173,6 @@ public class PerfilController {
         }
         return "redirect:/perfiles";
     }
+    
+    
 }

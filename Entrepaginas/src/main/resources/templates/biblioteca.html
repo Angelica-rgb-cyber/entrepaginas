@@ -9,6 +9,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" th:href="@{/css/stylebiblio.css}" />
   </head>
   <body>
@@ -124,7 +125,7 @@
       <section id="catalogo" class="py-16 px-4 max-w-6xl mx-auto">
         <h2 class="text-4xl font-bold text-center mb-8">Catálogo de Libros</h2>
         <div class="category-filter">
-          <select id="category-select" onchange="renderCatalogo()">
+          <select id="category-select">
             <option value="">Todas las categorías</option>
             <option value="Drama">Drama</option>
             <option value="Novela">Novela</option>
@@ -141,7 +142,9 @@
             <option value="Ciencia">Ciencia</option>
           </select>
         </div>
-        <div id="book-grid" class="book-grid"></div>
+        <div id="book-grid" class="book-grid">
+          <p class="text-center">Cargando libros...</p>
+        </div>
         <div class="pagination">
           <button class="pagination-prev">
             <i class="fas fa-chevron-left"></i>
@@ -153,39 +156,6 @@
         </div>
       </section>
 
-      <section id="prestamos" class="py-16 px-4 max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold text-center mb-8">
-          Registro de Préstamos
-        </h2>
-        <div id="prestamo-grid" class="prestamo-grid"></div>
-      </section>
-
-      <section id="boletin" class="boletin-socio">
-        <h2>¡Bienvenido al Club de Socios!</h2>
-        <p>
-          Únete a nuestra comunidad exclusiva y disfruta de beneficios
-          especiales en "Entre Páginas y Sabores".
-        </p>
-        <p><strong>Beneficios:</strong></p>
-        <ul>
-          <li>Acceso a eventos literarios y cafetería exclusivos.</li>
-          <li>10% de descuento en compras de café y libros.</li>
-          <li>Prioridad en la reserva de préstamos.</li>
-        </ul>
-        <p><strong>Sistema de Puntos:</strong> Gana puntos con cada acción:</p>
-        <ul>
-          <li>1 punto por cada libro prestado.</li>
-          <li>2 puntos por cada compra en la cafetería.</li>
-          <li>Canjea 10 puntos por un libro gratis o un café especial.</li>
-        </ul>
-        <div class="puntos-container">
-          Tus puntos acumulados: <span id="puntos-usuario">0</span>
-        </div>
-        <p>
-          ¡Regístrate o inicia sesión para empezar a acumular puntos hoy mismo!
-        </p>
-      </section>
-
       <section id="maraton" class="maraton">
         <h2>Maratón de Libros 2025</h2>
         <p>
@@ -193,48 +163,10 @@
           tus reseñas.
         </p>
         <ul>
-          <li><strong>Fecha:</strong> 1-30 de Junio, 2025</li>
+          <li><strong>Fecha:</strong> 1-31 de Octubre, 2025</li>
           <li><strong>Tema:</strong> Aventuras y Fantasía</li>
           <li><strong>Premio:</strong> Membresía gratuita por un año</li>
         </ul>
-      </section>
-      <section id="duo-magico" class="py-16 px-4 max-w-6xl mx-auto">
-        <section id="poemas-diarios" class="duo-item">
-          <h2 class="text-4xl font-bold mb-8">📜 Poema del Día 🖋️</h2>
-          <h3 id="poema-titulo" class="text-2xl font-bold mb-3">
-            Cargando Título...
-          </h3>
-          <div class="poema-contenedor">
-            <p id="poema-texto" class="text-xl italic mb-4 poema-error">
-              Cargando poemas...
-            </p>
-            <p id="poema-autor" class="text-lg font-semibold">
-              - Autor Desconocido
-            </p>
-          </div>
-        </section>
-
-        <section id="write" class="write-share duo-item">
-          <h2>Escribe Tu Historia</h2>
-          <div class="write-share-content">
-            <textarea
-              id="story-input"
-              placeholder="Escribe tu historia aquí..."
-            ></textarea>
-            <div>
-              <button id="save-draft">
-                <i class="fas fa-save"></i> Guardar Borrador
-              </button>
-              <button id="publish-story">
-                <i class="fas fa-upload"></i> Publicar
-              </button>
-              <button id="tts-story">
-                <i class="fas fa-volume-up"></i> Escuchar
-              </button>
-            </div>
-          </div>
-          <div id="story-list" class="story-list"></div>
-        </section>
       </section>
 
       <section id="eventos">
@@ -258,25 +190,6 @@
         </div>
       </section>
 
-      <section class="newsletter">
-        <h2>Suscríbete a Nuestro Boletín</h2>
-        <form id="newsletter-form">
-          <input
-            type="email"
-            id="newsletter-input"
-            placeholder="Tu correo electrónico"
-            required
-          />
-          <button type="submit">
-            <i class="fas fa-envelope"></i> Suscribirse
-          </button>
-        </form>
-        <div class="subscribers">
-          <h3>Suscriptores</h3>
-          <ul id="subscriber-list"></ul>
-        </div>
-      </section>
-    </main>
 
     <div id="register-modal" class="modal">
       <div class="register-container">
@@ -300,22 +213,6 @@
             required
             placeholder="Ingresa tu correo"
           />
-          <label for="telefono">Teléfono:</label>
-          <input
-            type="tel"
-            id="telefono"
-            name="telefono"
-            required
-            placeholder="Ingresa tu número de contacto"
-          />
-          <label for="direccion">Dirección:</label>
-          <input
-            type="text"
-            id="direccion"
-            name="direccion"
-            required
-            placeholder="Ingresa tu dirección"
-          />
           <label for="password">Contraseña:</label>
           <input
             type="password"
@@ -323,12 +220,44 @@
             name="password"
             required
             placeholder="Ingresa tu contraseña"
+
           />
+          <label>Rol:</label>
+          <select id="rol" name="rol">
+            <option value="ADMIN">Administrador</option>
+            <option value="BIBLIOTECARIO">Bibliotecario</option>
+            <option value="USER">Usuario</option>
+            <option value="LECTOR">Lector</option>
+          </select>
+
           <button type="submit">Registrarse</button>
         </form>
-        <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+        <p>¿Ya tienes cuenta? <a href="login">Inicia sesión aquí</a></p>
       </div>
     </div>
+    <section id="poemas" class="py-12 px-4 max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+        <i class="fas fa-feather-alt"></i> Poemas de la Semana
+    </h2>
+    <div class="poema-container bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl transition-colors duration-300">
+        <h3 id="poema-titulo" class="text-2xl font-semibold mb-3 text-red-600 dark:text-red-400">
+            Cargando título...
+        </h3>
+        <p id="poema-texto" class="text-lg italic mb-4 whitespace-pre-line text-gray-700 dark:text-gray-300">
+            Cargando el verso...
+        </p>
+        <p id="poema-autor" class="text-right font-medium text-gray-500 dark:text-gray-400">
+            - Autor
+        </p>
+    </div>
+    <button 
+        id="tts-poema-btn" 
+        class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+        onclick="speak(document.getElementById('poema-texto').innerText, this)"
+    >
+        <i class="fas fa-volume-up"></i> Escuchar Poema
+    </button>
+</section>
 
     <footer id="contacto">
       <p>📍 Av. San Martín 234 - Chiclayo, Perú | ☎️ (084) 123-456</p>
@@ -350,6 +279,10 @@
       <span id="notification-text"></span>
     </div>
 
+    <!-- Script original de biblioteca.js -->
     <script th:src="@{/js/biblioteca.js}"></script>
+    
+    <!-- Nuevo script para cargar libros desde BD -->
+    <script th:src="@{/js/carga-biblioteca.js}"></script>
   </body>
 </html>

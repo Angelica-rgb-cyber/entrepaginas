@@ -18,7 +18,7 @@ public class LibroService {
     }
 
     public long contarLibrosDisponibles() {
-        return libroRepository.countByDisponible(true);+
+        return libroRepository.countByDisponible(true); //seguro que si jajajja
     }
 
     public long contarLibrosNoDisponibles() {

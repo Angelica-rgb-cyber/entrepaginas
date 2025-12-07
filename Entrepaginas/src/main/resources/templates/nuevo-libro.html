@@ -18,7 +18,7 @@
       body {
         font-family: 'Open Sans', sans-serif;
         /* Fondo de biblioteca consistente */
-        background-image: url('https://i.pinimg.com/originals/f1/b2/f');
+        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -171,6 +171,27 @@
             required
             class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
+        </div>
+
+        <!--select de categoria-->
+        <div>
+          <label for="categoria" class="block text-gray-700 font-medium mb-1">Categoría
+          </label>
+          <select
+            id="categoria"
+            name="categoria.id"
+            required
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="" disabled selected>Seleccione una categoría</option>
+            <option
+              th:each="categoria : ${categorias}"
+              th:value="${categoria.id}"
+              th:text="${categoria.nombre}"
+            ></option>
+          </select>
+
+
         </div>
 
         <div class="flex items-center gap-2 pt-2">

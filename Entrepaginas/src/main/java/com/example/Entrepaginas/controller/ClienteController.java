@@ -22,7 +22,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/clientes")
 public class ClienteController {
-
+ //solo dices que consumes un api a un sitio web donde envias el dni, 8 digitos, y te devuelve nombres y apellidos de la persona y ya  la configuracione esta aqui
     @Autowired
     private ClienteService clienteService;
 
@@ -63,6 +63,42 @@ public class ClienteController {
         model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
         return "nuevo-cliente";
     }
+
+    @GetMapping("/editar/{id}")
+    public String formularioEditarCliente(@PathVariable Long id, Model model, HttpSession session) {
+        Object nombre = session.getAttribute("usuarioNombre");
+        if (nombre == null) {
+            return "redirect:/entrepaginas/login";
+        }
+
+        Cliente cliente = clienteService.obtenerPorId(id);
+        if (cliente == null) {
+            return "redirect:/clientes";
+        }
+
+        model.addAttribute("cliente", cliente);
+        model.addAttribute("usuarioNombre", nombre.toString());
+        model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
+        return "editar-cliente";
+    }
+
+    @PostMapping("/editar/{id}")
+    public String actualizarCliente(@PathVariable Long id, @ModelAttribute Cliente cliente) {
+        Cliente clienteExistente = clienteService.obtenerPorId(id);
+        if (clienteExistente == null) {
+            return "redirect:/clientes";
+        }
+
+        // Actualizar los campos del cliente existente
+        clienteExistente.setNombre(cliente.getNombre());
+        clienteExistente.setCorreo(cliente.getCorreo());
+        clienteExistente.setTelefono(cliente.getTelefono());
+        clienteExistente.setDni(cliente.getDni());
+        clienteExistente.setDireccion(cliente.getDireccion());
+
+        clienteService.guardar(clienteExistente);
+        return "redirect:/clientes";
+    }//muy bien, te ganaste una papa rellena xdnajajajajajajja
 
     @PostMapping
     public String guardarCliente(@ModelAttribute Cliente cliente) {

@@ -19,7 +19,9 @@ public class Libro {
     private String autor;
     private String genero;
     private String isbn;
-    private boolean disponible;
+    private boolean disponible; 
     private String imagen;
+    private String descripcion;
 
 }
+

@@ -573,6 +573,10 @@ body.dark-mode .book-card {
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 0.5rem;
+    /*centrar horizontalmente*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .book-card h3 {
@@ -920,6 +924,7 @@ body.dark-mode .notification {
 #catalogo, #prestamos {
     padding: 2rem;
 }
+
 
 .eventos-grid {
     display: grid;

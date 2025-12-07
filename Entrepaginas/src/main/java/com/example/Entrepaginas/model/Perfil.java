@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.example.Entrepaginas.model.Permiso;
+import java.util.Set; // Importa java.util.Set
 
 @Entity
 @Data
@@ -18,7 +18,7 @@ public class Perfil {
 
     private String nombre;
     private String descripcion;
-    private String imagen;
+    private String imagen; // Guarda la ruta relativa de la imagen
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -26,5 +26,5 @@ public class Perfil {
         joinColumns = @JoinColumn(name = "perfil_id"),
         inverseJoinColumns = @JoinColumn(name = "permiso_id")
     )
-    private java.util.Set<Permiso> permisos;
+    private Set<Permiso> permisos; // Colección de permisos asociados
 }

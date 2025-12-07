@@ -4,17 +4,20 @@ import com.example.Entrepaginas.model.Libro;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.Entrepaginas.service.LibroService;
+import com.example.Entrepaginas.service.CategoriaService;
+import com.example.Entrepaginas.model.Categoria;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List; // Asegúrate de importar List
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -24,11 +27,20 @@ public class LibroController {
     @Autowired
     private LibroService libroService;
 
-    @Value("${file.upload-dir-libros}") // Inyectar la ruta física del directorio de libros
+    @Autowired
+    private CategoriaService categoriaService;
+
+    @Value("${file.upload-dir-libros}")
     private String uploadDirLibrosPhysical;
 
-    // Definir la ruta web para los libros, consistente con WebConfig
     private final String uploadDirLibrosWebPath = "/uploads/libros/";
+
+    @GetMapping("/listar")
+    @ResponseBody
+    public ResponseEntity<List<Libro>> listarLibrosJson() {
+        List<Libro> libros = libroService.obtenerTodos();
+        return ResponseEntity.ok(libros);
+    }
 
     @GetMapping
     public String listarLibros(Model model, HttpSession session) {
@@ -37,10 +49,10 @@ public class LibroController {
             return "redirect:/entrepaginas/login";
         }
 
-        List<Libro> libros = libroService.obtenerTodos(); // Obtener la lista
-        System.out.println("Número de libros obtenidos del servicio: " + libros.size()); // AÑADIDO PARA DIAGNÓSTICO
+        List<Libro> libros = libroService.obtenerTodos();
+        System.out.println("Número de libros obtenidos del servicio: " + libros.size());
 
-        model.addAttribute("libros", libros); // Pasar la lista al modelo
+        model.addAttribute("libros", libros);
         model.addAttribute("usuarioNombre", nombre.toString());
         model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
 
@@ -53,8 +65,9 @@ public class LibroController {
         if (nombre == null) {
             return "redirect:/entrepaginas/login";
         }
-
+        List<Categoria> categorias = categoriaService.obtenerTodos();
         model.addAttribute("libro", new Libro());
+        model.addAttribute("categorias", categorias);
         model.addAttribute("usuarioNombre", nombre.toString());
         model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
         return "nuevo-libro";
@@ -81,18 +94,15 @@ public class LibroController {
                 Path rutaFisica = Paths.get(uploadDirLibrosPhysical, uniqueFileName);
                 Files.write(rutaFisica, imagenFile.getBytes());
 
-                // Guardar la ruta web relativa en la base de datos
                 libro.setImagen(uploadDirLibrosWebPath + uniqueFileName);
             } catch (IOException e) {
                 e.printStackTrace();
-                // Considera añadir un mensaje de error al modelo o a RedirectAttributes
             }
         } else {
-            // Si no se sube imagen, establecer una por defecto o null
-            libro.setImagen(null); // O una ruta a una imagen por defecto como '/images/book-default.png'
+            libro.setImagen(null);
         }
         libroService.guardar(libro);
-        return "redirect:/libros"; // Redirige a la lista de libros
+        return "redirect:/libros";
     }
 
     @GetMapping("/editar/{id}")
@@ -128,20 +138,17 @@ public class LibroController {
         libroExistente.setAutor(libro.getAutor());
         libroExistente.setGenero(libro.getGenero());
         libroExistente.setDisponible(libro.isDisponible());
-        libroExistente.setIsbn(libro.getIsbn()); // Actualizar ISBN
-        libroExistente.setDescripcion(libro.getDescripcion()); // Actualizar Descripción
+        libroExistente.setIsbn(libro.getIsbn());
+        libroExistente.setDescripcion(libro.getDescripcion());
 
         if (!imagenFile.isEmpty()) {
             try {
-                // Eliminar la imagen antigua si existe
                 if (libroExistente.getImagen() != null && !libroExistente.getImagen().isEmpty()) {
-                    // Extraer solo el nombre del archivo de la ruta web
                     String fileName = Paths.get(libroExistente.getImagen()).getFileName().toString();
                     Path oldImagePath = Paths.get(uploadDirLibrosPhysical, fileName);
                     Files.deleteIfExists(oldImagePath);
                 }
 
-                // Guardar la nueva imagen
                 String originalFilename = imagenFile.getOriginalFilename();
                 String fileExtension = "";
                 if (originalFilename != null && originalFilename.contains(".")) {
@@ -154,10 +161,8 @@ public class LibroController {
                 libroExistente.setImagen(uploadDirLibrosWebPath + uniqueFileName);
             } catch (IOException e) {
                 e.printStackTrace();
-                // Considera añadir un mensaje de error al modelo o a RedirectAttributes
             }
         }
-        // Si imagenFile está vacío, se mantiene la imagen existente (o null si no había)
 
         libroService.guardar(libroExistente);
         return "redirect:/libros";
@@ -172,16 +177,13 @@ public class LibroController {
 
         Libro libro = libroService.obtenerPorId(id);
         if (libro != null) {
-            // Eliminar la imagen física asociada
             if (libro.getImagen() != null && !libro.getImagen().isEmpty()) {
                 try {
-                    // Extraer solo el nombre del archivo de la ruta web
                     String fileName = Paths.get(libro.getImagen()).getFileName().toString();
                     Path imagePath = Paths.get(uploadDirLibrosPhysical, fileName);
                     Files.deleteIfExists(imagePath);
                 } catch (IOException e) {
                     System.err.println("Error al eliminar la imagen del libro: " + libro.getImagen() + " - " + e.getMessage());
-                    // No lanzar excepción, solo loguear, para que la eliminación del libro continúe
                 }
             }
             libroService.eliminar(id);

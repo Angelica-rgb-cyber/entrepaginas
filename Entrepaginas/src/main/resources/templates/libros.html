@@ -19,7 +19,7 @@
       /* === Estilos Base Unificados === */
       body {
         font-family: 'Open Sans', sans-serif;
-        /* background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b');*/
+        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg'); /* Fondo de biblioteca consistente */
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -250,7 +250,7 @@
                     class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm transition duration-300 inline-block"
                     th:data-id="${libro.id}"
                     th:data-titulo="${libro.titulo}"
-                    onclick="eliminarLibro(this)"
+                    onclick="eliminarLibro(this);"
                   >
                     <i class="fas fa-trash-alt"></i> Eliminar
                   </button>

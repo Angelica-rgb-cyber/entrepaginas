@@ -16,5 +16,6 @@ public class Permiso {
 
     private String nombre;
 
+    //necesita haber logica aqui,
 }
 
