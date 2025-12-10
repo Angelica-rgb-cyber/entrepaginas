@@ -140,6 +140,8 @@ public class LibroController {
         libroExistente.setDisponible(libro.isDisponible());
         libroExistente.setIsbn(libro.getIsbn());
         libroExistente.setDescripcion(libro.getDescripcion());
+        libroExistente.setStock(libro.getStock());
+        libroExistente.setPrecio(libro.getPrecio());
 
         if (!imagenFile.isEmpty()) {
             try {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.Entrepaginas.service.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -78,7 +79,12 @@ public class UsuarioController {
     }
 
     @GetMapping("/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable Long id) {
+    public String eliminarUsuario(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        String rol = (String) session.getAttribute("usuarioRol");
+        if (rol == null || !rol.equalsIgnoreCase("ADMIN")) {
+             redirectAttributes.addFlashAttribute("error", "No tienes permisos para eliminar usuarios.");
+             return "redirect:/usuarios";
+        }
         usuarioService.eliminar(id);
         return "redirect:/usuarios";
     }

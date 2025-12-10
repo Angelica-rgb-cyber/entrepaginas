@@ -29,6 +29,9 @@ public class Venta {
     @Column(name = "total", nullable = false)
     private Double total;
 
+    @Column(name = "tipo_comprobante")
+    private String tipoComprobante; // FACTURA o BOLETA
+
     @Column(name = "anulada", nullable = false)
     private boolean anulada = false; // Estado lógico para anulación
 
@@ -94,6 +97,14 @@ public class Venta {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public String getTipoComprobante() {
+        return tipoComprobante;
+    }
+
+    public void setTipoComprobante(String tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
     public boolean isAnulada() {

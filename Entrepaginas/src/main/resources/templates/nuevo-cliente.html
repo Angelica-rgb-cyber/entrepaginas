@@ -1,330 +1,280 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nuevo Cliente - Entre Páginas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Añadido para alertas -->
-    <style>
-      /* === Estilos Base Unificados === */
-      body {
-        font-family: 'Open Sans', sans-serif;
-        /* Fondo de biblioteca consistente */
-        background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        min-height: 100vh;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-      }
 
-      body::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45); /* Capa oscura consistente */
-        z-index: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuevo Cliente - Entre Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Añadido para alertas -->
+  <style>
+    /* === Estilos Base Unificados === */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      /* Fondo de biblioteca consistente */
+      background-image: url('https://i.pinimg.com/originals/f1/b2/f5/f1b2f576b973d97b4c28c5695446f933.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
 
-      nav,
-      main,
-      footer {
-        position: relative;
-        z-index: 1;
-      }
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      /* Capa oscura consistente */
+      z-index: 0;
+    }
 
-      /* === Estilos Navbar (Azul) === */
-      .navbar {
-        background: linear-gradient(90deg, #1e3a8a, #1e40af);
-      }
+    nav,
+    main,
+    footer {
+      position: relative;
+      z-index: 1;
+    }
 
-      .navbar a {
-        color: #93c5fd;
-        transition: color 0.3s;
-      }
+    /* === Estilos Navbar (Azul) === */
+    .navbar {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
 
-      .navbar a:hover {
-        color: #eff6ff;
-      }
+    .navbar a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
 
-      /* === Contenedor Principal (Formulario) === */
-      .contenedor-form {
-        background: linear-gradient(135deg, #fffef0, #f5f5f5);
-        border: 3px solid #d4af37; /* Borde dorado consistente */
-        border-radius: 16px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(8px);
-      }
+    .navbar a:hover {
+      color: #eff6ff;
+    }
 
-      /* === Títulos === */
-      h1 {
-        font-family: 'Merriweather', serif;
-        color: #1e3a8a; /* Color azul consistente */
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-      }
+    /* === Contenedor Principal (Formulario) === */
+    .contenedor-form {
+      background: linear-gradient(135deg, #fffef0, #f5f5f5);
+      border: 3px solid #d4af37;
+      /* Borde dorado consistente */
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
 
-      .boton-guardar {
-        background: linear-gradient(90deg, #1e40af, #2563eb);
-        transition: background 0.3s, transform 0.2s;
-      }
+    /* === Títulos === */
+    h1 {
+      font-family: 'Merriweather', serif;
+      color: #1e3a8a;
+      /* Color azul consistente */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
 
-      .boton-guardar:hover {
-        background: linear-gradient(90deg, #1e3a8a, #1e40af);
-        transform: translateY(-2px);
-      }
+    .boton-guardar {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      transition: background 0.3s, transform 0.2s;
+    }
 
-      /* Footer - Azul Marino Consistente */
-      footer {
-        background: linear-gradient(90deg, #1e3a8a, #1e40af);
-      }
+    .boton-guardar:hover {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+      transform: translateY(-2px);
+    }
 
-      footer a {
-        color: #93c5fd;
-        transition: color 0.3s;
-      }
+    /* Footer - Azul Marino Consistente */
+    footer {
+      background: linear-gradient(90deg, #1e3a8a, #1e40af);
+    }
 
-      footer a:hover {
-        color: #eff6ff;
-      }
-    </style>
-  </head>
+    footer a {
+      color: #93c5fd;
+      transition: color 0.3s;
+    }
 
-  <body class="flex flex-col min-h-screen">
-    <nav class="navbar text-white py-4 px-6">
-      <div class="container mx-auto flex justify-between items-center">
-        <a th:href="@{/dashboard}" class="text-xl font-bold"
-          ><i class="fas fa-book-open mr-2"></i>Entre Páginas</a
-        >
-        <div class="flex items-center space-x-4">
-          <span
-            th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'"
-            th:if="${usuarioNombre}"
-          ></span>
-          <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
-          <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
-          <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
-          <a th:href="@{/libros}" class="hover:underline">Libros</a>
-          <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
-          <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
-          <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
-          <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
-          <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+    footer a:hover {
+      color: #eff6ff;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+  <nav class="navbar text-white py-4 px-6">
+    <div class="container mx-auto flex justify-between items-center">
+      <a th:href="@{/dashboard}" class="text-xl font-bold"><i class="fas fa-book-open mr-2"></i>Entre Páginas</a>
+      <div class="flex items-center space-x-4">
+        <span th:text="'Bienvenido, ' + ${usuarioNombre} + ' (' + ${usuarioRol} + ')'" th:if="${usuarioNombre}"></span>
+        <a th:href="@{/dashboard}" class="hover:underline">Dashboard</a>
+        <a th:href="@{/usuarios}" class="hover:underline">Usuarios</a>
+        <a th:href="@{/clientes}" class="hover:underline">Clientes</a>
+        <a th:href="@{/libros}" class="hover:underline">Libros</a>
+        <a th:href="@{/categorias}" class="hover:underline">Categorías</a>
+        <a th:href="@{/prestamos}" class="hover:underline">Préstamos</a>
+        <a th:href="@{/ventas}" class="hover:underline">Ventas</a>
+        <a th:href="@{/perfiles}" class="hover:underline">Perfiles</a>
+        <a th:href="@{/catalogos}" class="hover:underline">Catálogo</a>
+        <a th:href="@{/logout}" class="hover:underline">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1 flex items-center justify-center p-6">
+    <div class="contenedor-form w-full max-w-md p-8 space-y-5">
+      <h1 class="text-3xl font-bold text-center mb-6">
+        <i class="fas fa-user-plus mr-2"></i> Registrar Nuevo Cliente
+      </h1>
+
+      <form th:action="@{/clientes}" th:object="${cliente}" method="post" class="space-y-5">
+        <!-- Campo DNI y botón de consulta -->
+        <div>
+          <label for="dni" class="block text-sm font-medium text-blue-800 mb-1">DNI</label>
+          <div class="flex space-x-2">
+            <input type="text" id="dni" name="dni" th:field="*{dni}" maxlength="8" pattern="\d{8}" title="El DNI debe tener 8 dígitos
+              numéricos" required
+              class="flex-1 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+            <button type="button" id="consultarDniBtn"
+              class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold shadow-md transition duration-200">
+              <i class="fas fa-search"></i> Consultar
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
-    <main class="flex-1 flex items-center justify-center p-6">
-      <div class="contenedor-form w-full max-w-md p-8 space-y-5">
-        <h1 class="text-3xl font-bold text-center mb-6">
-          <i class="fas fa-user-plus mr-2"></i> Registrar Nuevo Cliente
-        </h1>
 
-        <form
-          th:action="@{/clientes}"
-          th:object="${cliente}"
-          method="post"
-          class="space-y-5"
-        >
-          <!-- Campo DNI y botón de consulta -->
-          <div>
-            <label
-              for="dni"
-              class="block text-sm font-medium text-blue-800 mb-1"
-              >DNI</label
-            >
-            <div class="flex space-x-2">
-              <input
-                type="text"
-                id="dni"
-                name="dni"
-                th:field="*{dni}"
-                maxlength="8"
-                pattern="\d{8}"
-                title="El DNI debe tener 8 dígitos
-              numéricos"
-                required
-                class="flex-1 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              />
-              <button
-                type="button"
-                id="consultarDniBtn"
-                class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold shadow-md transition duration-200"
-              >
-                <i class="fas fa-search"></i> Consultar
-              </button>
-            </div>
-          </div>
+        <div>
+          <label for="nombre" class="block text-sm font-medium text-blue-800 mb-1">Nombre Completo</label>
+          <input type="text" id="nombre" name="nombre" th:field="*{nombre}" required
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
 
-          <div>
-            <label
-              for="nombre"
-              class="block text-sm font-medium text-blue-800 mb-1"
-              >Nombre Completo</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              th:field="*{nombre}"
-              required
-              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
+        <div>
+          <label for="correo" class="block text-sm font-medium text-blue-800 mb-1">Correo</label>
+          <input type="email" id="correo" name="correo" th:field="*{correo}" required
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
 
-          <div>
-            <label
-              for="correo"
-              class="block text-sm font-medium text-blue-800 mb-1"
-              >Correo</label
-            >
-            <input
-              type="email"
-              id="correo"
-              name="correo"
-              th:field="*{correo}"
-              required
-              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
+        <div>
+          <label for="telefono" class="block text-sm font-medium text-blue-800 mb-1">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" th:field="*{telefono}" required
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
 
-          <div>
-            <label
-              for="telefono"
-              class="block text-sm font-medium text-blue-800 mb-1"
-              >Teléfono</label
-            >
-            <input
-              type="tel"
-              id="telefono"
-              name="telefono"
-              th:field="*{telefono}"
-              required
-              class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
+        <div>
+          <label for="direccion" class="block text-sm font-medium text-blue-800 mb-1">Dirección</label>
+          <input type="text" id="direccion" name="direccion" th:field="*{direccion}"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
 
-          <button
-            type="submit"
-            class="w-full boton-guardar text-white py-3 rounded-lg font-semibold shadow-md"
-          >
-            <i class="fas fa-save mr-2"></i> Guardar Cliente
-          </button>
+        <div>
+          <label for="ruc" class="block text-sm font-medium text-blue-800 mb-1">RUC (Opcional - 11 dígitos)</label>
+          <input type="text" id="ruc" name="ruc" th:field="*{ruc}" maxlength="11" pattern="\d{11}"
+            title="El RUC debe tener 11 dígitos numéricos"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          <p class="text-xs text-gray-600 mt-1">
+            <i class="fas fa-info-circle"></i> Requerido para emitir facturas
+          </p>
+        </div>
 
-          <a
-            th:href="@{/clientes}"
-            class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-medium transition duration-200"
-          >
-            <i class="fas fa-arrow-left mr-2"></i> Volver a Clientes
-          </a>
-        </form>
-      </div>
-    </main>
+        <button type="submit" class="w-full boton-guardar text-white py-3 rounded-lg font-semibold shadow-md">
+          <i class="fas fa-save mr-2"></i> Guardar Cliente
+        </button>
 
-    <footer class="text-white py-4 text-center mt-auto">
-      <p>
-        © 2025 Entre Páginas | Contacto:
-        <a href="mailto:info@entrepaginas.org" class="underline"
-          >info@entrepaginas.org</a
-        >
-        |
-        <a
-          href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
-          class="underline bg-green-500 px-2 py-1 rounded"
-          >WhatsApp</a
-        >
-      </p>
-    </footer>
+        <a th:href="@{/clientes}"
+          class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-medium transition duration-200">
+          <i class="fas fa-arrow-left mr-2"></i> Volver a Clientes
+        </a>
+      </form>
+    </div>
+  </main>
 
-    <script th:inline="javascript">
-      /*<![CDATA[*/
-      document
-        .getElementById('consultarDniBtn')
-        .addEventListener('click', async () => {
-          const dniInput = document.getElementById('dni');
-          const nombreInput = document.getElementById('nombre');
-          const dni = dniInput.value;
+  <footer class="text-white py-4 text-center mt-auto">
+    <p>
+      © 2025 Entre Páginas | Contacto:
+      <a href="mailto:info@entrepaginas.org" class="underline">info@entrepaginas.org</a>
+      |
+      <a href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+        class="underline bg-green-500 px-2 py-1 rounded">WhatsApp</a>
+    </p>
+  </footer>
 
-          if (!dni || dni.length !== 8 || !/^\d{8}$/.test(dni)) {
-            Swal.fire({
-              icon: 'warning',
-              title: 'DNI Inválido',
-              text: 'Por favor, ingrese un DNI de 8 dígitos numéricos.',
-              confirmButtonColor: '#3085d6',
-            });
-            return;
-          }
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    document
+      .getElementById('consultarDniBtn')
+      .addEventListener('click', async () => {
+        const dniInput = document.getElementById('dni');
+        const nombreInput = document.getElementById('nombre');
+        const dni = dniInput.value;
 
-          // Mostrar indicador de carga
+        if (!dni || dni.length !== 8 || !/^\d{8}$/.test(dni)) {
           Swal.fire({
-            title: 'Consultando RENIEC...',
-            text: 'Por favor, espere.',
-            allowOutsideClick: false,
-            didOpen: () => {
-              Swal.showLoading();
-            },
+            icon: 'warning',
+            title: 'DNI Inválido',
+            text: 'Por favor, ingrese un DNI de 8 dígitos numéricos.',
+            confirmButtonColor: '#3085d6',
           });
+          return;
+        }
 
-          try {
-            // Construcción explícita de la URL para depuración
-            const baseUrl = /*[[@{/clientes/consultar-dni/}]]*/;
-            const fullUrl = baseUrl + dni;
+        // Mostrar indicador de carga
+        Swal.fire({
+          title: 'Consultando RENIEC...',
+          text: 'Por favor, espere.',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
 
-            console.log("DEBUG JS: URL de consulta DNI:", fullUrl); // <-- AÑADIDO PARA DEPURACIÓN
+        try {
+          // Construcción explícita de la URL para depuración
+          const baseUrl = /*[[@{'/clientes/consultar-dni/'}]]*/ '/clientes/consultar-dni/';
+          const fullUrl = baseUrl + dni;
+          console.log("DEBUG JS: URL de consulta DNI:", fullUrl); // <-- AÑADIDO PARA DEPURACIÓN
+          const response = await fetch(fullUrl); // Usar la URL completa
+          const data = await response.json();
 
-            const response = await fetch(fullUrl); // Usar la URL completa
-            const data = await response.json();
+          Swal.close(); // Cerrar el indicador de carga
 
-            Swal.close(); // Cerrar el indicador de carga
-
-            if (data.success) {
-              if (data.data && data.data.full_name) {
-                nombreInput.value = data.data.full_name;
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Éxito',
-                  text: 'Información de RENIEC obtenida y campos rellenados.',
-                  confirmButtonColor: '#3085d6',
-                });
-              } else {
-                Swal.fire({
-                  icon: 'info',
-                  title: 'No encontrado',
-                  text: 'No se encontró el nombre completo para el DNI proporcionado.',
-                  confirmButtonColor: '#3085d6',
-                });
-              }
+          if (data.success) {
+            if (data.data && data.data.full_name) {
+              nombreInput.value = data.data.full_name;
+              Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Información de RENIEC obtenida y campos rellenados.',
+                confirmButtonColor: '#3085d6',
+              });
             } else {
               Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.message || 'Ocurrió un error al consultar RENIEC.',
-                confirmButtonColor: '#d33',
+                icon: 'info',
+                title: 'No encontrado',
+                text: 'No se encontró el nombre completo para el DNI proporcionado.',
+                confirmButtonColor: '#3085d6',
               });
             }
-          } catch (error) {
-            Swal.close(); // Cerrar el indicador de carga
-            console.error('Error al consultar RENIEC:', error);
+          } else {
             Swal.fire({
               icon: 'error',
-              title: 'Error de Conexión',
-              text: 'No se pudo conectar con el servidor o la API de RENIEC.',
+              title: 'Error',
+              text: data.message || 'Ocurrió un error al consultar RENIEC.',
               confirmButtonColor: '#d33',
             });
           }
-        });
-      /*]]>*/
-    </script>
-  </body>
+        } catch (error) {
+          Swal.close(); // Cerrar el indicador de carga
+          console.error('Error al consultar RENIEC:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de Conexión',
+            text: 'No se pudo conectar con el servidor o la API de RENIEC.',
+            confirmButtonColor: '#d33',
+          });
+        }
+      });
+    /*]]>*/
+  </script>
+</body>
+
 </html>

@@ -17,7 +17,7 @@ public class DetalleVenta {
 
     // Relación Muchos a Uno: Un detalle se refiere a un único libro
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "libro_id", nullable = false)
+    @JoinColumn(name = "libro_id", nullable = false) 
     private Libro libro;
     
     // Campo para la cantidad vendida

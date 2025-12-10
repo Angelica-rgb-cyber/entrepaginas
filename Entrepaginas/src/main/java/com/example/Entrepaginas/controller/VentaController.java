@@ -44,7 +44,7 @@ public class VentaController {
         model.addAttribute("loggedInUser", "JuanPerez"); 
         model.addAttribute("userRole", "Administrador");
 
-        return "ventas/ventas"; // Retorna el archivo ventas.html
+        return "ventas";
     }
     
     // ====================================================================
@@ -54,15 +54,15 @@ public class VentaController {
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaVenta(Model model) {
         List<Cliente> clientes = clienteService.listarClientes(); // Clientes para el <select>
-        
-        // Solo listar libros que tengan stock > 0
-        List<Libro> libros = libroService.listarLibrosConStock(); 
+        List<Libro> libros = libroService.obtenerTodos(); 
 
         model.addAttribute("clientes", clientes);
         model.addAttribute("libros", libros);
-        model.addAttribute("venta", new Venta()); // Objeto vacío para el formulario (opcional, pero buena práctica)
+        Venta venta = new Venta();
+        venta.setTipoComprobante("BOLETA");
+        model.addAttribute("venta", venta);
 
-        return "ventas/nueva-venta"; // Retorna el archivo nueva-venta.html
+        return "nueva-venta";
     }
 
     // ====================================================================
@@ -81,6 +81,13 @@ public class VentaController {
             // Asignar Cliente (si se seleccionó uno)
             if (clienteId != null) {
                 Cliente cliente = clienteService.obtenerPorId(clienteId);
+                // validacion factura, ruc si o si
+                if ("FACTURA".equalsIgnoreCase(venta.getTipoComprobante())) {
+                    if (cliente.getRuc() == null || cliente.getRuc().trim().isEmpty()) {
+                         throw new Exception("Para emitir FACTURA, el cliente debe tener RUC registrado.");
+                    }
+                }
+                
                 venta.setCliente(cliente);
             }
             
@@ -116,7 +123,7 @@ public class VentaController {
                 return "redirect:/ventas";
             }
             model.addAttribute("venta", venta);
-            return "ventas/detalleventa"; // Retorna el voucher POS
+            return "DetalleVenta";
         } catch (Exception e) {
              redirectAttributes.addFlashAttribute("errorMessage", "Error al cargar el detalle: " + e.getMessage());
              return "redirect:/ventas";
@@ -142,57 +149,4 @@ public class VentaController {
         }
     }
     
-    // ====================================================================
-    // 6. EDITAR VENTA (Formulario GET)
-    // ====================================================================
-
-    @GetMapping("/editar/{id}")
-    public String mostrarFormularioEdicionVenta(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Venta venta = ventaService.buscarVentaPorId(id);
-            if (venta == null || venta.isAnulada()) {
-                 redirectAttributes.addFlashAttribute("errorMessage", "La venta no existe o ya está anulada y no puede ser editada.");
-                 return "redirect:/ventas";
-            }
-
-            model.addAttribute("venta", venta);
-            model.addAttribute("clientes", clienteService.listarClientes());
-            model.addAttribute("libros", libroService.listarLibrosConStock());
-            
-            return "ventas/editar-venta"; // Retorna el formulario de edición
-        } catch (Exception e) {
-             redirectAttributes.addFlashAttribute("errorMessage", "Error al cargar datos de edición: " + e.getMessage());
-             return "redirect:/ventas";
-        }
-    }
-
-    // ====================================================================
-    // 7. GUARDAR EDICIÓN (Formulario POST)
-    // ====================================================================
-
-    @PostMapping("/guardarEdicion")
-    public String guardarEdicionVenta(@ModelAttribute Venta venta, 
-                                      @RequestParam(value = "clienteId", required = false) Long clienteId,
-                                      RedirectAttributes redirectAttributes) {
-        try {
-            // Asignar Cliente
-            if (clienteId != null) {
-                Cliente cliente = clienteService.obtenerPorId(clienteId);
-                venta.setCliente(cliente);
-            }
-            
-            // Llama al servicio. Esta es la lógica MÁS COMPLEJA, ya que debe comparar 
-            // los detalles Viejos vs Nuevos y ajustar el STOCK en consecuencia.
-            Venta ventaActualizada = ventaService.actualizarVenta(venta);
-            
-            redirectAttributes.addFlashAttribute("successMessage", 
-                                                "Venta N° " + ventaActualizada.getId() + " actualizada con éxito.");
-            return "redirect:/ventas";
-            
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
-                                                "Error al guardar la edición de la venta: " + e.getMessage());
-            return "redirect:/ventas/editar/" + venta.getId(); // Vuelve al formulario
-        }
-    }
 }

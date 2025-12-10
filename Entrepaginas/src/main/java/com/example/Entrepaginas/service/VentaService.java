@@ -32,13 +32,20 @@ public class VentaService {
     // MÉTODOS BÁSICOS
     // ====================================================================
 
+    @Transactional(readOnly = true) 
     public List<Venta> listarTodasLasVentas() {
-        // Asegura que cargamos los detalles de la venta si son necesarios en la vista principal
-        return ventaRepository.findAll(); 
+        List<Venta> ventas = ventaRepository.findAll();
+        ventas.forEach(venta -> {
+            venta.getDetallesVenta().size(); 
+            venta.getDetallesVenta().forEach(detalle -> {
+                detalle.getLibro().getTitulo(); 
+            });
+        });
+        return ventas; 
     }
 
     public Venta buscarVentaPorId(Long id) {
-        return ventaRepository.findById(id).orElse(null);
+        return ventaRepository.findByIdWithDetalles(id).orElse(null);
     }
     
     // ====================================================================

@@ -1,8 +1,10 @@
 package com.example.Entrepaginas.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.repository.query.Param;
+import java.util.Optional;
 import com.example.Entrepaginas.model.Venta;
 
 // La anotación @Repository es opcional en las interfaces que extienden de JpaRepository,
@@ -20,5 +22,8 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     
     // List<Venta> findByFechaVentaBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
     // List<Venta> findByAnuladaFalseOrderByFechaVentaDesc();
+
+    @Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta dv LEFT JOIN FETCH dv.libro WHERE v.id = :id")
+    Optional<Venta> findByIdWithDetalles(@Param("id") Long id);
 
 }
