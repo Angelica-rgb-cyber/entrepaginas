@@ -144,4 +144,67 @@ public class PrestamoController {
         }
         return "redirect:/prestamos"; // Redirige a la lista de préstamos
     }
+
+    @Autowired
+    private com.example.Entrepaginas.repository.ClienteRepository clienteRepository;
+
+    // ====================================================================
+    // API PARA PRÉSTAMOS WEB (BIBLIOTECA)
+    // ====================================================================
+    
+    @PostMapping("/api/crear")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> crearPrestamoWeb(@RequestBody com.example.Entrepaginas.dto.PrestamoWebDTO prestamoWebDTO) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            // 1. Crear o Buscar Cliente "Web"
+            Cliente cliente = new Cliente();
+            cliente.setNombre(prestamoWebDTO.getClienteNombre());
+            cliente.setCorreo(prestamoWebDTO.getClienteEmail());
+            // Generar datos ficticios obligatorios si faltan
+            cliente.setDni("00000000"); 
+            cliente.setDireccion("Dirección Web");
+            cliente.setTelefono("000-000000");
+            
+            // Podrías buscar si el correo ya existe para no duplicar
+            Cliente existente = clienteRepository.findByCorreo(prestamoWebDTO.getClienteEmail());
+            if (existente != null) {
+                cliente = existente;
+            } else {
+                cliente = clienteRepository.save(cliente);
+            }
+
+            // 2. Buscar Libro
+            Libro libro = libroService.obtenerPorId(prestamoWebDTO.getLibroId());
+            if (libro == null) {
+                throw new Exception("Libro no encontrado con ID: " + prestamoWebDTO.getLibroId());
+            }
+            if (!libro.isDisponible()) {
+                throw new Exception("El libro '" + libro.getTitulo() + "' no está disponible actualmente.");
+            }
+
+            // 3. Crear Préstamo
+            Prestamo prestamo = new Prestamo();
+            prestamo.setCliente(cliente);
+            prestamo.setLibro(libro);
+            prestamo.setFechaPrestamo(LocalDate.now());
+            prestamo.setFechaDevolucion(prestamoWebDTO.getFechaDevolucion()); // Asumiendo que el DTO lo envía
+            prestamo.setActivo(true);
+            
+            // 4. Actualizar Libro
+            libro.setDisponible(false);
+            libroService.guardar(libro);
+            
+            prestamoService.guardar(prestamo);
+            
+            response.put("success", true);
+            response.put("message", "Préstamo registrado con éxito. ID: " + prestamo.getId());
+            return org.springframework.http.ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error al procesar el préstamo: " + e.getMessage());
+            return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

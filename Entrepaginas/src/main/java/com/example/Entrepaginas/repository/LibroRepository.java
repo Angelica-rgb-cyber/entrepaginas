@@ -28,4 +28,7 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     //metodo para listar libros con stock
     List<Libro> findByStockGreaterThan(int stock);
 
+    Libro findFirstByTitulo(String titulo);
+
+    Libro findFirstByTituloAndStockGreaterThan(String titulo, int stock);
 }

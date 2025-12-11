@@ -83,8 +83,6 @@ public class DetalleVenta {
     public void setPrecioUnitario(Double precioUnitario) {
         this.precioUnitario = precioUnitario;
     }
-
-    // --- Método Auxiliar para calcular Subtotal ---
     
     @Transient // Indica que este campo no se mapea a la base de datos
     public Double getSubtotal() {
@@ -92,5 +90,8 @@ public class DetalleVenta {
             return 0.0;
         }
         return precioUnitario * cantidad;
+    }
+
+    public void setSubtotal(double d) {
     }
 }
