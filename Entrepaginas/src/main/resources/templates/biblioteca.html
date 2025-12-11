@@ -1,288 +1,954 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Entre Páginas y Sabores</title>
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" th:href="@{/css/stylebiblio.css}" />
-  </head>
-  <body>
+
+    <style>
+        :root {
+            --primary-blue: #0A4E78; /* Azul oscuro profundo */
+            --primary-dark: #073B5E; /* Azul más oscuro */
+            --primary-light: #5AA1D1; /* Azul claro */
+            --accent-magic: #FFD700; /* Dorado Mágico */
+            --background-light: #f4f7f9;
+            --text-color: #2c3e50;
+            --card-color: #ffffff;
+        }
+        
+        /* Estilos generales de la tienda (se aplicarán solo cuando la sección tienda sea visible) */
+        #tienda-section {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--background-light);
+            display: none; /* INICIALMENTE OCULTA */
+        }
+
+        #tienda-section h2 {
+            color: var(--primary-blue);
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        .book-grid-tienda {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .book-card-tienda {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s, box-shadow 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card-tienda:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(10, 78, 120, 0.6);
+        }
+
+        .book-card-tienda img {
+            height: 250px;
+            width: 100%;
+            object-fit: contain;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .price-tienda {
+            color: var(--accent-magic);
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            margin: 10px 0 20px 0;
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(to right, var(--primary-light), var(--primary-blue));
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 90%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .add-to-cart-btn:hover {
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-dark));
+            width: 100%;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Carrito Flotante */
+        #floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--accent-magic);
+            color: var(--primary-dark);
+            border: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            font-size: 1.6rem;
+            box-shadow: 0 0 15px 3px var(--accent-magic);
+            cursor: pointer;
+            z-index: 1000; /* Asegura que esté por encima de todo */
+            display: none; /* Oculto por defecto, solo visible en la tienda */
+        }
+
+        #cart-count {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+        
+        /* Estilos del Modal Carrito/Voucher */
+        .voucher { border: 4px solid var(--accent-magic); }
+        .voucher-total { background-color: var(--primary-dark); color: var(--accent-magic); }
+        
+        /* Estilos de controles de cantidad en el modal (GRID del carrito) */
+        #cart-items-list li {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr; 
+            gap: 10px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dotted var(--primary-light);
+        }
+        .quantity-controls { display: flex; align-items: center; justify-content: center; }
+        .qty-btn { background: none; border: none; color: var(--primary-blue); cursor: pointer; font-size: 1.2rem; }
+        .qty-btn:hover { color: var(--accent-magic); }
+        .qty-value { padding: 0 10px; font-weight: bold; color: var(--primary-dark); }
+        
+        /* Estilos para SweetAlert Inputs mejorados */
+        .swal2-input { 
+            border: 1px solid var(--primary-light) !important; 
+            box-shadow: none !important; 
+            margin-bottom: 10px !important;
+            padding: 10px !important;
+        }
+        .swal2-content label {
+            display: block;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            text-align: left;
+            width: 100%;
+        }
+        /* Para que las etiquetas dentro del modal manual no sean tan separadas si están en una división */
+        .swal2-content .text-left label {
+             margin-top: 10px; 
+        }
+    </style>
+</head>
+<body>
+    
     <div id="modalBiblioteca" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="cerrarModalBiblioteca()">&times;</span>
-        <h2>Nueva llegada</h2>
-        <p>
-          Ya está disponible el nuevo libro de Isabel Allende en nuestra
-          biblioteca.
-        </p>
-      </div>
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalBiblioteca()">&times;</span>
+            <h2>Nueva llegada</h2>
+            <p>
+                Ya está disponible el nuevo libro de Isabel Allende en nuestra
+                biblioteca.
+            </p>
+        </div>
     </div>
 
     <header>
-      <div class="container">
-        <div class="logo">
-          <h1><i class="fas fa-book-open"></i> Entre Páginas y Sabores</h1>
-        </div>
-        <div class="search-bar">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Buscar libros o préstamos..."
-          />
-          <button id="search-btn"><i class="fas fa-search"></i></button>
-        </div>
-        <button class="hamburger" id="hamburger-btn">
-          <i class="fas fa-bars"></i>
-        </button>
-        <nav class="nav-links">
-          <ul class="flex flex-col md:flex-row md:gap-6 text-white">
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#catalogo">Catálogo</a></li>
-            <li><a href="#prestamos">Préstamos</a></li>
-            <li><a href="#maraton">Maratón</a></li>
-            <li><a href="#eventos">Eventos</a></li>
-            <li><a href="#write">Escribe</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-            <li><a id="register-link">Registro</a></li>
-            <li><a th:href="@{/login}">Iniciar Sesión</a></li>
-            <div class="login-buttons">
-              <label class="switch">
-                <input id="theme-toggle-input" type="checkbox" />
-                <span class="slider round">
-                  <i class="fas fa-sun sun-icon"></i>
-                  <i class="fas fa-moon moon-icon"></i>
-                </span>
-              </label>
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-book-open"></i> Entre Páginas y Sabores</h1>
             </div>
-          </ul>
-        </nav>
-      </div>
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Buscar libros o préstamos..."
+                />
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="hamburger" id="hamburger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-links">
+                <ul class="flex flex-col md:flex-row md:gap-6 text-white">
+                    <li><a href="javascript:void(0)" onclick="showSection('biblioteca-content', this)" class="active-link" data-target="biblioteca-content">Inicio</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('biblioteca-content', this, 'catalogo')">Catálogo</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('biblioteca-content', this, 'prestamos')">Préstamos</a></li>
+                    
+                    <li>
+                        <a href="javascript:void(0)" onclick="showSection('tienda-section', this)" data-target="tienda-section" style="font-weight: bold; color: var(--accent-magic);">
+                            <i class="fas fa-store"></i> Tienda Mágica
+                        </a>
+                    </li>
+                    
+                    <li><a href="javascript:void(0)" onclick="showSection('biblioteca-content', this, 'maraton')">Maratón</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('biblioteca-content', this, 'eventos')">Eventos</a></li>
+                    <li><a href="#write">Escribe</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a id="register-link">Registro</a></li>
+                    <li><a th:href="@{/login}">Iniciar Sesión</a></li>
+                    <div class="login-buttons">
+                        <label class="switch">
+                            <input id="theme-toggle-input" type="checkbox" />
+                            <span class="slider round">
+                                <i class="fas fa-sun sun-icon"></i>
+                                <i class="fas fa-moon moon-icon"></i>
+                            </span>
+                        </label>
+                    </div>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
-      <section id="carousel-section" class="carousel">
-        <h2>Libros Destacados</h2>
-        <div class="carousel-container">
-          <button class="carousel-prev" id="carousel-prev-btn">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img
-                src="https://statics.uniradioinforma.com/2023/07/crop/64a330d58847f__940x940.webp"
-                alt="Romper el Círculo"
-              />
-              <h3>Romper el Círculo</h3>
-              <p>Colleen Hoover</p>
-              <button
-                class="tts-btn"
-                data-text="Lily no siempre lo ha tenido fácil, pero eso nunca le ha impedido luchar por la vida que quiere."
-              >
-                <i class="fas fa-volume-up"></i> Escuchar
-              </button>
+        <div id="biblioteca-content">
+            <section id="carousel-section" class="carousel">
+                <h2>Libros Destacados</h2>
+                <div class="carousel-container">
+                    <button class="carousel-prev" id="carousel-prev-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="carousel-slides">
+                        <div class="carousel-slide active">
+                            <img
+                                src="https://statics.uniradioinforma.com/2023/07/crop/64a330d58847f__940x940.webp"
+                                alt="Romper el Círculo"
+                            />
+                            <h3>Romper el Círculo</h3>
+                            <p>Colleen Hoover</p>
+                            <button
+                                class="tts-btn"
+                                data-text="Lily no siempre lo ha tenido fácil, pero eso nunca ha impedido luchar por la vida que quiere."
+                            >
+                                <i class="fas fa-volume-up"></i> Escuchar
+                            </button>
+                        </div>
+                        <div class="carousel-slide">
+                            <img
+                                src="https://m.media-amazon.com/images/I/91CcrfPNjSL._SL1500_.jpg"
+                                alt="Culpa Mía"
+                            />
+                            <h3>Culpa Mía</h3>
+                            <p>Mercedes Ron</p>
+                            <button
+                                class="tts-btn"
+                                data-text="Una historia de amor prohibido entre hermanastros en el glamuroso mundo de Hollywood."
+                            >
+                                <i class="fas fa-volume-up"></i> Escuchar
+                            </button>
+                        </div>
+                        <div class="carousel-slide">
+                            <img
+                                src="https://www.libreriaespanola.com/wp-content/uploads/2022/05/05057347.jpg"
+                                alt="A través de mi ventana"
+                            />
+                            <h3>A Través de Mi Ventana</h3>
+                            <p>Ariana Godoy</p>
+                            <button
+                                class="tts-btn"
+                                data-text="Una trilogía de amor y misterio sobre Raquel y Ares, dos vecinos que se enamoran sin conocerse."
+                            >
+                                <i class="fas fa-volume-up"></i> Escuchar
+                            </button>
+                        </div>
+                    </div>
+                    <button class="carousel-next" id="carousel-next-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section id="catalogo" class="py-16 px-4 max-w-6xl mx-auto">
+                <h2 class="text-4xl font-bold text-center mb-8">Catálogo de Libros</h2>
+                <div class="category-filter">
+                    <select id="category-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Novela">Novela</option>
+                        <option value="Poesía">Poesía</option>
+                        <option value="Fantasía">Fantasía</option>
+                        <option value="Clásico">Clásico</option>
+                        <option value="Romántica">Romántica</option>
+                        <option value="Distopía">Distopía</option>
+                        <option value="Infantil">Infantil</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Terror">Terror</option>
+                        <option value="Misterio">Misterio</option>
+                        <option value="No ficción">No ficción</option>
+                        <option value="Ciencia">Ciencia</option>
+                    </select>
+                </div>
+                <div id="book-grid" class="book-grid">
+                    <p class="text-center">Cargando libros...</p>
+                    </div>
+                <div class="pagination">
+                    <button class="pagination-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div id="pagination-numbers" class="pagination-numbers"></div>
+                    <button class="pagination-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section id="prestamos" class="py-16 px-4 max-w-6xl mx-auto">
+                <h2 class="text-4xl font-bold text-center mb-8">Préstamos de Libros</h2> 
+                
+                <div class="text-center mb-8">
+                    <button 
+                        onclick="openRegistroManualModal()" 
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300"
+                    >
+                        <i class="fas fa-plus-circle mr-2"></i> Registrar Préstamo Manual (Admin)
+                    </button>
+                </div>
+
+                <div id="loan-list" class="flex flex-col gap-4">
+                     <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4" role="alert">
+                      <p class="font-bold">Mis Préstamos Activos:</p>
+                      <p>Las solicitudes del catálogo y el registro manual se procesan en <code>/api/prestamos/registrar</code>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="maraton" class="maraton">
+                <h2>Maratón de Libros 2025</h2>
+                <p>
+                    ¡Únete a nuestro desafío de lectura! Lee 5 libros en un mes y comparte
+                    tus reseñas.
+                </p>
+                <ul>
+                    <li><strong>Fecha:</strong> 1-31 de Octubre, 2025</li>
+                    <li><strong>Tema:</strong> Aventuras y Fantasía</li>
+                    <li><strong>Premio:</strong> Membresía gratuita por un año</li>
+                </ul>
+            </section>
+
+            <section id="eventos">
+                <h2>Eventos de la Biblioteca</h2>
+                <div class="eventos-grid">
+                    <div class="evento">
+                        <h3>Lectura de Poesía</h3>
+                        <p><i class="fas fa-calendar-alt"></i> 25 de Mayo, 2025</p>
+                        <p>Únete a nuestra noche de poesía con autores locales.</p>
+                    </div>
+                    <div class="evento">
+                        <h3>Taller de Escritura</h3>
+                        <p><i class="fas fa-calendar-alt"></i> 30 de Mayo, 2025</p>
+                        <p>Aprende técnicas de escritura creativa con expertos.</p>
+                    </div>
+                    <div class="evento">
+                        <h3>Club de Lectura</h3>
+                        <p><i class="fas fa-calendar-alt"></i> 5 de Junio, 2025</p>
+                        <p>Discutimos "El Principito" en un ambiente acogedor.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="poemas" class="py-12 px-4 max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+                    <i class="fas fa-feather-alt"></i> Poemas de la Semana
+                </h2>
+                <div class="poema-container bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl transition-colors duration-300">
+                    <h3 id="poema-titulo" class="text-2xl font-semibold mb-3 text-red-600 dark:text-red-400">
+                        Cargando título...
+                    </h3>
+                    <p id="poema-texto" class="text-lg italic mb-4 whitespace-pre-line text-gray-700 dark:text-gray-300">
+                        Cargando el verso...
+                    </p>
+                    <p id="poema-autor" class="text-right font-medium text-gray-500 dark:text-gray-400">
+                        - Autor
+                    </p>
+                </div>
+                <button 
+                    id="tts-poema-btn" 
+                    class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+                    onclick="speak(document.getElementById('poema-texto').innerText, this)"
+                >
+                    <i class="fas fa-volume-up"></i> Escuchar Poema
+                </button>
+            </section>
+        </div>
+        <div id="register-modal" class="modal">
+            <div class="register-container">
+                <button class="close-modal">×</button>
+                <h2 class="text-2xl font-bold text-center mb-4">Registro de Usuario</h2>
+                <div id="register-notification" class="register-notification"></div>
+                <form id="registroForm">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ingresa tu nombre" />
+                    <label for="email">Correo:</label>
+                    <input type="email" id="email" name="email" required placeholder="Ingresa tu correo" />
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required placeholder="Ingresa tu contraseña" />
+                    <label>Rol:</label>
+                    <select id="rol" name="rol">
+                        <option value="ADMIN">Administrador</option>
+                        <option value="BIBLIOTECARIO">Bibliotecario</option>
+                        <option value="USER">Usuario</option>
+                        <option value="LECTOR">Lector</option>
+                    </select>
+                    <button type="submit">Registrarse</button>
+                </form>
+                <p>¿Ya tienes cuenta? <a href="login">Inicia sesión aquí</a></p>
             </div>
-            <div class="carousel-slide">
-              <img
-                src="https://m.media-amazon.com/images/I/91CcrfPNjSL._SL1500_.jpg"
-                alt="Culpa Mía"
-              />
-              <h3>Culpa Mía</h3>
-              <p>Mercedes Ron</p>
-              <button
-                class="tts-btn"
-                data-text="Una historia de amor prohibido entre hermanastros en el glamuroso mundo de Hollywood."
-              >
-                <i class="fas fa-volume-up"></i> Escuchar
-              </button>
+        </div>
+
+
+        <section id="tienda-section">
+            <h2>Sabiduría Milenaria y Tesoros Ocultos</h2>
+            
+            <div class="book-grid-tienda">
+                
+                <div class="book-card-tienda">
+                    <img src="https://m.media-amazon.com/images/I/91CcrfPNjSL._SL1500_.jpg" alt="Cien Años de Soledad" />
+                    <h3>Cien Años de Soledad</h3>
+                    <p>Gabriel García Márquez</p>
+                    <p class="price-tienda"><i class="fas fa-coins"></i> S/ 69.90</p>
+                    <button class="add-to-cart-btn" onclick="addToCart('Cien Años de Soledad', 69.90)">
+                        <i class="fas fa-feather-alt"></i> Adquirir Volumen
+                    </button>
+                </div>
+
+                <div class="book-card-tienda">
+                    <img src="https://statics.uniradioinforma.com/2023/07/crop/64a330d58847f__940x940.webp" alt="Romper el Círculo" />
+                    <h3>Romper el Círculo</h3>
+                    <p>Colleen Hoover</p>
+                    <p class="price-tienda"><i class="fas fa-coins"></i> S/ 45.00</p>
+                    <button class="add-to-cart-btn" onclick="addToCart('Romper el Círculo', 45.00)">
+                        <i class="fas fa-feather-alt"></i> Adquirir Volumen
+                    </button>
+                </div>
+
+                <div class="book-card-tienda">
+                    <img src="https://i.imgur.com/G5XlM4b.jpeg" alt="El Caballero de la Armadura Oxidada" />
+                    <h3>El Caballero de la Armadura Oxidada</h3>
+                    <p>Robert Fisher</p>
+                    <p class="price-tienda"><i class="fas fa-coins"></i> S/ 38.00</p>
+                    <button class="add-to-cart-btn" onclick="addToCart('Caballero Armadura', 38.00)">
+                        <i class="fas fa-feather-alt"></i> Adquirir Volumen
+                    </button>
+                </div>
+
+                <div class="book-card-tienda">
+                    <img src="https://m.media-amazon.com/images/I/61N9hGqD59L._SL1500_.jpg" alt="El Alquimista" />
+                    <h3>El Alquimista</h3>
+                    <p>Paulo Coelho</p>
+                    <p class="price-tienda"><i class="fas fa-coins"></i> S/ 40.50</p>
+                    <button class="add-to-cart-btn" onclick="addToCart('El Alquimista', 40.50)">
+                        <i class="fas fa-feather-alt"></i> Adquirir Volumen
+                    </button>
+                </div>
+                
             </div>
-            <div class="carousel-slide">
-              <img
-                src="https://www.libreriaespanola.com/wp-content/uploads/2022/05/05057347.jpg"
-                alt="A través de mi ventana"
-              />
-              <h3>A Través de Mi Ventana</h3>
-              <p>Ariana Godoy</p>
-              <button
-                class="tts-btn"
-                data-text="Una trilogía de amor y misterio sobre Raquel y Ares, dos vecinos que se enamoran sin conocerse."
-              >
-                <i class="fas fa-volume-up"></i> Escuchar
-              </button>
-            </div>
-          </div>
-          <button class="carousel-next" id="carousel-next-btn">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <section id="catalogo" class="py-16 px-4 max-w-6xl mx-auto">
-        <h2 class="text-4xl font-bold text-center mb-8">Catálogo de Libros</h2>
-        <div class="category-filter">
-          <select id="category-select">
-            <option value="">Todas las categorías</option>
-            <option value="Drama">Drama</option>
-            <option value="Novela">Novela</option>
-            <option value="Poesía">Poesía</option>
-            <option value="Fantasía">Fantasía</option>
-            <option value="Clásico">Clásico</option>
-            <option value="Romántica">Romántica</option>
-            <option value="Distopía">Distopía</option>
-            <option value="Infantil">Infantil</option>
-            <option value="Aventura">Aventura</option>
-            <option value="Terror">Terror</option>
-            <option value="Misterio">Misterio</option>
-            <option value="No ficción">No ficción</option>
-            <option value="Ciencia">Ciencia</option>
-          </select>
-        </div>
-        <div id="book-grid" class="book-grid">
-          <p class="text-center">Cargando libros...</p>
-        </div>
-        <div class="pagination">
-          <button class="pagination-prev">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div id="pagination-numbers" class="pagination-numbers"></div>
-          <button class="pagination-next">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <section id="maraton" class="maraton">
-        <h2>Maratón de Libros 2025</h2>
-        <p>
-          ¡Únete a nuestro desafío de lectura! Lee 5 libros en un mes y comparte
-          tus reseñas.
-        </p>
-        <ul>
-          <li><strong>Fecha:</strong> 1-31 de Octubre, 2025</li>
-          <li><strong>Tema:</strong> Aventuras y Fantasía</li>
-          <li><strong>Premio:</strong> Membresía gratuita por un año</li>
-        </ul>
-      </section>
-
-      <section id="eventos">
-        <h2>Eventos de la Biblioteca</h2>
-        <div class="eventos-grid">
-          <div class="evento">
-            <h3>Lectura de Poesía</h3>
-            <p><i class="fas fa-calendar-alt"></i> 25 de Mayo, 2025</p>
-            <p>Únete a nuestra noche de poesía con autores locales.</p>
-          </div>
-          <div class="evento">
-            <h3>Taller de Escritura</h3>
-            <p><i class="fas fa-calendar-alt"></i> 30 de Mayo, 2025</p>
-            <p>Aprende técnicas de escritura creativa con expertos.</p>
-          </div>
-          <div class="evento">
-            <h3>Club de Lectura</h3>
-            <p><i class="fas fa-calendar-alt"></i> 5 de Junio, 2025</p>
-            <p>Discutimos "El Principito" en un ambiente acogedor.</p>
-          </div>
-        </div>
-      </section>
-
-
-    <div id="register-modal" class="modal">
-      <div class="register-container">
-        <button class="close-modal">×</button>
-        <h2 class="text-2xl font-bold text-center mb-4">Registro de Usuario</h2>
-        <div id="register-notification" class="register-notification"></div>
-        <form id="registroForm">
-          <label for="nombre">Nombre:</label>
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            required
-            placeholder="Ingresa tu nombre"
-          />
-          <label for="email">Correo:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            placeholder="Ingresa tu correo"
-          />
-          <label for="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            placeholder="Ingresa tu contraseña"
-
-          />
-          <label>Rol:</label>
-          <select id="rol" name="rol">
-            <option value="ADMIN">Administrador</option>
-            <option value="BIBLIOTECARIO">Bibliotecario</option>
-            <option value="USER">Usuario</option>
-            <option value="LECTOR">Lector</option>
-          </select>
-
-          <button type="submit">Registrarse</button>
-        </form>
-        <p>¿Ya tienes cuenta? <a href="login">Inicia sesión aquí</a></p>
-      </div>
-    </div>
-    <section id="poemas" class="py-12 px-4 max-w-4xl mx-auto text-center">
-    <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">
-        <i class="fas fa-feather-alt"></i> Poemas de la Semana
-    </h2>
-    <div class="poema-container bg-white dark:bg-gray-700 p-8 rounded-lg shadow-xl transition-colors duration-300">
-        <h3 id="poema-titulo" class="text-2xl font-semibold mb-3 text-red-600 dark:text-red-400">
-            Cargando título...
-        </h3>
-        <p id="poema-texto" class="text-lg italic mb-4 whitespace-pre-line text-gray-700 dark:text-gray-300">
-            Cargando el verso...
-        </p>
-        <p id="poema-autor" class="text-right font-medium text-gray-500 dark:text-gray-400">
-            - Autor
-        </p>
-    </div>
-    <button 
-        id="tts-poema-btn" 
-        class="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
-        onclick="speak(document.getElementById('poema-texto').innerText, this)"
-    >
-        <i class="fas fa-volume-up"></i> Escuchar Poema
+        </section>
+        </main>
+    
+    <button id="floating-cart-btn" onclick="viewCart()">
+        <i class="fas fa-gem"></i>
+        <span id="cart-count">0</span>
     </button>
-</section>
 
     <footer id="contacto">
-      <p>📍 Av. San Martín 234 - Chiclayo, Perú | ☎️ (084) 123-456</p>
-      <p>
-        © 2025 Entre Páginas | Contacto:
-        <a href="mailto:info@entrepaginas.org" class="underline"
-          >info@entrepaginas.org</a
-        >
-        |
-        <a
-          href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
-          class="underline bg-green-500 px-2 py-1 rounded"
-          >WhatsApp</a
-        >
-      </p>
+        <p>📍 Av. San Martín 234 - Chiclayo, Perú | ☎️ (084) 123-456</p>
+        <p>
+            © 2025 Entre Páginas | Contacto:
+            <a href="mailto:info@entrepaginas.org" class="underline"
+                >info@entrepaginas.org</a
+            >
+            |
+            <a
+                href="https://wa.me/51999999999?text=¡Hola! Quiero saber más sobre Entre Páginas 📚"
+                class="underline bg-green-500 px-2 py-1 rounded"
+                >WhatsApp</a
+            >
+        </p>
     </footer>
 
     <div class="notification" id="loan-notification">
-      <span id="notification-text"></span>
+        <span id="notification-text"></span>
     </div>
 
-    <!-- Script original de biblioteca.js -->
     <script th:src="@{/js/biblioteca.js}"></script>
-    
-    <!-- Nuevo script para cargar libros desde BD -->
     <script th:src="@{/js/carga-biblioteca.js}"></script>
-  </body>
+    
+    <script>
+        // =========================================================
+        // LÓGICA DE NAVEGACIÓN Y CARRUSEL (Se mantiene)
+        // =========================================================
+        function showSection(sectionId, element, subSectionId = null) {
+            document.getElementById('biblioteca-content').style.display = (sectionId === 'biblioteca-content' ? 'block' : 'none');
+            document.getElementById('tienda-section').style.display = (sectionId === 'tienda-section' ? 'block' : 'none');
+            
+            document.getElementById('floating-cart-btn').style.display = (sectionId === 'tienda-section' ? 'block' : 'none');
+
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-link'));
+            if (element) {
+                element.classList.add('active-link');
+            }
+            
+            if (subSectionId) {
+                 setTimeout(() => {
+                    const target = document.getElementById(subSectionId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
+            } else {
+                 window.scrollTo(0, 0);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+             // 1. Mostrar la biblioteca por defecto
+            document.getElementById('biblioteca-content').style.display = 'block';
+            document.getElementById('tienda-section').style.display = 'none';
+            document.getElementById('floating-cart-btn').style.display = 'none';
+            
+            // 2. Poner el enlace "Inicio" como activo por defecto
+            const inicioLink = document.querySelector('.nav-links a[data-target="biblioteca-content"]');
+            if(inicioLink) inicioLink.classList.add('active-link');
+            
+            // 3. Forzar el desplazamiento para enlaces de subsección
+            document.querySelectorAll('#biblioteca-content a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault(); 
+                    const targetId = this.getAttribute('href').substring(1);
+                    showSection('biblioteca-content', this, targetId);
+                });
+            });
+            
+            updateCartCount(); 
+        });
+
+
+        // Asumiendo que la función generarTarjetaLibro está definida en /js/carga-biblioteca.js o similar
+        // Placeholder para que el script no falle si no tienes la función:
+        /*
+        const booksData = [{ id: 1, titulo: "Libro Ejemplo", autor: "Autor Ejemplo", categoria: "Fantasía", cover: "..." }];
+        function loadBooks(page) { 
+             // ... tu lógica de carga de libros ...
+        }
+        function generarTarjetaLibro(book) { // ... }
+        */
+
+        // =========================================================
+        // B. LÓGICA DE LA TIENDA MÁGICA (Carrito, Pago, Voucher)
+        // =========================================================
+        
+        let carrito = [];
+        let orderIdCounter = 1000;
+        let deliveryCost = 15.00; 
+
+        const stock = {
+            'Cien Años de Soledad': { price: 69.90, available: 10 },
+            'Romper el Círculo': { price: 45.00, available: 15 },
+            'Caballero Armadura': { price: 38.00, available: 5 },
+            'El Alquimista': { price: 40.50, available: 20 }
+        };
+
+        function updateCartCount() {
+            const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').innerText = totalItems;
+        }
+
+        function addToCart(title, price) {
+            let item = carrito.find(i => i.title === title);
+            const currentStock = stock[title].available;
+
+            const currentQuantity = item ? item.quantity : 0;
+            if (currentQuantity >= currentStock) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock Insuficiente',
+                    text: `Solo quedan ${currentStock} ejemplares de "${title}".`,
+                    toast: true,
+                    position: 'bottom-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return;
+            }
+            
+            if (item) {
+                item.quantity++;
+            } else {
+                carrito.push({ title, price, quantity: 1 });
+            }
+
+            updateCartCount();
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Añadido al Inventario!',
+                text: `"${title}" guardado.`,
+                toast: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            });
+        }
+
+        function updateQuantity(title, delta) {
+            let item = carrito.find(i => i.title === title);
+            if (!item) return;
+
+            const currentStock = stock[title].available;
+            const newQuantity = item.quantity + delta;
+
+            if (newQuantity <= 0) {
+                removeItem(title);
+                return;
+            }
+            if (newQuantity > currentStock) {
+                Swal.fire({ icon: 'warning', title: 'Límite de Stock Alcanzado', showConfirmButton: false, timer: 1500 });
+                return;
+            }
+
+            item.quantity = newQuantity;
+            updateCartCount();
+            viewCart(false); 
+        }
+
+        function removeItem(title) {
+            carrito = carrito.filter(item => item.title !== title);
+            updateCartCount();
+            viewCart(false); 
+        }
+
+        function viewCart(initialCall = true) {
+            if (carrito.length === 0) {
+                if (initialCall) {
+                    Swal.fire({ icon: 'question', title: 'Pergamino Vacío', text: '¡Tu pergamino de órdenes está esperando tesoros!', confirmButtonText: 'Buscar Libros' });
+                } else {
+                    Swal.close();
+                }
+                return;
+            }
+            
+            const subtotal = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal + deliveryCost;
+
+            const cartItemsHtml = carrito.map(item => 
+                `<li>
+                    <div class="cart-item-info">${item.title}</div>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="updateQuantity('${item.title}', -1)"><i class="fas fa-minus-circle"></i></button>
+                        <span class="qty-value">${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateQuantity('${item.title}', 1)"><i class="fas fa-plus-circle"></i></button>
+                    </div>
+                    <span class="cart-item-price">S/ ${(item.price * item.quantity).toFixed(2)}</span>
+                </li>`
+            ).join('');
+            
+            const cartContent = `
+                <ul id="cart-items-list">${cartItemsHtml}</ul>
+                <div class="cart-total" style="font-size:1.1rem; border:none; padding-bottom:5px;">Subtotal: S/ ${subtotal.toFixed(2)}</div>
+                <div class="cart-total" style="font-size:1.1rem; border:none; padding-bottom:5px;">Costo de Envío: S/ ${deliveryCost.toFixed(2)}</div>
+                <div class="cart-total">Total a Pagar: S/ ${total.toFixed(2)}</div>
+            `;
+            
+            if (initialCall) {
+                Swal.fire({
+                    title: '📜 Resumen de tu Pergamino',
+                    html: cartContent,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fas fa-scroll"></i> Finalizar Orden',
+                    cancelButtonText: 'Seguir Buscando',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requestDeliveryInfo(total, subtotal);
+                    }
+                });
+            } else {
+                Swal.update({ html: cartContent });
+            }
+        }
+
+        function requestDeliveryInfo(total, subtotal) {
+            Swal.fire({
+                title: '📍 Datos del Destino Mágico',
+                html: `
+                    <input id="swal-name" class="swal2-input" placeholder="Nombre de Héroe">
+                    <input id="swal-address" class="swal2-input" placeholder="Dirección del Reino/Torre">
+                    <input id="swal-phone" class="swal2-input" placeholder="Teléfono de Contacto">
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Proceder al Pago',
+                preConfirm: () => {
+                    const name = document.getElementById('swal-name').value;
+                    const address = document.getElementById('swal-address').value;
+                    const phone = document.getElementById('swal-phone').value;
+                    if (!name || !address || !phone) {
+                        Swal.showValidationMessage('Todos los campos son obligatorios para el envío.');
+                        return false;
+                    }
+                    return { name, address, phone };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    processCheckout(total, subtotal, result.value);
+                }
+            });
+        }
+
+        function processCheckout(total, subtotal, deliveryInfo) {
+            Swal.fire({
+                title: 'Iniciando Ritual de Pago...',
+                html: 'El portal de transacciones está abriéndose...',
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: () => { Swal.showLoading(); }
+            }).then(() => {
+                orderIdCounter++;
+                const orderId = `ORD-MAGIC-${orderIdCounter}`;
+                const date = new Date().toLocaleDateString('es-PE');
+                
+                // Simulación de actualización de stock y registro en backend
+                
+                const voucherItemsHtml = carrito.map(item => 
+                    `<p><span>${item.title} (x${item.quantity})</span><span>S/ ${(item.price * item.quantity).toFixed(2)}</span></p>`
+                ).join('');
+
+                const voucherHtml = `
+                    <div class="voucher">
+                        <h3 class="voucher-header">✅ ¡Compra y Envío Confirmados! ✅</h3>
+                        <i class="fas fa-shipping-fast fa-3x" style="color: var(--primary-blue); margin-bottom: 15px;"></i>
+                        <div class="voucher-details">
+                            <p><strong>Orden:</strong> ${orderId}</p>
+                            <p><strong>Fecha:</strong> ${date}</p>
+                            <p style="margin-top:10px; border-top:1px dotted #ccc; padding-top:10px;"><strong>DESTINO:</strong></p>
+                            <p><strong>Héroe:</strong> ${deliveryInfo.name}</p>
+                            <p><strong>Lugar:</strong> ${deliveryInfo.address}</p>
+                            <p><strong>Contacto:</strong> ${deliveryInfo.phone}</p>
+                        </div>
+                        <div class="voucher-items">
+                            <p style="font-weight: bold; margin-bottom: 5px;">RESUMEN DE COBROS:</p>
+                            <p><span>Subtotal Ítems:</span><span>S/ ${subtotal.toFixed(2)}</span></p>
+                            <p><span>Costo de Envío (Lechuza):</span><span>S/ ${deliveryCost.toFixed(2)}</span></p>
+                        </div>
+                        <p class="voucher-total">COBRO TOTAL: S/ ${total.toFixed(2)}</p>
+                        <p style="font-size: 0.8rem; margin-top: 20px;">Tu pedido será entregado por un mensajero alado en 48 horas.</p>
+                    </div>
+                `;
+
+                Swal.fire({
+                    title: 'Voucher de Encantamiento y Entrega',
+                    html: voucherHtml,
+                    icon: 'success',
+                    confirmButtonText: 'Cerrar',
+                }).then(() => {
+                    carrito = [];
+                    updateCartCount();
+                });
+            });
+        }
+
+        // =========================================================
+        // C. LÓGICA DE PRÉSTAMOS (Catálogo y Manual)
+        // =========================================================
+        
+        // Modal de solicitud de préstamo desde el catálogo 
+        function solicitarPrestamo(libroId, libroTitulo) {
+            Swal.fire({
+                title: `Solicitar Préstamo de: <strong>${libroTitulo}</strong>`,
+                html: `
+                    <p class="mb-4 text-sm text-gray-600">Completa tus datos para confirmar el préstamo.</p>
+                    <label for="swal-cliente-nombre" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Tu Nombre:</label>
+                    <input id="swal-cliente-nombre" class="swal2-input" placeholder="Nombre Completo">
+                    
+                    <label for="swal-cliente-email" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Tu Email:</label>
+                    <input id="swal-cliente-email" class="swal2-input" placeholder="Correo Electrónico">
+                    
+                    <label for="swal-fecha-devolucion" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Fecha Devolución Estimada:</label>
+                    <input id="swal-fecha-devolucion" class="swal2-input" type="date">
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-handshake"></i> Confirmar Préstamo',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    const nombre = document.getElementById('swal-cliente-nombre').value;
+                    const email = document.getElementById('swal-cliente-email').value;
+                    const fechaDevolucion = document.getElementById('swal-fecha-devolucion').value;
+
+                    if (!nombre || !email || !fechaDevolucion) {
+                        Swal.showValidationMessage('Todos los campos son obligatorios.');
+                        return false;
+                    }
+                    
+                    const datosPrestamo = {
+                        libroId: libroId, 
+                        clienteNombre: nombre,
+                        clienteEmail: email,
+                        fechaPrestamo: new Date().toISOString().split('T')[0],
+                        fechaDevolucion: fechaDevolucion,
+                    };
+                    return { datosPrestamo, tituloReferencia: libroTitulo };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarPrestamoAlBackend(result.value.datosPrestamo, result.value.tituloReferencia);
+                }
+            });
+        }
+
+        /**
+         * Abre el modal para que el bibliotecario registre un préstamo manualmente.
+         */
+        function openRegistroManualModal() {
+            Swal.fire({
+                title: '📚 Registro Manual de Préstamo',
+                html: `
+                    <div class="text-left mt-4">
+                        
+                        <label for="swal-manual-cliente">Nombre del Cliente:</label>
+                        <input id="swal-manual-cliente" class="swal2-input" placeholder="Nombre Completo" required>
+                        
+                        <label for="swal-manual-email">Correo Electrónico:</label>
+                        <input id="swal-manual-email" class="swal2-input" type="email" placeholder="email@dominio.com" required>
+
+                        <label for="swal-manual-libro">ID o Título del Libro:</label>
+                        <input id="swal-manual-libro" class="swal2-input" placeholder="ID o Título (Ej: 123 o 'Cien Años')" required>
+
+                        <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
+                            <div style="flex: 1;">
+                                <label for="swal-manual-prestamo" style="margin-top: 0;">Fecha Préstamo:</label>
+                                <input id="swal-manual-prestamo" class="swal2-input" type="date" value="${new Date().toISOString().split('T')[0]}" style="width: 100%; margin-bottom: 0;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="swal-manual-devolucion" style="margin-top: 0;">Fecha Devolución:</label>
+                                <input id="swal-manual-devolucion" class="swal2-input" type="date" style="width: 100%; margin-bottom: 0;">
+                            </div>
+                        </div>
+                    </div>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-paper-plane"></i> Registrar Préstamo',
+                cancelButtonText: 'Cancelar',
+                width: '600px', 
+                customClass: {
+                    htmlContainer: 'text-left' 
+                },
+                preConfirm: () => {
+                    const clienteNombre = document.getElementById('swal-manual-cliente').value;
+                    const clienteEmail = document.getElementById('swal-manual-email').value;
+                    const libroManual = document.getElementById('swal-manual-libro').value;
+                    const fechaPrestamo = document.getElementById('swal-manual-prestamo').value;
+                    const fechaDevolucion = document.getElementById('swal-manual-devolucion').value;
+                    
+                    if (!clienteNombre || !clienteEmail || !libroManual || !fechaPrestamo || !fechaDevolucion) {
+                        Swal.showValidationMessage('🚨 Todos los campos son obligatorios.');
+                        return false;
+                    }
+
+                    // Determina si es ID (número) o Título (texto)
+                    const isId = !isNaN(parseInt(libroManual)) && String(parseInt(libroManual)) === libroManual;
+
+                    const datosPrestamo = {
+                        clienteNombre: clienteNombre,
+                        clienteEmail: clienteEmail,
+                        fechaPrestamo: fechaPrestamo,
+                        fechaDevolucion: fechaDevolucion,
+                        libroId: isId ? parseInt(libroManual) : null,
+                        libroTitulo: isId ? null : libroManual,
+                    };
+                    
+                    return { datosPrestamo, tituloReferencia: libroManual };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarPrestamoAlBackend(result.value.datosPrestamo, result.value.tituloReferencia);
+                }
+            });
+        }
+
+        /**
+         * Función genérica para enviar datos de préstamo al backend (ENDPOINT: /api/prestamos/registrar).
+         */
+        function enviarPrestamoAlBackend(datosPrestamo, tituloReferencia) {
+            const ENDPOINT_PRESTAMO = '/api/prestamos/registrar'; 
+            
+            // Simulación de envío al backend. Reemplaza esto con tu llamada real a fetch/axios
+            console.log("Enviando datos de préstamo:", datosPrestamo);
+
+            Swal.fire({
+                title: '🎉 Solicitud Enviada con Éxito (Simulación)',
+                html: `<p>El ítem <strong>${tituloReferencia}</strong> ha sido prestado a <strong>${datosPrestamo.clienteNombre}</strong>. </p>
+                       <p class="mt-2 text-sm">Fecha Límite: <strong>${new Date(datosPrestamo.fechaDevolucion).toLocaleDateString('es-PE')}</strong>.</p>`,
+                icon: 'success',
+                confirmButtonText: 'Genial'
+            });
+            
+            // Si quieres la funcionalidad de conexión real, descomenta el siguiente bloque y borra el bloque Swal.fire de simulación:
+            /*
+            fetch(ENDPOINT_PRESTAMO, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datosPrestamo)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => { 
+                        throw new Error(errorData.message || 'Error en el servidor.'); 
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    title: '🎉 Préstamo Registrado con Éxito',
+                    html: `<p>El ítem <strong>${tituloReferencia}</strong> ha sido prestado a <strong>${datosPrestamo.clienteNombre}</strong>. </p>
+                           <p class="mt-2 text-sm">Fecha Límite: <strong>${new Date(datosPrestamo.fechaDevolucion).toLocaleDateString('es-PE')}</strong>.</p>
+                           <p class="text-xs text-gray-500 mt-3">ID de Préstamo (API): ${data.prestamoId || 'N/A'}</p>`,
+                    icon: 'success',
+                    confirmButtonText: 'Genial'
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: '❌ Falló la Solicitud',
+                    text: `Detalle: ${error.message || 'Error inesperado al registrar el préstamo.'}`,
+                    icon: 'error',
+                    confirmButtonText: 'Entendido'
+                });
+            });
+            */
+        }
+    </script>
+</body>
 </html>
