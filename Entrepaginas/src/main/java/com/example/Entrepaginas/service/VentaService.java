@@ -34,7 +34,7 @@ public class VentaService {
 
     @Transactional(readOnly = true) 
     public List<Venta> listarTodasLasVentas() {
-        List<Venta> ventas = ventaRepository.findAll();
+        List<Venta> ventas = ventaRepository.findAllWithClienteAndUsuario();
         ventas.forEach(venta -> {
             venta.getDetallesVenta().size(); 
             venta.getDetallesVenta().forEach(detalle -> {

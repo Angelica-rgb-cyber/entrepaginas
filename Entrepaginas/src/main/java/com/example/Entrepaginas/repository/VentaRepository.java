@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import com.example.Entrepaginas.model.Venta;
+import java.util.List;
 
 // La anotación @Repository es opcional en las interfaces que extienden de JpaRepository,
 // pero es buena práctica incluirla.
@@ -23,7 +24,10 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     // List<Venta> findByFechaVentaBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
     // List<Venta> findByAnuladaFalseOrderByFechaVentaDesc();
 
-    @Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta dv LEFT JOIN FETCH dv.libro WHERE v.id = :id")
+    @Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta dv LEFT JOIN FETCH dv.libro LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.usuario WHERE v.id = :id")
     Optional<Venta> findByIdWithDetalles(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT v FROM Venta v LEFT JOIN FETCH v.cliente LEFT JOIN FETCH v.usuario")
+    List<Venta> findAllWithClienteAndUsuario();
 
 }

@@ -54,7 +54,7 @@
             <p class="font-bold">TIPO: <span th:text="${venta.tipoComprobante}">BOLETA</span></p>
             <p>FECHA: <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}">05/12/2025</span></p>
             <p>HORA: <span th:text="${#temporals.format(venta.fechaVenta, 'HH:mm:ss')}">10:45:00</span></p>
-            <p>CAJERO: <span th:text="${venta.usuario != null ? venta.usuario.nombre : 'Sistema'}">Sistema</span></p>
+            <p>CAJERO: <span th:text="${venta.usuario != null ? venta.usuario.correo : 'Sistema'}">Sistema</span></p>
         </div>
 
         <div class="mb-4 text-left border-b border-dashed border-gray-400 pb-2" th:if="${venta.cliente != null}">

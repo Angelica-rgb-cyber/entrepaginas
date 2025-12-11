@@ -3,7 +3,11 @@ package com.example.Entrepaginas.controller;
 import com.example.Entrepaginas.model.Venta;
 import com.example.Entrepaginas.model.Cliente;
 import com.example.Entrepaginas.model.Libro;
+import com.example.Entrepaginas.model.Usuario;
 import com.example.Entrepaginas.service.VentaService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.example.Entrepaginas.service.ClienteService;
 import com.example.Entrepaginas.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.example.Entrepaginas.repository.UsuarioRepository;
 
 import java.util.List;
 
@@ -26,6 +31,9 @@ public class VentaController {
 
      @Autowired
     private LibroService libroService;    
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
     
     // Asumimos que tienes un servicio de usuario o una forma de obtener el usuario logueado
     // private UserService userService;
@@ -76,6 +84,7 @@ public class VentaController {
     @PostMapping("/guardar")
     public String guardarVenta(@ModelAttribute Venta venta, 
                                @RequestParam(value = "clienteId", required = false) Long clienteId,
+                               HttpSession session,
                                RedirectAttributes redirectAttributes) {
         try {
             // Asignar Cliente (si se seleccionó uno)
@@ -92,7 +101,12 @@ public class VentaController {
             }
             
             // Asignar el usuario que realiza la venta (simulado)
-            // venta.setUsuario(userService.getUsuarioLogueado()); 
+            // Asignar el usuario que realiza la venta desde la sesión
+            String correoUsuario = (String) session.getAttribute("usuarioNombre");
+            if (correoUsuario != null) {
+                Usuario usuario = usuarioRepository.findByCorreo(correoUsuario);
+                venta.setUsuario(usuario);
+            } 
 
             // Llama al servicio para guardar la venta y ACTUALIZAR EL STOCK
             Venta ventaGuardada = ventaService.guardarVentaYActualizarStock(venta);
