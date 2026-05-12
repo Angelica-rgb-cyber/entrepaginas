@@ -1,5 +1,6 @@
 package com.example.Entrepaginas.controller;
 
+
 import com.example.Entrepaginas.model.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value; // Importar Value
@@ -10,9 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.example.Entrepaginas.service.ClienteService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate; // Importar RestTemplate
 
@@ -101,10 +105,43 @@ public class ClienteController {
     }//muy bien, te ganaste una papa rellena xdnajajajajajajja
 
     @PostMapping
-    public String guardarCliente(@ModelAttribute Cliente cliente) {
-        clienteService.guardar(cliente);
+public String guardarCliente(@Valid @ModelAttribute Cliente cliente, 
+                             BindingResult bindingResult, 
+                             Model model, 
+                             HttpSession session) {
+
+    Object nombre = session.getAttribute("usuarioNombre");
+    if (nombre == null) {
         return "redirect:/clientes";
     }
+
+    // Validaciones manuales adicionales
+    if (bindingResult.hasErrors()) {
+        model.addAttribute("cliente", cliente);
+        model.addAttribute("usuarioNombre", nombre.toString());
+        model.addAttribute("usuarioRol", session.getAttribute("usuarioRol"));
+        model.addAttribute("error", "Por favor corrige los errores");
+        return "nuevo-cliente";
+    }
+
+    try {
+        // Si el nombre viene vacío (por fallo del JS), lo marcamos como error
+        if (cliente.getNombre() == null || cliente.getNombre().trim().isEmpty()) {
+            model.addAttribute("error", "Debes consultar el DNI para obtener el nombre");
+            model.addAttribute("cliente", cliente);
+            return "nuevo-cliente";
+        }
+
+        clienteService.guardar(cliente);
+        return "redirect:/clientes?success=Cliente guardado correctamente";
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        model.addAttribute("error", "Error al guardar: " + e.getMessage());
+        model.addAttribute("cliente", cliente);
+        return "nuevo-cliente";
+    }
+}
 
     @GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable Long id, HttpSession session) {

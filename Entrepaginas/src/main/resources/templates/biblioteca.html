@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entre Páginas y Sabores</title>
+  <title>Entre Páginas</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -25,6 +24,7 @@
       --card-color: #ffffff;
     }
 
+    
     /* Estilos generales de la tienda (se aplicarán solo cuando la sección tienda sea visible) */
     #tienda-section {
       padding: 40px 20px;
@@ -218,7 +218,7 @@
   <header>
     <div class="container">
       <div class="logo">
-        <h1><i class="fas fa-book-open"></i> Entre Páginas y Sabores</h1>
+        <h1><i class="fas fa-book-open"></i> Entre Páginas</h1>
       </div>
       <div class="search-bar">
         <input type="text" id="search-input" placeholder="Buscar libros o préstamos..." />
@@ -331,9 +331,15 @@
         <div id="book-grid" class="book-grid">
           <!-- Thymeleaf Rendering for Catalog -->
           <div class="book-card" th:each="libro : ${libros}" th:if="${libro.disponible}">
-            <img
-              th:src="${libro.imagen != null and #strings.startsWith(libro.imagen, 'http') ? libro.imagen : '/img/libros/' + (libro.imagen != null ? libro.imagen : 'default.jpg')}"
-              alt="Portada" onerror="this.src='https://via.placeholder.com/150?text=Sin+Imagen'" />
+            <img th:src="@{${libro.imagen}}" 
+                 th:if="${libro.imagen != null and !libro.imagen.isEmpty()}"
+                 alt="Portada" 
+                 class="w-full h-64 object-cover rounded shadow"
+                 onerror="this.src='https://via.placeholder.com/300x400?text=Sin+Imagen'" />
+            
+            <img src="https://via.placeholder.com/300x400?text=Sin+Imagen" 
+                 th:unless="${libro.imagen != null and !libro.imagen.isEmpty()}"
+                 class="w-full h-64 object-cover rounded shadow" />
             <div class="book-info">
               <h3 th:text="${libro.titulo}">Título</h3>
               <p th:text="${libro.autor}">Autor</p>
@@ -366,13 +372,13 @@
 
 
       <section id="maraton" class="maraton">
-        <h2>Maratón de Libros 2025</h2>
+        <h2>Maratón de Libros 2026</h2>
         <p>
           ¡Únete a nuestro desafío de lectura! Lee 5 libros en un mes y comparte
           tus reseñas.
         </p>
         <ul>
-          <li><strong>Fecha:</strong> 1-31 de Octubre, 2025</li>
+          <li><strong>Fecha:</strong> 1-31 de Octubre, 2026</li>
           <li><strong>Tema:</strong> Aventuras y Fantasía</li>
           <li><strong>Premio:</strong> Membresía gratuita por un año</li>
         </ul>
@@ -383,17 +389,17 @@
         <div class="eventos-grid">
           <div class="evento">
             <h3>Lectura de Poesía</h3>
-            <p><i class="fas fa-calendar-alt"></i> 25 de Mayo, 2025</p>
+            <p><i class="fas fa-calendar-alt"></i> 25 de Mayo, 2026</p>
             <p>Únete a nuestra noche de poesía con autores locales.</p>
           </div>
           <div class="evento">
             <h3>Taller de Escritura</h3>
-            <p><i class="fas fa-calendar-alt"></i> 30 de Mayo, 2025</p>
+            <p><i class="fas fa-calendar-alt"></i> 30 de Mayo, 2026</p>
             <p>Aprende técnicas de escritura creativa con expertos.</p>
           </div>
           <div class="evento">
             <h3>Club de Lectura</h3>
-            <p><i class="fas fa-calendar-alt"></i> 5 de Junio, 2025</p>
+            <p><i class="fas fa-calendar-alt"></i> 5 de Junio, 2026</p>
             <p>Discutimos "El Principito" en un ambiente acogedor.</p>
           </div>
         </div>
@@ -453,9 +459,15 @@
       <div class="book-grid-tienda">
         <div class="book-card-tienda" th:each="libro : ${libros}" th:if="${libro.disponible}">
           <!-- Lógica para imagen: si empieza con http es URL, sino es local -->
-          <img
-            th:src="${libro.imagen != null and #strings.startsWith(libro.imagen, 'http') ? libro.imagen : '/img/libros/' + (libro.imagen != null ? libro.imagen : 'default.jpg')}"
-            alt="Portada del libro" onerror="this.src='https://via.placeholder.com/150?text=Sin+Imagen'" />
+          <img th:src="@{${libro.imagen}}" 
+                 th:if="${libro.imagen != null and !libro.imagen.isEmpty()}"
+                 alt="Portada" 
+                 class="w-full h-64 object-cover rounded shadow"
+                 onerror="this.src='https://via.placeholder.com/300x400?text=Sin+Imagen'" />
+            
+            <img src="https://via.placeholder.com/300x400?text=Sin+Imagen" 
+                 th:unless="${libro.imagen != null and !libro.imagen.isEmpty()}"
+                 class="w-full h-64 object-cover rounded shadow" />
 
           <h3 th:text="${libro.titulo}">Título del Libro</h3>
           <p th:text="${libro.autor}">Autor del Libro</p>
@@ -506,553 +518,182 @@
   <script th:src="@{/js/biblioteca.js}"></script>
   <!-- <script th:src="@{/js/carga-biblioteca.js}"></script> -->
 
+
+
+  <!-- ==================== SCRIPT PRINCIPAL COMPLETO (ESTE ES EL QUE IMPORTA) ==================== -->
   <script>
-    // =========================================================
-    // LÓGICA DE NAVEGACIÓN Y CARRUSEL (Se mantiene)
-    // =========================================================
+    // NAVEGACIÓN
     function showSection(sectionId, element, subSectionId = null) {
       document.getElementById('biblioteca-content').style.display = (sectionId === 'biblioteca-content' ? 'block' : 'none');
       document.getElementById('tienda-section').style.display = (sectionId === 'tienda-section' ? 'block' : 'none');
-
       document.getElementById('floating-cart-btn').style.display = (sectionId === 'tienda-section' ? 'block' : 'none');
-
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-link'));
-      if (element) {
-        element.classList.add('active-link');
-      }
-
-      if (subSectionId) {
-        setTimeout(() => {
-          const target = document.getElementById(subSectionId);
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
-      } else {
-        window.scrollTo(0, 0);
-      }
+      if (element) element.classList.add('active-link');
+      if (subSectionId) setTimeout(() => document.getElementById(subSectionId)?.scrollIntoView({behavior:'smooth'}), 100);
+      else window.scrollTo(0,0);
     }
-
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Mostrar la biblioteca por defecto
       document.getElementById('biblioteca-content').style.display = 'block';
-      document.getElementById('tienda-section').style.display = 'none';
-      document.getElementById('floating-cart-btn').style.display = 'none';
-
-      // 2. Poner el enlace "Inicio" como activo por defecto
-      const inicioLink = document.querySelector('.nav-links a[data-target="biblioteca-content"]');
-      if (inicioLink) inicioLink.classList.add('active-link');
-
-      // 3. Forzar el desplazamiento para enlaces de subsección
-      document.querySelectorAll('#biblioteca-content a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href').substring(1);
-          showSection('biblioteca-content', this, targetId);
-        });
-      });
-
+      document.querySelector('.nav-links a[data-target="biblioteca-content"]')?.classList.add('active-link');
       updateCartCount();
     });
 
-
-    // Asumiendo que la función generarTarjetaLibro está definida en /js/carga-biblioteca.js o similar
-    // Placeholder para que el script no falle si no tienes la función:
-    /*
-    const booksData = [{ id: 1, titulo: "Libro Ejemplo", autor: "Autor Ejemplo", categoria: "Fantasía", cover: "..." }];
-    function loadBooks(page) { 
-         // ... tu lógica de carga de libros ...
-    }
-    function generarTarjetaLibro(book) { // ... }
-    */
-
-    // =========================================================
-    // B. LÓGICA DE LA TIENDA MÁGICA (Carrito, Pago, Voucher)
-    // =========================================================
-
+    // TIENDA MÁGICA - CARRITO
     let carrito = [];
-    let orderIdCounter = 1000;
-    let deliveryCost = 15.00;
-
-    // "stock" variable eliminada, ahora se pasa dinámicamente desde el backend
+    const deliveryCost = 15.00;
 
     function updateCartCount() {
-      const totalItems = carrito.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cart-count').innerText = totalItems;
+      const total = carrito.reduce((s, i) => s + i.quantity, 0);
+      document.getElementById('cart-count').innerText = total || '0';
     }
 
     function addToCart(title, price, image, maxStock) {
-      // 1. Verificar si ya existe en el carrito
-      let item = carrito.find(i => i.title === title);
-
-      // 2. Calcular cantidad actual
-      const currentQuantity = item ? item.quantity : 0;
-
-      // 3. Validar contra el stock real que viene de la BD
-      if (currentQuantity >= maxStock) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Stock Insuficiente',
-          text: `Solo quedan ${maxStock} ejemplares disponibles de "${title}".`,
-          toast: true,
-          position: 'bottom-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
-        return;
-      }
-
-      // 4. Agregar items
-      if (item) {
-        item.quantity++;
-      } else {
-        carrito.push({ title: title, price: price, quantity: 1, image: image, maxStock: maxStock });
-      }
-
-      // 5. Feedback visual y lógica de carrito
+      const item = carrito.find(i => i.title === title);
+      if (item && item.quantity >= maxStock) { Swal.fire({icon:'error', title:'Sin stock', text:`Solo quedan ${maxStock}`, toast:true, timer:3000}); return; }
+      if (item) item.quantity++; else carrito.push({title, price, quantity:1, image, maxStock});
       updateCartCount();
-
-      Swal.fire({
-        icon: 'success',
-        title: '¡Agregado al Grimorio!',
-        text: `Has añadido "${title}" a tu colección.`,
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 2000,
-        background: '#fff3cd',
-        color: '#856404'
-      });
+      Swal.fire({icon:'success', title:'¡Agregado!', text:`"${title}" en tu grimorio`, toast:true, timer:2000});
     }
-
-
 
     function updateQuantity(title, delta) {
-      let item = carrito.find(i => i.title === title);
+      const item = carrito.find(i => i.title === title);
       if (!item) return;
-
-      const newQuantity = item.quantity + delta;
-
-      if (newQuantity <= 0) {
-        removeItem(title);
-        return;
-      }
-
-      // Validar con el maxStock guardado en el ítem
-      if (item.maxStock !== undefined && newQuantity > item.maxStock) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Límite de Stock Alcanzado',
-          text: `Solo hay ${item.maxStock} disponibles.`,
-          showConfirmButton: false,
-          timer: 1500
-        });
-        return;
-      }
-
-      item.quantity = newQuantity;
+      const nueva = item.quantity + delta;
+      if (nueva <= 0) { removeItem(title); return; }
+      if (nueva > item.maxStock) { Swal.fire({icon:'warning', title:'Stock máximo', text:'No hay más ejemplares', timer:2000}); return; }
+      item.quantity = nueva;
       updateCartCount();
       viewCart(false);
     }
 
-    function removeItem(title) {
-      carrito = carrito.filter(item => item.title !== title);
-      updateCartCount();
-      viewCart(false);
-    }
+    function removeItem(title) { carrito = carrito.filter(i => i.title !== title); updateCartCount(); viewCart(false); }
 
-    function viewCart(initialCall = true) {
-      if (carrito.length === 0) {
-        if (initialCall) {
-          Swal.fire({ icon: 'question', title: 'Pergamino Vacío', text: '¡Tu pergamino de órdenes está esperando tesoros!', confirmButtonText: 'Buscar Libros' });
-        } else {
-          Swal.close();
-        }
-        return;
-      }
-
-      const subtotal = carrito.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const total = subtotal + deliveryCost;
-
-      const cartItemsHtml = carrito.map(item =>
-        `<li>
-                    <div class="cart-item-info">${item.title}</div>
-                    <div class="quantity-controls">
-                        <button class="qty-btn" onclick="updateQuantity('${item.title}', -1)"><i class="fas fa-minus-circle"></i></button>
-                        <span class="qty-value">${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateQuantity('${item.title}', 1)"><i class="fas fa-plus-circle"></i></button>
-                    </div>
-                    <span class="cart-item-price">S/ ${(item.price * item.quantity).toFixed(2)}</span>
-                </li>`
-      ).join('');
-
-      const cartContent = `
-                <ul id="cart-items-list">${cartItemsHtml}</ul>
-                <div class="cart-total" style="font-size:1.1rem; border:none; padding-bottom:5px;">Subtotal: S/ ${subtotal.toFixed(2)}</div>
-                <div class="cart-total" style="font-size:1.1rem; border:none; padding-bottom:5px;">Costo de Envío: S/ ${deliveryCost.toFixed(2)}</div>
-                <div class="cart-total">Total a Pagar: S/ ${total.toFixed(2)}</div>
-            `;
-
-      if (initialCall) {
-        Swal.fire({
-          title: '📜 Resumen de tu Pergamino',
-          html: cartContent,
-          showCancelButton: true,
-          confirmButtonText: '<i class="fas fa-scroll"></i> Finalizar Orden',
-          cancelButtonText: 'Seguir Buscando',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            requestDeliveryInfo(total, subtotal);
-          }
-        });
-      } else {
-        Swal.update({ html: cartContent });
-      }
+    function viewCart(abrir = true) {
+      if (carrito.length === 0) { if (abrir) Swal.fire({icon:'info', title:'Tu grimorio está vacío'}); return; }
+      const subtotal = carrito.reduce((s,i)=>s+i.price*i.quantity,0).toFixed(2);
+      const total = (parseFloat(subtotal) + deliveryCost).toFixed(2);
+      const items = carrito.map(i=>`
+        <li>
+          <div>${i.title}</div>
+          <div class="quantity-controls">
+            <button class="qty-btn" onclick="updateQuantity('${i.title}',-1)">-</button>
+            <span class="qty-value">${i.quantity}</span>
+            <button class="qty-btn" onclick="updateQuantity('${i.title}',1)">+</button>
+          </div>
+          <span>S/ ${(i.price*i.quantity).toFixed(2)}</span>
+        </li>`).join('');
+      const html = `<ul id="cart-items-list">${items}</ul>
+        <div style="margin-top:15px;text-align:right;">
+          <div>Subtotal: S/ ${subtotal}</div>
+          <div>Envío: S/ ${deliveryCost.toFixed(2)}</div>
+          <div style="font-weight:bold;color:var(--accent-magic);">Total: S/ ${total}</div>
+        </div>`;
+      if (abrir) {
+        Swal.fire({title:'Resumen del pedido', html, showCancelButton:true, confirmButtonText:'Finalizar compra', cancelButtonText:'Seguir comprando'})
+          .then(r => r.isConfirmed && requestDeliveryInfo(total, subtotal));
+      } else Swal.update({html});
     }
 
     function requestDeliveryInfo(total, subtotal) {
       Swal.fire({
-        title: '📍 Datos de Entrega (Contraentrega)',
-        html: `
-                    <p style="margin-bottom:15px; color:#555;">El pago se realizará al momento de recibir tus libros (Efectivo o Yape/Plin).</p>
-                    <input id="swal-name" class="swal2-input" placeholder="Nombre de Quien Recibe">
-                    <input id="swal-address" class="swal2-input" placeholder="Dirección Exacta de Entrega">
-                    <input id="swal-phone" class="swal2-input" placeholder="Teléfono / WhatsApp">
-                `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Confirmar Pedido',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-          const name = document.getElementById('swal-name').value;
-          const address = document.getElementById('swal-address').value;
-          const phone = document.getElementById('swal-phone').value;
-          if (!name || !address || !phone) {
-            Swal.showValidationMessage('Todos los campos son obligatorios para el envío.');
-            return false;
-          }
-          return { name, address, phone };
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          processCheckout(total, subtotal, result.value);
-        }
-      });
+        title:'Datos de entrega (Contraentrega)',
+        html:`<p style="margin-bottom:15px;">Pago en efectivo, Yape o Plin al recibir</p>
+              <input id="swal-nombre" class="swal2-input" placeholder="Nombre completo">
+              <input id="swal-direccion" class="swal2-input" placeholder="Dirección exacta">
+              <input id="swal-telefono" class="swal2-input" placeholder="Teléfono / WhatsApp">`,
+        showCancelButton:true, confirmButtonText:'Confirmar pedido',
+        preConfirm:()=>{ const n=document.getElementById('swal-nombre').value.trim(); const d=document.getElementById('swal-direccion').value.trim(); const t=document.getElementById('swal-telefono').value.trim(); if(!n||!d||!t){Swal.showValidationMessage('Todos los campos son obligatorios'); return false;} return {nombre:n,direccion:d,telefono:t}; }
+      }).then(r=>r.isConfirmed && processCheckout(total,subtotal,r.value));
     }
 
-    function processCheckout(total, subtotal, deliveryInfo) {
-      Swal.fire({
-        title: 'Procesando Pedido...',
-        html: 'Enviando la orden a nuestra librería...',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-      });
-
-      // Construir el payload para el backend
-      const payload = {
-        clienteNombre: deliveryInfo.name,
-        clienteDireccion: deliveryInfo.address,
-        clienteTelefono: deliveryInfo.phone,
-        total: total,
-        items: carrito.map(item => ({
-          titulo: item.title,
-          precio: item.price,
-          cantidad: item.quantity
-        }))
-      };
-
-      fetch('/entrepaginas/ventas/api/crear', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Éxito
-            const orderId = `ORD-${data.orderId}`;
-            const date = new Date().toLocaleDateString('es-PE');
-
-            const voucherItemsHtml = carrito.map(item =>
-              `<p><span>${item.title} (x${item.quantity})</span><span>S/ ${(item.price * item.quantity).toFixed(2)}</span></p>`
-            ).join('');
-
-            const voucherHtml = `
-                        <div class="voucher">
-                            <h3 class="voucher-header">📦 ¡Pedido Confirmado! 📦</h3>
-                            <div style="text-align:center; margin-bottom:15px; color:var(--primary-blue);">
-                                 <i class="fas fa-truck fa-2x"></i>
-                                 <p style="font-size:0.9rem; margin-top:5px;">Pago Contraentrega</p>
-                            </div>
-                            <div class="voucher-details">
-                                <p><strong>N° Orden:</strong> ${orderId}</p>
-                                <p><strong>Fecha:</strong> ${date}</p>
-                                <p style="margin-top:10px; border-top:1px dotted #ccc; padding-top:10px;"><strong>DATOS DE ENVÍO:</strong></p>
-                                <p><strong>Cliente:</strong> ${deliveryInfo.name}</p>
-                                <p><strong>Dirección:</strong> ${deliveryInfo.address}</p>
-                                <p><strong>Teléfono:</strong> ${deliveryInfo.phone}</p>
-                            </div>
-                            <div class="voucher-items">
-                                <p style="font-weight: bold; margin-bottom: 5px;">DETALLE:</p>
-                                ${voucherItemsHtml}
-                                <p style="border-top:1px solid #eee; margin-top:5px; padding-top:5px;"><span>Subtotal:</span><span>S/ ${subtotal.toFixed(2)}</span></p>
-                                <p><span>Envío:</span><span>S/ ${deliveryCost.toFixed(2)}</span></p>
-                            </div>
-                            <p class="voucher-total">TOTAL A PAGAR: S/ ${total.toFixed(2)}</p>
-                            <p style="font-size: 0.8rem; margin-top: 20px; text-align:center;">
-                                Ten listo el efectivo o tu aplicativo de pago al recibir el pedido.<br>
-                                ¡Gracias por comprar en Entre Páginas!
-                            </p>
-                        </div>
-                    `;
-
-            Swal.fire({
-              title: '',
-              html: voucherHtml,
-              showConfirmButton: true,
-              confirmButtonText: 'Cerrar y Seguir Explorando',
-              customClass: { popup: 'swal-wide' }
-            }).then(() => {
-              carrito = [];
-              updateCartCount();
-              viewCart(false); // Cierra/limpia el modal
-            });
-
-          } else {
-            // Error del backend
-            Swal.fire({
-              icon: 'error',
-              title: 'Error al procesar',
-              text: data.message || 'Ocurrió un error desconocido.'
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error de Conexión',
-            text: 'No se pudo conectar con el servidor.'
-          });
-        });
+    function processCheckout(total, subtotal, info) {
+      Swal.fire({title:'Procesando...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+      fetch('/entrepaginas/ventas/api/crear', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+        clienteNombre:info.nombre, clienteDireccion:info.direccion, clienteTelefono:info.telefono, total:parseFloat(total),
+        items:carrito.map(i=>({titulo:i.title, precio:i.price, cantidad:i.quantity}))
+      })})
+      .then(r=>r.json()).then(data=>{
+        if(data.success){
+          const voucher=`
+            <div class="voucher">
+              <h3>¡Pedido Confirmado!</h3>
+              <p><strong>Orden:</strong> ORD-${data.orderId||'XXXX'}</p>
+              <p><strong>Cliente:</strong> ${info.nombre}</p>
+              <p><strong>Dirección:</strong> ${info.direccion}</p>
+              <p><strong>Teléfono:</strong> ${info.telefono}</p>
+              <div class="voucher-total">TOTAL: S/ ${total}</div>
+              <p style="font-size:0.9rem;margin-top:15px;">¡Gracias por tu compra mágica!</p>
+            </div>`;
+          Swal.fire({html:voucher, confirmButtonText:'Cerrar'}).then(()=>{carrito=[];updateCartCount();});
+        } else throw new Error(data.message||'Error');
+      }).catch(()=>Swal.fire({icon:'error',title:'Error',text:'No se pudo procesar el pedido'}));
     }
 
-    // =========================================================
-    // C. LÓGICA DE PRÉSTAMOS (Catálogo y Manual)
-    // =========================================================
-
-    // Modal de solicitud de préstamo desde el catálogo 
+    // PRÉSTAMOS - 100% REAL + VOUCHER
     function solicitarPrestamo(libroId, libroTitulo) {
       Swal.fire({
-        title: `Solicitar Préstamo de: <strong>${libroTitulo}</strong>`,
-        html: `
-                    <p class="mb-4 text-sm text-gray-600">Completa tus datos para confirmar el préstamo.</p>
-                    <label for="swal-cliente-nombre" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Tu Nombre:</label>
-                    <input id="swal-cliente-nombre" class="swal2-input" placeholder="Nombre Completo">
-                    
-                    <label for="swal-cliente-email" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Tu Email:</label>
-                    <input id="swal-cliente-email" class="swal2-input" placeholder="Correo Electrónico">
-                    
-                    <label for="swal-fecha-devolucion" style="display:block; text-align:left; font-weight:bold; margin-top:5px;">Fecha Devolución Estimada:</label>
-                    <input id="swal-fecha-devolucion" class="swal2-input" type="date">
-                `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: '<i class="fas fa-handshake"></i> Confirmar Préstamo',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-          const nombre = document.getElementById('swal-cliente-nombre').value;
-          const email = document.getElementById('swal-cliente-email').value;
-          const fechaDevolucion = document.getElementById('swal-fecha-devolucion').value;
-
-          if (!nombre || !email || !fechaDevolucion) {
-            Swal.showValidationMessage('Todos los campos son obligatorios.');
-            return false;
-          }
-
-          const datosPrestamo = {
-            libroId: libroId,
-            clienteNombre: nombre,
-            clienteEmail: email,
-            fechaDevolucion: fechaDevolucion,
-          };
-          return { datosPrestamo, tituloReferencia: libroTitulo };
+        title:'Solicitar Préstamo',
+        html:`
+          <p class="font-bold text-xl mb-4 text-center">${libroTitulo}</p>
+          <input id="swal-nombre" class="swal2-input" placeholder="Nombre completo" required>
+          <input id="swal-email" class="swal2-input" type="email" placeholder="Correo electrónico" required>
+          <input id="swal-fecha" class="swal2-input" type="date" min="${new Date(Date.now()+3*86400000).toISOString().split('T')[0]}" required>
+        `,
+        showCancelButton:true, confirmButtonText:'Confirmar Préstamo',
+        preConfirm:()=>{
+          const nombre=document.getElementById('swal-nombre').value.trim();
+          const email=document.getElementById('swal-email').value.trim();
+          const fecha=document.getElementById('swal-fecha').value;
+          if(!nombre||!email||!fecha){Swal.showValidationMessage('Completa todos los campos');return false;}
+          return {libroId, nombre, email, fechaDevolucion:fecha, titulo:libroTitulo};
         }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          enviarPrestamoAlBackend(result.value.datosPrestamo, result.value.tituloReferencia);
-        }
-      });
+      }).then(r=>r.isConfirmed && enviarPrestamoAlBackend(r.value));
     }
 
-    function enviarPrestamoAlBackend(datos, titulo) {
-      Swal.fire({
-        title: 'Procesando Solicitud...',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-      });
-
+    function enviarPrestamoAlBackend(datos) {
+      Swal.fire({title:'Procesando préstamo...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
       fetch('/entrepaginas/prestamos/api/crear', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: '¡Préstamo Confirmado!',
-              html: `Has solicitado "<strong>${titulo}</strong>".<br>Devolución: ${datos.fechaDevolucion}<br>Ticket: #${data.message.split('ID: ')[1]}`,
-              confirmButtonText: 'Entendido'
-            }).then(() => {
-              location.reload(); // Recargar para actualizar disponibilidad
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: data.message
-            });
-          }
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          libroId:datos.libroId,
+          clienteNombre:datos.nombre,
+          clienteEmail:datos.email,
+          fechaDevolucion:datos.fechaDevolucion
         })
-        .catch(err => {
-          console.error(err);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error de Conexión',
-            text: 'No se pudo registrar el préstamo.'
-          });
-        });
-    }
-
-    /**
-     * Abre el modal para que el bibliotecario registre un préstamo manualmente.
-     */
-    function openRegistroManualModal() {
-      Swal.fire({
-        title: '📚 Registro Manual de Préstamo',
-        html: `
-                    <div class="text-left mt-4">
-                        
-                        <label for="swal-manual-cliente">Nombre del Cliente:</label>
-                        <input id="swal-manual-cliente" class="swal2-input" placeholder="Nombre Completo" required>
-                        
-                        <label for="swal-manual-email">Correo Electrónico:</label>
-                        <input id="swal-manual-email" class="swal2-input" type="email" placeholder="email@dominio.com" required>
-
-                        <label for="swal-manual-libro">ID o Título del Libro:</label>
-                        <input id="swal-manual-libro" class="swal2-input" placeholder="ID o Título (Ej: 123 o 'Cien Años')" required>
-
-                        <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
-                            <div style="flex: 1;">
-                                <label for="swal-manual-prestamo" style="margin-top: 0;">Fecha Préstamo:</label>
-                                <input id="swal-manual-prestamo" class="swal2-input" type="date" value="${new Date().toISOString().split('T')[0]}" style="width: 100%; margin-bottom: 0;">
-                            </div>
-                            <div style="flex: 1;">
-                                <label for="swal-manual-devolucion" style="margin-top: 0;">Fecha Devolución:</label>
-                                <input id="swal-manual-devolucion" class="swal2-input" type="date" style="width: 100%; margin-bottom: 0;">
-                            </div>
-                        </div>
-                    </div>
-                `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: '<i class="fas fa-paper-plane"></i> Registrar Préstamo',
-        cancelButtonText: 'Cancelar',
-        width: '600px',
-        customClass: {
-          htmlContainer: 'text-left'
-        },
-        preConfirm: () => {
-          const clienteNombre = document.getElementById('swal-manual-cliente').value;
-          const clienteEmail = document.getElementById('swal-manual-email').value;
-          const libroManual = document.getElementById('swal-manual-libro').value;
-          const fechaPrestamo = document.getElementById('swal-manual-prestamo').value;
-          const fechaDevolucion = document.getElementById('swal-manual-devolucion').value;
-
-          if (!clienteNombre || !clienteEmail || !libroManual || !fechaPrestamo || !fechaDevolucion) {
-            Swal.showValidationMessage('🚨 Todos los campos son obligatorios.');
-            return false;
-          }
-
-          // Determina si es ID (número) o Título (texto)
-          const isId = !isNaN(parseInt(libroManual)) && String(parseInt(libroManual)) === libroManual;
-
-          const datosPrestamo = {
-            clienteNombre: clienteNombre,
-            clienteEmail: clienteEmail,
-            fechaPrestamo: fechaPrestamo,
-            fechaDevolucion: fechaDevolucion,
-            libroId: isId ? parseInt(libroManual) : null,
-            libroTitulo: isId ? null : libroManual,
-          };
-
-          return { datosPrestamo, tituloReferencia: libroManual };
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          enviarPrestamoAlBackend(result.value.datosPrestamo, result.value.tituloReferencia);
-        }
+      })
+      .then(r=>r.json())
+      .then(res=>{
+        if(!res.success) throw new Error(res.message||'Error del servidor');
+        const id = res.prestamoId || res.id || 'XXXX';
+        const hoy = new Date().toLocaleDateString('es-PE');
+        const voucher=`
+          <div class="voucher">
+            <h3>Préstamo Confirmado</h3>
+            <p><strong>Ticket:</strong> #PRS-${id}</p>
+            <p><strong>Fecha:</strong> ${hoy}</p>
+            <p><strong>Libro:</strong> ${datos.titulo}</p>
+            <p><strong>Lector:</strong> ${datos.nombre}</p>
+            <p><strong>Devolución:</strong> ${new Date(datos.fechaDevolucion).toLocaleDateString('es-PE')}</p>
+            <div class="voucher-total">¡Gracias por leer con nosotros!</div>
+            <p style="font-size:0.85rem;margin-top:15px;text-align:center;">Presenta este ticket al retirar tu libro</p>
+          </div>`;
+        Swal.fire({html:voucher, confirmButtonText:'¡Entendido!', allowOutsideClick:false})
+          .then(()=>{location.reload();});
+      })
+      .catch(err=>{
+        console.error(err);
+        Swal.fire({icon:'error', title:'Error', text:err.message||'No se pudo registrar el préstamo'});
       });
     }
 
-    /**
-     * Función genérica para enviar datos de préstamo al backend (ENDPOINT: /api/prestamos/registrar).
-     */
-    function enviarPrestamoAlBackend(datosPrestamo, tituloReferencia) {
-      const ENDPOINT_PRESTAMO = '/api/prestamos/registrar';
-
-      // Simulación de envío al backend. Reemplaza esto con tu llamada real a fetch/axios
-      console.log("Enviando datos de préstamo:", datosPrestamo);
-
-      Swal.fire({
-        title: ' Solicitud Enviada con Éxito',
-        html: `<p>El ítem <strong>${tituloReferencia}</strong> ha sido prestado a <strong>${datosPrestamo.clienteNombre}</strong>. </p>
-                       <p class="mt-2 text-sm">Fecha Límite: <strong>${new Date(datosPrestamo.fechaDevolucion).toLocaleDateString('es-PE')}</strong>.</p>`,
-        icon: 'success',
-        confirmButtonText: 'Genial'
+    // IMÁGENES ROTAS → NUNCA MÁS
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('img').forEach(img => {
+        img.onerror = function() { this.onerror = null; this.src = 'https://picsum.photos/300/450?blur=2&random=' + Date.now(); };
+        if (img.complete && img.naturalWidth === 0) img.src = 'https://picsum.photos/300/450?blur=2&random=' + Date.now();
       });
-
-      // Si quieres la funcionalidad de conexión real, descomenta el siguiente bloque y borra el bloque Swal.fire de simulación:
-      /*
-      fetch(ENDPOINT_PRESTAMO, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(datosPrestamo)
-      })
-      .then(response => {
-          if (!response.ok) {
-              return response.json().then(errorData => { 
-                  throw new Error(errorData.message || 'Error en el servidor.'); 
-              });
-          }
-          return response.json();
-      })
-      .then(data => {
-          Swal.fire({
-              title: '🎉 Préstamo Registrado con Éxito',
-              html: `<p>El ítem <strong>${tituloReferencia}</strong> ha sido prestado a <strong>${datosPrestamo.clienteNombre}</strong>. </p>
-                     <p class="mt-2 text-sm">Fecha Límite: <strong>${new Date(datosPrestamo.fechaDevolucion).toLocaleDateString('es-PE')}</strong>.</p>
-                     <p class="text-xs text-gray-500 mt-3">ID de Préstamo (API): ${data.prestamoId || 'N/A'}</p>`,
-              icon: 'success',
-              confirmButtonText: 'Genial'
-          });
-      })
-      .catch(error => {
-          Swal.fire({
-              title: '❌ Falló la Solicitud',
-              text: `Detalle: ${error.message || 'Error inesperado al registrar el préstamo.'}`,
-              icon: 'error',
-              confirmButtonText: 'Entendido'
-          });
-      });
-      */
-    }
+    });
   </script>
 </body>
 
